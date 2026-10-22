@@ -45,12 +45,13 @@
 \begin{abstract}
 % TODO: escribir al final, cuando estén los resultados. Debe sintetizar en
 % 5 a 8 líneas: (1) la pregunta, (2) el dataset y el período, (3) el método
-% (comparación entre compañeros de equipo y descomposición por eras) y
+% (comparación entre compañeros de equipo y comparación entre eras
+% reglamentarias) y
 % (4) los dos o tres hallazgos principales con números concretos.
 El presente trabajo analiza en qué medida el resultado de una carrera de
 Fórmula 1 depende del talento del piloto o del rendimiento del auto. Para
-ello se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)}
-y se compara a cada piloto con su compañero de equipo, que dispone del mismo
+ello se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)}, restringido a las
+temporadas 2010--2024, y se compara a cada piloto con su compañero de equipo, que dispone del mismo
 auto. [Completar con la metodología resumida y los hallazgos principales.]
 \end{abstract}
 
@@ -63,7 +64,7 @@ auto. [Completar con la metodología resumida y los hallazgos principales.]
 ¿Qué pesa más en el resultado de una carrera de Fórmula 1: el talento del
 piloto o el rendimiento del auto? Para medirlo, se compara a cada piloto con
 su compañero de equipo (mismo auto) y se analiza cómo varía el peso de cada
-factor a lo largo de las eras del campeonato (1950--2024).
+factor entre las eras reglamentarias del período 2010--2024.
 
 % TODO (2 o 3 oraciones): por qué la pregunta es relevante. Por ejemplo, para
 % una escudería la respuesta orienta dónde invertir el presupuesto (contratar
@@ -73,8 +74,8 @@ factor a lo largo de las eras del campeonato (1950--2024).
 \subsection{Objetivos}
 El objetivo general del trabajo es estimar qué proporción del resultado de
 una carrera de Fórmula 1 se explica por el rendimiento del auto y qué
-proporción por el desempeño del piloto, y describir cómo cambió ese balance
-a lo largo de la historia del campeonato.
+proporción por el desempeño del piloto en las temporadas 2010--2024, y
+describir cómo cambió ese balance entre las eras reglamentarias del período.
 
 Los objetivos particulares son:
 \begin{enumerate}
@@ -85,13 +86,15 @@ Los objetivos particulares son:
     \item Medir el rendimiento del auto a nivel de escudería y temporada
     (posición promedio, puntos y porcentaje de podios del equipo) y comparar
     su dispersión con la dispersión de las diferencias entre compañeros.
-    \item Analizar la evolución del peso relativo de cada factor por eras
-    del campeonato:
+    \item Analizar la evolución del peso relativo de cada factor entre las
+    tres eras reglamentarias del período: motores V8 (2010--2013), motores
+    turbo híbridos (2014--2021) y efecto suelo (2022--2024):
     \begin{enumerate}
-        \item comparar las brechas entre escuderías y las brechas entre
-        compañeros de equipo por década o era reglamentaria;
-        \item identificar los períodos de dominio de un constructor y
-        evaluar si en ellos el resultado depende más del auto que del piloto.
+        \item comparar, en cada era, las brechas entre escuderías con las
+        brechas entre compañeros de equipo;
+        \item evaluar si en los períodos de dominio de un constructor (Red
+        Bull 2010--2013 y 2022--2023, Mercedes 2014--2020) el resultado
+        depende más del auto que del piloto.
     \end{enumerate}
     \item Identificar a los pilotos que superan de forma sistemática a sus
     compañeros a lo largo de distintos equipos, como evidencia de un efecto
@@ -104,6 +107,9 @@ Los objetivos particulares son:
 Se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)},
 publicado en Kaggle por Rohan Rao, que recopila resultados de carreras,
 clasificaciones, pilotos, escuderías y circuitos del campeonato mundial.
+El análisis se restringe a las temporadas 2010--2024, que cubren tres eras
+reglamentarias completas y para las que todas las tablas utilizadas
+(incluida la de clasificación) tienen datos completos.
 
 % ---------------------------------------------------------------------------
 % §3. Datos y metodología (media página)
@@ -124,9 +130,10 @@ clasificaciones, pilotos, escuderías y circuitos del campeonato mundial.
 %  - Crear la columna de duelo: para cada carrera y constructor, diferencia
 %    de posición entre los dos pilotos (o variable binaria "le ganó al
 %    compañero").
-%  - Crear la variable "era" (por década o por cambio reglamentario).
+%  - Crear la variable "era" según el reglamento técnico: V8 (2010--2013),
+%    turbo híbrido (2014--2021) y efecto suelo (2022--2024).
 %  - Normalizar posiciones por cantidad de autos en la grilla, porque el
-%    número de participantes varió mucho entre 1950 y 2024.
+%    número de participantes varió entre 20 y 24 autos según la temporada.
 
 \subsection{Herramientas}
 El análisis se realizó en Python sobre Google Colab, con las librerías
@@ -183,10 +190,12 @@ El análisis se realizó en Python sobre Google Colab, con las librerías
 
 \subsection{Limitaciones}
 % TODO. Algunas a considerar:
-%  - Los datos de clasificación (qualifying) solo cubren las temporadas
-%    recientes, no todo el período 1950--2024.
-%  - En las primeras décadas había equipos con más de dos autos y pilotos
-%    que compartían auto, lo que complica definir al "compañero".
+%  - El período 2010--2024 no permite generalizar a las décadas anteriores
+%    del campeonato, en las que la tecnología y los reglamentos eran otros.
+%  - Hay pocos equipos por temporada (10 a 12), por lo que los resultados
+%    por era se apoyan en pocas observaciones de escudería.
+%  - Los reemplazos a mitad de temporada generan duelos con pocas carreras,
+%    con menos peso estadístico que los duelos de temporada completa.
 %  - La comparación entre compañeros mide al piloto respecto de otro piloto,
 %    no en términos absolutos.
 
