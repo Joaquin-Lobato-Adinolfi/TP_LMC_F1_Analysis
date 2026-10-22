@@ -1,0 +1,215 @@
+% Informe académico - TP Grupal LMC 2C 2026
+% Copiar este archivo al proyecto de Overleaf (reemplaza el main.tex actual).
+% Los bloques marcados con TODO se completan cuando el notebook esté ejecutado.
+% Extensión objetivo: 3 a 5 páginas sin contar portada, índice ni bibliografía.
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{hyperref}
+
+\graphicspath{{figuras/}}
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Portada
+% ---------------------------------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    {\LARGE Laboratorio de Métodos Cuantitativos\\ Aplicados a la Gestión\par}
+    \vspace{2cm}
+    {\Huge\bfseries Análisis F1\par}
+    \vspace{0.5cm}
+    {\Large Rendimiento por auto o talento\par}
+    \vfill
+    {\large Alumnos: Agustín Mier Torre y Joaquín Lobato Adinolfi\par}
+    \vspace{0.5cm}
+    {\large Facultad de Ciencias Económicas, Universidad de Buenos Aires\par}
+    \vspace{0.3cm}
+    {\large 2do Cuatrimestre 2026\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------------------
+% §1. Resumen (5 a 8 líneas)
+% ---------------------------------------------------------------------------
+\begin{abstract}
+% TODO: escribir al final, cuando estén los resultados. Debe sintetizar en
+% 5 a 8 líneas: (1) la pregunta, (2) el dataset y el período, (3) el método
+% (comparación entre compañeros de equipo y descomposición por eras) y
+% (4) los dos o tres hallazgos principales con números concretos.
+El presente trabajo analiza en qué medida el resultado de una carrera de
+Fórmula 1 depende del talento del piloto o del rendimiento del auto. Para
+ello se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)}
+y se compara a cada piloto con su compañero de equipo, que dispone del mismo
+auto. [Completar con la metodología resumida y los hallazgos principales.]
+\end{abstract}
+
+% ---------------------------------------------------------------------------
+% §2. Introducción (media página)
+% ---------------------------------------------------------------------------
+\section{Introducción}
+
+\subsection{Motivación}
+¿Qué pesa más en el resultado de una carrera de Fórmula 1: el talento del
+piloto o el rendimiento del auto? Para medirlo, se compara a cada piloto con
+su compañero de equipo (mismo auto) y se analiza cómo varía el peso de cada
+factor a lo largo de las eras del campeonato (1950--2024).
+
+% TODO (2 o 3 oraciones): por qué la pregunta es relevante. Por ejemplo, para
+% una escudería la respuesta orienta dónde invertir el presupuesto (contratar
+% un piloto estrella o desarrollar el auto), y desde 2021 el límite
+% presupuestario (\emph{budget cap}) vuelve esta decisión más relevante.
+
+\subsection{Objetivos}
+El objetivo general del trabajo es estimar qué proporción del resultado de
+una carrera de Fórmula 1 se explica por el rendimiento del auto y qué
+proporción por el desempeño del piloto, y describir cómo cambió ese balance
+a lo largo de la historia del campeonato.
+
+Los objetivos particulares son:
+\begin{enumerate}
+    \item Construir, a partir de las tablas del dataset, una base de duelos
+    entre compañeros de equipo (mismo constructor, misma carrera), de modo
+    que la diferencia de resultado entre ambos pilotos aísle el efecto del
+    piloto manteniendo constante el auto.
+    \item Medir el rendimiento del auto a nivel de escudería y temporada
+    (posición promedio, puntos y porcentaje de podios del equipo) y comparar
+    su dispersión con la dispersión de las diferencias entre compañeros.
+    \item Analizar la evolución del peso relativo de cada factor por eras
+    del campeonato:
+    \begin{enumerate}
+        \item comparar las brechas entre escuderías y las brechas entre
+        compañeros de equipo por década o era reglamentaria;
+        \item identificar los períodos de dominio de un constructor y
+        evaluar si en ellos el resultado depende más del auto que del piloto.
+    \end{enumerate}
+    \item Identificar a los pilotos que superan de forma sistemática a sus
+    compañeros a lo largo de distintos equipos, como evidencia de un efecto
+    piloto que se mantiene al cambiar de auto.
+\end{enumerate}
+
+\subsection{Dataset y fuente}
+% TODO (2 o 3 oraciones): nombre del dataset, autor y link de Kaggle,
+% cobertura temporal y qué representa cada fila de la tabla principal.
+Se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)},
+publicado en Kaggle por Rohan Rao, que recopila resultados de carreras,
+clasificaciones, pilotos, escuderías y circuitos del campeonato mundial.
+
+% ---------------------------------------------------------------------------
+% §3. Datos y metodología (media página)
+% ---------------------------------------------------------------------------
+\section{Datos y metodología}
+
+\subsection{Variables y estructura}
+% TODO: describir las tablas usadas (races, results, drivers, constructors,
+% qualifying, status), cómo se unen (raceId, driverId, constructorId) y las
+% variables clave: posición de llegada, grilla de partida, puntos y estado
+% de finalización. Incluir dimensiones de la base final.
+
+\subsection{Transformaciones}
+% TODO: describir al menos dos transformaciones y justificar cada una.
+% Sugeridas:
+%  - Filtrar abandonos por fallas mecánicas (tabla status), porque castigan
+%    al piloto por un problema del auto.
+%  - Crear la columna de duelo: para cada carrera y constructor, diferencia
+%    de posición entre los dos pilotos (o variable binaria "le ganó al
+%    compañero").
+%  - Crear la variable "era" (por década o por cambio reglamentario).
+%  - Normalizar posiciones por cantidad de autos en la grilla, porque el
+%    número de participantes varió mucho entre 1950 y 2024.
+
+\subsection{Herramientas}
+El análisis se realizó en Python sobre Google Colab, con las librerías
+\texttt{pandas} y \texttt{numpy} para la manipulación de datos y
+\texttt{matplotlib} para los gráficos. El informe se redactó en \LaTeX{}
+(Overleaf). El código está disponible en el repositorio del grupo.
+
+% ---------------------------------------------------------------------------
+% §4. Resultados (1 a 2 páginas)
+% ---------------------------------------------------------------------------
+\section{Resultados}
+% TODO: un párrafo de interpretación por figura o tabla, que explique qué
+% significa en relación con la pregunta (no solo qué se ve).
+
+\subsection{Diferencias entre escuderías y entre compañeros}
+% TODO: tabla de resumen con groupby (por ejemplo, dispersión de resultados
+% entre equipos vs. dentro de cada equipo, por era).
+% \begin{table}[H]
+%     \centering
+%     \caption{...}
+%     \label{tab:dispersion}
+%     \begin{tabular}{lrr}
+%         \toprule
+%         Era & Brecha entre equipos & Brecha entre compañeros \\
+%         \midrule
+%         ... & ... & ... \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}
+
+\subsection{Evolución por eras}
+% TODO: gráfico de evolución temporal (líneas) del peso relativo del auto.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.85\textwidth]{evolucion_eras.png}
+%     \caption{...}
+%     \label{fig:evolucion}
+% \end{figure}
+
+\subsection{Comparación entre categorías}
+% TODO: gráfico de barras (por ejemplo, porcentaje de duelos ganados por
+% piloto, o resultados promedio por escudería dominante).
+
+\subsection{Relación entre variables}
+% TODO: dispersión entre rendimiento del auto (posición media del equipo) y
+% resultado del piloto, o entre grilla de partida y posición final.
+
+% ---------------------------------------------------------------------------
+% §5. Conclusiones (media página)
+% ---------------------------------------------------------------------------
+\section{Conclusiones}
+% TODO: responder la pregunta de forma directa, retomando cada objetivo
+% particular.
+
+\subsection{Limitaciones}
+% TODO. Algunas a considerar:
+%  - Los datos de clasificación (qualifying) solo cubren las temporadas
+%    recientes, no todo el período 1950--2024.
+%  - En las primeras décadas había equipos con más de dos autos y pilotos
+%    que compartían auto, lo que complica definir al "compañero".
+%  - La comparación entre compañeros mide al piloto respecto de otro piloto,
+%    no en términos absolutos.
+
+\subsection{Posibles extensiones}
+% TODO: por ejemplo, un modelo de regresión con efectos fijos de piloto y de
+% escudería-temporada, o incorporar los tiempos de vuelta (lap_times).
+
+% ---------------------------------------------------------------------------
+% §6. Reflexión metodológica (un cuarto de página)
+% ---------------------------------------------------------------------------
+\section{Reflexión metodológica}
+% TODO: qué herramientas de IA se usaron y para qué (código, redacción,
+% estructura del informe), qué se verificó manualmente, cómo fue la revisión
+% intragrupal y, si se hizo, qué comentarios dejó la validación externa y
+% cómo se incorporaron. Cerrar con uno o dos aprendizajes.
+
+% ---------------------------------------------------------------------------
+% §7. Bibliografía (opcional)
+% ---------------------------------------------------------------------------
+\begin{thebibliography}{9}
+    \bibitem{kaggle}
+    Rao, R. \emph{Formula 1 World Championship (1950--2024)}.
+    Kaggle. \url{https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020}
+\end{thebibliography}
+
+\end{document}
