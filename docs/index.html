@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¿Piloto o auto?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="TP de Laboratorio: ¿qué pesa más en la Fórmula 1 2010–2024, el piloto o el auto? Análisis de compañeros de equipo con el dataset de Kaggle.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=Share+Tech+Mono&family=Titillium+Web:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<div class="largada" id="largada" role="dialog" aria-label="Largada">
+  <div class="luces" aria-hidden="true">
+    <div class="columna-luz"><div class="foco"></div><div class="foco rojo"></div><div class="foco rojo"></div></div>
+    <div class="columna-luz"><div class="foco"></div><div class="foco rojo"></div><div class="foco rojo"></div></div>
+    <div class="columna-luz"><div class="foco"></div><div class="foco rojo"></div><div class="foco rojo"></div></div>
+    <div class="columna-luz"><div class="foco"></div><div class="foco rojo"></div><div class="foco rojo"></div></div>
+    <div class="columna-luz"><div class="foco"></div><div class="foco rojo"></div><div class="foco rojo"></div></div>
+  </div>
+  <div class="leyenda" id="leyenda-largada"></div>
+  <button class="saltar" id="saltar" type="button">Saltar largada</button>
+</div>
+
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="#inicio"><svg id="logo-f1" viewBox="0 0 24 24" aria-hidden="true"></svg>Piloto o auto</a>
+    <nav aria-label="Secciones">
+      <a href="#grilla">La grilla</a>
+      <a href="#peso">Peso del auto</a>
+      <a href="#duelos">Duelos</a>
+      <a href="#espejo">Espejo</a>
+      <a href="#brecha">Brecha</a>
+      <a href="#simulador">Simulador</a>
+      <a href="#veredicto">Veredicto</a>
+    </nav>
+  </div>
+  <div class="progreso" id="progreso"></div>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <canvas id="estelas" aria-hidden="true"></canvas>
+  <div class="envoltura">
+    <span class="etiqueta">TP Laboratorio · Fórmula 1 · Temporadas 2010–2024</span>
+    <h1>¿Piloto<span class="o">o</span><br><span class="auto">auto?</span></h1>
+    <p class="bajada">Comparamos a cada piloto con su <b>compañero de equipo</b>, que maneja el mismo auto en la misma carrera. Lo que los separa es el piloto. Lo que separa a los equipos es el auto. Con 15 temporadas de datos, la cuenta da así:</p>
+    <div class="balanza" aria-label="El auto explica el 85,3% y el piloto el 14,7%">
+      <div class="fila-et"><span>Auto <span class="num" id="pct-auto">85,3%</span></span><span>Piloto <span class="num" id="pct-piloto">14,7%</span></span></div>
+      <div class="pista-barra"><div class="seg-auto" id="seg-auto"></div><div class="seg-piloto"></div></div>
+      <p class="nota">Porcentaje de la variación de posiciones dentro de cada carrera que explica la escudería, período completo (igual en clasificación y en carrera).</p>
+    </div>
+    <div class="auto-hero" id="auto-hero" aria-hidden="true"><div class="estela"></div></div>
+  </div>
+  <div class="envoltura">
+    <div class="tablero" id="tablero"></div>
+  </div>
+</section>
+
+<section class="bloque" id="grilla">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 1 · La grilla temporada por temporada</span>
+      <h2>Los compañeros largan pegados</h2>
+      <p>Cada fila es un piloto, ordenado por su posición media en clasificación durante la temporada (mínimo 8 carreras con el mismo equipo). Mirá cómo los dos autos de cada escudería aparecen casi siempre uno al lado del otro, y cómo los equipos suben y bajan en bloque cuando cambia el reglamento. Tocá Play.</p>
+    </div>
+    <div class="controles">
+      <button class="boton rojo" id="play" type="button">▶ Play 2010 → 2024</button>
+      <span class="etiqueta">Pasá el mouse por un piloto para ver a su compañero</span>
+    </div>
+    <div class="anios" id="anios" role="group" aria-label="Elegir temporada"></div>
+    <div class="torre-layout" style="margin-top:16px">
+      <div class="torre" id="torre">
+        <div class="encab"><span>P</span><span></span><span></span><span>Piloto</span><span style="text-align:right">Pos. media</span><span style="text-align:right">vs. comp.</span></div>
+        <div class="filas" id="filas"></div>
+      </div>
+      <aside class="panel-anio" id="panel-anio" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<section class="bloque" id="peso">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 2 · Gráfico 1 · Evolución temporal</span>
+      <h2>¿Cuánto explica el auto, año por año?</h2>
+      <p>Descomponemos la variación de posiciones de cada carrera en dos partes, como en un ANOVA: la distancia entre escuderías (auto) y la distancia entre compañeros (piloto). Si los equipos no importaran, el auto explicaría igual un 47% por puro azar.</p>
+    </div>
+    <div class="leyenda-graf"><span><i style="background:var(--celeste)"></i>Clasificación</span><span><i style="background:var(--amarillo)"></i>Carrera (autos que terminaron)</span><span><i style="background:var(--niebla);height:0;border-top:2px dashed var(--niebla)"></i>Esperado por azar (≈47%)</span></div>
+    <div class="grafico" id="g-peso"></div>
+    <p class="lectura"><b>Lectura.</b> Ningún año baja del 70%. El pico de 2011 coincide con el dominio de Red Bull. Desde 2021, con el tope presupuestario y el reglamento de efecto suelo, los autos quedaron más parejos y el piloto pesa más: en la clasificación de 2023 llega casi al 30%.</p>
+  </div>
+</section>
+
+<section class="bloque" id="duelos">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 3 · Gráfico 2 · Comparación entre categorías</span>
+      <h2>Duelos de clasificación</h2>
+      <p>Con el mismo auto, quién sale adelante del compañero es la medida más directa del talento. Porcentaje de clasificaciones ganadas al compañero, pilotos con al menos 50 duelos. Los logos muestran por qué equipos pasó cada uno.</p>
+    </div>
+    <div class="controles" role="group" aria-label="Filtrar duelos">
+      <button class="boton" type="button" data-duelos="top" aria-pressed="true">Los 15 que más ganan</button>
+      <button class="boton" type="button" data-duelos="fondo" aria-pressed="false">Los 10 que más pierden</button>
+      <button class="boton" type="button" data-duelos="todos" aria-pressed="false">Los 39 pilotos</button>
+    </div>
+    <div class="duelos" id="lista-duelos"></div>
+    <p class="lectura"><b>Lectura.</b> Verstappen, Russell y Alonso le ganan a su compañero 3 de cada 4 veces, en distintos equipos y contra distintos compañeros: el talento existe y es persistente. Ojo con Timo Glock: su porcentaje alto se explica en parte porque sus compañeros en Virgin y Marussia eran debutantes.</p>
+  </div>
+</section>
+
+<section class="bloque" id="espejo">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 4 · Gráfico 3 · Relación entre dos variables</span>
+      <h2>El compañero es tu espejo</h2>
+      <p>Cada punto es un piloto en una temporada: su posición media en clasificación contra la de su compañero. Si el piloto fuera lo que más pesa, la nube estaría desparramada. Está pegada a la diagonal.</p>
+    </div>
+    <div class="filtros-equipo" id="filtros-equipo" role="group" aria-label="Resaltar escudería"></div>
+    <div class="dispersion-layout">
+      <div class="grafico" id="g-dispersion"></div>
+      <div style="display:grid;gap:12px">
+        <span class="etiqueta">Correlación piloto–compañero</span>
+        <div class="r-grande" id="r-grande">0,91</div>
+        <p style="color:#c3c9d6">La distancia de cada punto a la diagonal es lo que aporta el piloto: casi siempre de 1 a 3 lugares. El auto, en cambio, mueve los puntos a lo largo de toda la grilla.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bloque" id="brecha">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 5 · Gráfico 4 · Distribución</span>
+      <h2>¿A cuántos lugares queda el compañero?</h2>
+      <p>Distancia en la grilla entre los dos pilotos de cada equipo, en cada clasificación. Cajas: del 25% al 75% de los casos; línea amarilla: mediana.</p>
+    </div>
+    <div class="grafico" id="g-brecha"></div>
+    <p class="lectura"><b>Lectura.</b> La mediana es de 2 posiciones hasta 2020 y de 3 desde 2021, en una grilla donde del primero al último hay unas 19. El piloto le puede ganar al compañero, pero rara vez saca a su auto de la zona que le toca.</p>
+  </div>
+</section>
+
+<section class="bloque" id="simulador">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Vuelta 6 · Simulador</span>
+      <h2>Cambio de asiento</h2>
+      <p>¿Dónde clasificaría un piloto si lo subimos a otro auto? Tomamos la posición media del auto en esa temporada y le sumamos lo que ese piloto le saca (o le cede) en promedio a sus compañeros. Es un modelo aditivo simple, pensado para ilustrar el resultado, no para predecir.</p>
+    </div>
+    <div class="simulador">
+      <div class="sim-controles">
+        <label for="sim-piloto"><span class="etiqueta">Piloto</span><select class="boton" id="sim-piloto"></select></label>
+        <label for="sim-anio"><span class="etiqueta">Temporada del auto</span><select class="boton" id="sim-anio"></select></label>
+        <label for="sim-equipo"><span class="etiqueta">Auto</span><select class="boton" id="sim-equipo"></select></label>
+      </div>
+      <div class="presets" id="presets"></div>
+      <div class="recta" id="recta">
+        <div class="carril a"><div class="coche" id="coche-auto"></div><span class="rotulo" id="rot-auto"></span></div>
+        <div class="carril b"><div class="coche" id="coche-piloto"></div><span class="rotulo" id="rot-piloto"></span></div>
+        <div class="marcas" id="marcas"></div>
+      </div>
+      <div class="sim-cifras">
+        <div><span class="etiqueta">El auto solo</span><span class="num" id="c-auto"></span></div>
+        <div><span class="etiqueta">Lugares que gana o pierde el piloto</span><span class="num" id="c-piloto"></span></div>
+        <div><span class="etiqueta">Resultado estimado</span><span class="num" id="c-total"></span></div>
+      </div>
+      <p class="veredicto" id="sim-texto"></p>
+    </div>
+  </div>
+</section>
+
+<section class="bloque" id="veredicto">
+  <div class="envoltura">
+    <div class="cabeza">
+      <span class="vuelta">Bandera a cuadros · Respuesta</span>
+      <h2>Pesa más el auto, por amplio margen</h2>
+    </div>
+    <div class="hallazgos">
+      <div><span class="cifra" style="color:var(--rojo-luz)">85%</span><h3>El auto define la zona</h3><p>La escudería explica cerca del 85% de la variación de posiciones dentro de cada carrera, en clasificación y en carrera. Ningún año baja del 70%.</p></div>
+      <div><span class="cifra" style="color:var(--amarillo)">3 de 4</span><h3>El talento existe</h3><p>Verstappen, Alonso o Russell le ganan la clasificación a su compañero 3 de cada 4 veces, cambiando de equipo y de compañero.</p></div>
+      <div><span class="cifra" style="color:var(--morado)">0,91</span><h3>Pero mueve poco</h3><p>La posición media de un piloto y la de su compañero tienen una correlación de 0,91. La brecha típica entre compañeros es de 2 o 3 lugares.</p></div>
+      <div><span class="cifra" style="color:var(--verde)">2021+</span><h3>El balance cambia</h3><p>Con el tope presupuestario y el reglamento 2022 los autos quedaron más parejos y el piloto ganó peso: en la clasificación de 2023 llegó al 30%.</p></div>
+    </div>
+    <div class="limites">
+      <h3>Limitaciones</h3>
+      <ul>
+        <li>El "auto" incluye todo lo que comparten los compañeros: auto, estrategia, equipo técnico, y también que los mejores pilotos suelen ir a los mejores autos. Por eso el 85% es una cota superior del efecto del auto.</li>
+        <li>Ganarle a un compañero débil es más fácil que a uno fuerte: el porcentaje de duelos depende de con quién compartió equipo cada piloto.</li>
+        <li>En carrera dejamos afuera los abandonos, que dependen tanto del auto (roturas) como del piloto (choques).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="envoltura">
+    <p><b>Datos:</b> <a href="https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020" target="_blank" rel="noopener">Formula 1 World Championship (1950–2020), Kaggle, rohanrao</a> (datos Ergast, actualizado hasta 2024). Filtrado a 2010–2024. Los cálculos replican el notebook del TP; para regenerar los datos de esta web: <code>python docs/scripts/exportar_datos.py CARPETA_CSV</code>.</p>
+    <p><b>Código y notebook:</b> <a href="https://github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis" target="_blank" rel="noopener">Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis</a>. Agustín Mier Torre y Joaquín Lobato Adinolfi · Laboratorio, 2C 2026.</p>
+    <p>Logos de Simple Icons (CC0). Las marcas pertenecen a sus dueños y se usan solo con fines educativos. Sitio no oficial, sin relación con Formula One Group. Web hecha con asistencia de IA (Claude, Anthropic).</p>
+  </div>
+</footer>
+
+<script src="vendor/d3.min.js"></script>
+<script src="data/f1_data.js"></script>
+<script src="js/equipos.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
