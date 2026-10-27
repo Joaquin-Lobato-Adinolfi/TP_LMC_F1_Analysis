@@ -11,9 +11,10 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{float}
+\usepackage{amsmath}
 \usepackage{hyperref}
 
-\graphicspath{{figuras/}}
+\graphicspath{{figuras/}{../graficos/}}
 
 \begin{document}
 
@@ -43,16 +44,17 @@
 % §1. Resumen (5 a 8 líneas)
 % ---------------------------------------------------------------------------
 \begin{abstract}
-% TODO: escribir al final, cuando estén los resultados. Debe sintetizar en
-% 5 a 8 líneas: (1) la pregunta, (2) el dataset y el período, (3) el método
-% (comparación entre compañeros de equipo y comparación entre eras
-% reglamentarias) y
-% (4) los dos o tres hallazgos principales con números concretos.
 El presente trabajo analiza en qué medida el resultado de una carrera de
-Fórmula 1 depende del talento del piloto o del rendimiento del auto. Para
-ello se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)}, restringido a las
-temporadas 2010--2024, y se compara a cada piloto con su compañero de equipo, que dispone del mismo
-auto. [Completar con la metodología resumida y los hallazgos principales.]
+Fórmula 1 depende del rendimiento del auto o del talento del piloto. Se
+utilizan los resultados de carrera y de clasificación del dataset
+\emph{Formula 1 World Championship}, restringidos a las temporadas
+2010--2024. Como los dos pilotos de una escudería disponen del mismo auto, la
+diferencia entre compañeros de equipo se atribuye al piloto y la diferencia
+entre escuderías al auto. Con esa idea se descompone, carrera por carrera, la
+variación de las posiciones en un componente de escudería y uno de piloto, y
+se estudia su evolución por temporada.
+% TODO: agregar una o dos oraciones con los hallazgos principales cuando la
+% sección de resultados esté cerrada.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -61,40 +63,51 @@ auto. [Completar con la metodología resumida y los hallazgos principales.]
 \section{Introducción}
 
 \subsection{Motivación}
-¿Qué pesa más en el resultado de una carrera de Fórmula 1: el talento del
-piloto o el rendimiento del auto? Para medirlo, se compara a cada piloto con
-su compañero de equipo (mismo auto) y se analiza cómo varía el peso de cada
-factor entre las eras reglamentarias del período 2010--2024.
+En la Fórmula 1 el resultado de cada carrera combina dos factores difíciles
+de separar: el auto que construye la escudería y el piloto que lo maneja. Los
+equipos invierten cientos de millones de dólares por año en el desarrollo del
+auto y, al mismo tiempo, pagan salarios muy altos para contratar a los pilotos
+más destacados. Estimar cuánto del resultado explica cada factor permite
+evaluar dónde rinde más cada peso invertido, y también qué tan justo es
+comparar a campeones que corrieron con autos de muy distinto nivel.
 
-% TODO (2 o 3 oraciones): por qué la pregunta es relevante. Por ejemplo, para
-% una escudería la respuesta orienta dónde invertir el presupuesto (contratar
-% un piloto estrella o desarrollar el auto), y desde 2021 el límite
-% presupuestario (\emph{budget cap}) vuelve esta decisión más relevante.
+El período 2010--2024 resulta adecuado para estudiarlo porque contiene tres
+reglamentos técnicos distintos (motores V8 hasta 2013, motores turbo híbridos
+desde 2014 y autos de efecto suelo desde 2022) y la introducción del límite
+presupuestario en 2021. Esos cambios permiten observar si el balance entre
+auto y piloto se modifica cuando cambian las reglas que determinan cuán
+parejos son los autos.
+
+\subsection{Pregunta de investigación}
+La pregunta que guía el trabajo es: \emph{¿qué pesa más en el resultado de una
+carrera de Fórmula 1 entre 2010 y 2024, el rendimiento del auto o el talento
+del piloto?} Para responderla se compara a cada piloto con su compañero de
+equipo, que corre con el mismo auto en la misma carrera.
 
 \subsection{Objetivos}
 El objetivo general del trabajo es estimar qué proporción del resultado de
 una carrera de Fórmula 1 se explica por el rendimiento del auto y qué
 proporción por el desempeño del piloto en las temporadas 2010--2024, y
-describir cómo cambió ese balance entre las eras reglamentarias del período.
+describir cómo cambió ese balance a lo largo del período.
 
 Los objetivos particulares son:
 \begin{enumerate}
-    \item Construir, a partir de las tablas del dataset, una base de duelos
-    entre compañeros de equipo (mismo constructor, misma carrera), de modo
-    que la diferencia de resultado entre ambos pilotos aísle el efecto del
-    piloto manteniendo constante el auto.
-    \item Medir el rendimiento del auto a nivel de escudería y temporada
-    (posición promedio, puntos y porcentaje de podios del equipo) y comparar
-    su dispersión con la dispersión de las diferencias entre compañeros.
-    \item Analizar la evolución del peso relativo de cada factor entre las
-    tres eras reglamentarias del período: motores V8 (2010--2013), motores
-    turbo híbridos (2014--2021) y efecto suelo (2022--2024):
+    \item Construir, a partir de las tablas del dataset, una base de
+    comparaciones entre compañeros de equipo (misma escudería, misma
+    carrera), de modo que la diferencia de resultado entre ambos pilotos
+    aísle el efecto del piloto manteniendo constante el auto.
+    \item Descomponer la variación de las posiciones dentro de cada carrera en
+    un componente atribuible a la escudería y otro atribuible al piloto, tanto
+    en clasificación como en carrera, y compararlo con el valor esperable si
+    la escudería no tuviera ningún efecto.
+    \item Analizar la evolución del peso relativo de cada factor por
+    temporada:
     \begin{enumerate}
-        \item comparar, en cada era, las brechas entre escuderías con las
-        brechas entre compañeros de equipo;
-        \item evaluar si en los períodos de dominio de un constructor (Red
-        Bull 2010--2013 y 2022--2023, Mercedes 2014--2020) el resultado
-        depende más del auto que del piloto.
+        \item comparar las eras reglamentarias del período: motores V8
+        (2010--2013), turbo híbridos (2014--2021) y efecto suelo
+        (2022--2024);
+        \item evaluar si a partir del límite presupuestario de 2021 los autos
+        quedaron más parejos y aumentó el peso del piloto.
     \end{enumerate}
     \item Identificar a los pilotos que superan de forma sistemática a sus
     compañeros a lo largo de distintos equipos, como evidencia de un efecto
@@ -102,14 +115,13 @@ Los objetivos particulares son:
 \end{enumerate}
 
 \subsection{Dataset y fuente}
-% TODO (2 o 3 oraciones): nombre del dataset, autor y link de Kaggle,
-% cobertura temporal y qué representa cada fila de la tabla principal.
 Se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)},
-publicado en Kaggle por Rohan Rao, que recopila resultados de carreras,
-clasificaciones, pilotos, escuderías y circuitos del campeonato mundial.
-El análisis se restringe a las temporadas 2010--2024, que cubren tres eras
-reglamentarias completas y para las que todas las tablas utilizadas
-(incluida la de clasificación) tienen datos completos.
+publicado en Kaggle por Rohan Rao a partir de la base Ergast
+\cite{kaggle}. Está compuesto por un conjunto de tablas relacionadas
+(archivos CSV) que registran carreras, resultados, clasificaciones, pilotos,
+escuderías y circuitos del campeonato mundial desde 1950. El análisis se
+restringe a las temporadas 2010--2024: 305 carreras, 80 pilotos y 23
+escuderías.
 
 % ---------------------------------------------------------------------------
 % §3. Datos y metodología (media página)
@@ -117,29 +129,76 @@ reglamentarias completas y para las que todas las tablas utilizadas
 \section{Datos y metodología}
 
 \subsection{Variables y estructura}
-% TODO: describir las tablas usadas (races, results, drivers, constructors,
-% qualifying, status), cómo se unen (raceId, driverId, constructorId) y las
-% variables clave: posición de llegada, grilla de partida, puntos y estado
-% de finalización. Incluir dimensiones de la base final.
+Se utilizan seis tablas del dataset: \texttt{races} (carreras, con año y
+fecha), \texttt{results} (resultado de cada piloto en cada carrera),
+\texttt{qualifying} (posición de clasificación), \texttt{drivers},
+\texttt{constructors} y \texttt{status} (motivo por el que cada auto terminó
+o abandonó). Las tablas se unen mediante sus claves \texttt{raceId},
+\texttt{driverId}, \texttt{constructorId} y \texttt{statusId}. La tabla
+principal resultante tiene 6.436 filas, una por piloto y carrera, y 25
+columnas. No contiene filas duplicadas ni pilotos repetidos dentro de una
+misma carrera.
+
+Las variables de resultado son dos. En carrera se usa
+\texttt{positionOrder}, que ordena a todos los autos, incluidos los que
+abandonaron. En clasificación se usa \texttt{position}, la posición de salida
+obtenida en la sesión de clasificación, que mide el ritmo del auto y del
+piloto sin la interferencia de la estrategia, los choques o las roturas.
 
 \subsection{Transformaciones}
-% TODO: describir al menos dos transformaciones y justificar cada una.
-% Sugeridas:
-%  - Filtrar abandonos por fallas mecánicas (tabla status), porque castigan
-%    al piloto por un problema del auto.
-%  - Crear la columna de duelo: para cada carrera y constructor, diferencia
-%    de posición entre los dos pilotos (o variable binaria "le ganó al
-%    compañero").
-%  - Crear la variable "era" según el reglamento técnico: V8 (2010--2013),
-%    turbo híbrido (2014--2021) y efecto suelo (2022--2024).
-%  - Normalizar posiciones por cantidad de autos en la grilla, porque el
-%    número de participantes varió entre 20 y 24 autos según la temporada.
+Sobre la tabla principal se realizaron tres transformaciones:
+\begin{enumerate}
+    \item \textbf{Tratamiento de faltantes y tipos.} El dataset no codifica
+    los faltantes como celdas vacías sino con el texto \texttt{\textbackslash
+    N}, por lo que columnas numéricas como \texttt{position} se leían como
+    texto. Se reemplazó ese valor por un nulo y se convirtieron las columnas a
+    tipo numérico. Los 1.039 faltantes de \texttt{position} corresponden a
+    autos que no terminaron la carrera, no a errores de carga.
+    \item \textbf{Exclusión de abandonos en carrera.} Se creó una variable que
+    indica si el auto terminó la carrera, aunque sea con vueltas de atraso.
+    El 82\% de los resultados cumple esa condición. El resto se excluye del
+    análisis de carrera, porque un abandono por falla mecánica castiga al
+    piloto por un problema del auto, y uno por choque mezcla ambos factores.
+    La clasificación no tiene ese problema y se usa como medida
+    complementaria.
+    \item \textbf{Comparación contra el compañero.} Para cada carrera y
+    escudería se calculó la posición promedio de sus dos autos, que
+    representa el nivel del auto en ese fin de semana, y la diferencia de
+    cada piloto contra ese promedio, que representa el aporte del piloto. Se
+    conservaron solo las escuderías con exactamente dos autos comparables en
+    la carrera: 3.194 pares de compañeros en clasificación y 2.209 en carrera.
+\end{enumerate}
+
+\subsection{Método de análisis}
+Para cada carrera, la variación total de las posiciones alrededor de la media
+de la carrera se descompone en dos partes, con la misma lógica que un análisis
+de varianza (ANOVA) de un factor:
+\begin{equation}
+    \sum_{i} (y_i - \bar{y})^2 =
+    \underbrace{\sum_{i} (\bar{y}_{e(i)} - \bar{y})^2}_{\text{auto}} +
+    \underbrace{\sum_{i} (y_i - \bar{y}_{e(i)})^2}_{\text{piloto}},
+\end{equation}
+donde $y_i$ es la posición del piloto $i$, $\bar{y}$ la posición media de la
+carrera y $\bar{y}_{e(i)}$ la posición media de su escudería. El cociente
+entre el componente del auto y el total indica qué porcentaje de la variación
+explica la escudería. Ambas partes se suman por temporada con
+\texttt{groupby} para obtener la evolución anual. Como referencia, si la
+escudería no tuviera ningún efecto y los pilotos se repartieran al azar, con
+10 equipos de dos autos el componente del auto explicaría igualmente cerca
+del 47\% (9 de los 19 grados de libertad).
+
+Como medida complementaria del talento se calcula, para cada piloto con al
+menos 50 clasificaciones comparables, el porcentaje de duelos ganados a su
+compañero y la diferencia promedio de posición contra él.
 
 \subsection{Herramientas}
 El análisis se realizó en Python sobre Google Colab, con las librerías
 \texttt{pandas} y \texttt{numpy} para la manipulación de datos y
-\texttt{matplotlib} para los gráficos. El informe se redactó en \LaTeX{}
-(Overleaf). El código está disponible en el repositorio del grupo.
+\texttt{matplotlib} para los gráficos. Los datos se descargan con
+\texttt{kagglehub}; el notebook incluye un respaldo que obtiene los mismos
+archivos desde un espejo público con el mismo esquema. El informe se
+redactó en \LaTeX{} (Overleaf). El código y los gráficos están disponibles en
+el repositorio del grupo.
 
 % ---------------------------------------------------------------------------
 % §4. Resultados (1 a 2 páginas)
