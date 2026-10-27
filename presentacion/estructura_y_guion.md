@@ -131,12 +131,12 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
 ### 8. Cierre: IA y links (J, 0:25)
 
 **En pantalla**
-- Cómo usamos IA: Claude como asistente para código, estructura del informe y esta presentación; Canva IA para el diseño. Interpretación y revisión, del grupo.
+- Uso de IA en el flujo de trabajo: Claude (Anthropic) como agente con contexto del proyecto (consigna, diccionario del dataset, repositorio); generación y depuración del pipeline en pandas (joins, construcción de duelos, groupby, descomposición de la varianza); estructura del informe en LaTeX, visualizaciones y presentación generada por código. Validación de cada salida contra los datos crudos, con las celdas asistidas marcadas con su prompt.
 - Links: repositorio de GitHub, informe en Overleaf, sitio web (GitHub Pages)
 - "¿Preguntas?"
 
 **Guion**
-> "Para cerrar: usamos IA en todas las etapas, para el código, la estructura del informe y el diseño de esta presentación, y revisamos todo nosotros contra los datos. En el repositorio están el notebook, el informe y el sitio web. ¿Preguntas?"
+> "Para cerrar, sobre el uso de IA: trabajamos con Claude como agente, cargándole la consigna, el diccionario del dataset y el repositorio. Lo usamos para generar y depurar el pipeline en pandas, desde los joins entre tablas hasta la descomposición de la varianza, y para el informe en LaTeX, los gráficos y esta presentación. Cada salida la validamos contra los datos crudos, y en el notebook están marcadas las celdas asistidas con su prompt. Todo está en el repositorio. ¿Preguntas?"
 
 ---
 

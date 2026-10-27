@@ -303,8 +303,13 @@ SLIDES.append(f"""
     <div class="kicker">Vuelta 08/08 · Bandera a cuadros</div>
     <h1>¿Preguntas?</h1>
     <div class="ia">
-      <h3>Cómo usamos IA</h3>
-      <p>Claude como asistente para el código del análisis, la estructura del informe, la web y esta presentación. La interpretación de los resultados y la revisión contra los datos las hicimos nosotros.</p>
+      <h3>Uso de IA en el flujo de trabajo</h3>
+      <ul>
+        <li><b>Modelo:</b> Claude (Anthropic), usado como agente con contexto del proyecto: consigna, diccionario del dataset y repositorio.</li>
+        <li><b>Análisis:</b> generación y depuración del pipeline en pandas (joins por raceId, driverId y constructorId; construcción de duelos; agregaciones con groupby; descomposición de la varianza).</li>
+        <li><b>Comunicación:</b> estructura del informe en LaTeX, visualizaciones (matplotlib y SVG) y esta presentación, generada por código.</li>
+        <li><b>Validación:</b> cada salida se contrastó contra los datos crudos; las celdas asistidas están marcadas con su prompt.</li>
+      </ul>
     </div>
     <div class="links">
       <div><span>Repositorio</span>{REPO}</div>
@@ -446,12 +451,14 @@ b.p {{ color: {PILOTO}; }}
 .cuadros {{ position: absolute; right: -60px; top: -40px; width: 560px; height: 820px; transform: rotate(8deg);
   background: repeating-conic-gradient(#F2F3F5 0 25%, #0B0D12 0 50%) 0 0 / 70px 70px; opacity: .1;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%); }}
-.cierre-texto {{ position: absolute; left: 96px; top: 96px; right: 96px; }}
-.cierre h1 {{ font-weight: 900; font-style: italic; font-size: 140px; letter-spacing: -.045em; margin: 18px 0 40px; line-height: .95; }}
-.ia {{ max-width: 640px; border-left: 4px solid {PILOTO}; padding-left: 20px; }}
+.cierre-texto {{ position: absolute; left: 96px; top: 64px; right: 96px; }}
+.cierre h1 {{ font-weight: 900; font-style: italic; font-size: 140px; letter-spacing: -.045em; margin: 14px 0 26px; line-height: .95; }}
+.ia {{ max-width: 760px; border-left: 4px solid {PILOTO}; padding-left: 20px; }}
 .ia h3 {{ font-size: 15px; text-transform: uppercase; letter-spacing: .14em; color: {PILOTO}; margin-bottom: 8px; }}
-.ia p {{ font-size: 18px; line-height: 1.45; color: #C4C8D2; }}
-.links {{ display: flex; gap: 18px; margin-top: 44px; }}
+.ia ul {{ list-style: none; }}
+.ia li {{ font-size: 16px; line-height: 1.4; color: #C4C8D2; margin-bottom: 7px; }}
+.ia li b {{ color: {TEXTO}; font-weight: 600; }}
+.links {{ display: flex; gap: 18px; margin-top: 28px; }}
 .links div {{ background: #151821; border: 1px solid {LINEA}; border-radius: 12px; padding: 14px 18px; font-family: 'JetBrains Mono'; font-size: 14px; }}
 .links span {{ display: block; font-family: 'Inter'; font-size: 12px; color: {TENUE}; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }}
 """

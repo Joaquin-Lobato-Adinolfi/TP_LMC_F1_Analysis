@@ -24,7 +24,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAFICOS = os.path.join(RAIZ, "graficos")
 SALIDA = os.path.join(RAIZ, "avance", "Avance_TP_F1.pdf")
 
-VERSION = "v2"
+VERSION = "v3"
 FECHA = date(2026, 10, 27)
 
 # ---------------------------------------------------------------------------
@@ -49,7 +49,8 @@ ESTADO = [
      "redactados. Faltan resumen, resultados, conclusiones y reflexión metodológica, compilarlo y el link de Overleaf."),
     ("Presentación con IA (6–10 diapos.)", "parcial",
      "Estructura y guion listos en presentacion/estructura_y_guion.md (8 diapositivas, ~6 min, turnos repartidos). "
-     "El PDF de la presentación se está armando."),
+     "PDF con diseño propio en presentacion/Presentacion_TP_F1.pdf (PR #7), generado por código con los datos de la web. "
+     "Resultados marcados como provisorios."),
     ("Complemento opcional: sitio web", "parcial",
      "Web interactiva en docs/ (largada, torre de tiempos, gráficos animados, duelos, simulador). "
      "Falta activar GitHub Pages y actualizar los datos cuando esté el notebook final."),
@@ -174,7 +175,7 @@ PENDIENTES = [
     ("Alta", "Con el notebook final: actualizar los números marcados [PROVISORIO] en la presentación, el informe y la web."),
     ("Alta", "Informe: redactar resumen, resultados con los gráficos, conclusiones y reflexión metodológica; "
              "compilarlo en Overleaf y poner el link en el README."),
-    ("Alta", "Presentación: terminar el PDF de 6–10 diapositivas y subirlo (o su link) al repo. Ensayar el guion (~6 min)."),
+    ("Alta", "Presentación: regenerarla con los datos finales (PROVISORIO = False) y ensayar el guion (~6 min). Consultar al profe si vale hecha con Claude en vez de Canva/Copilot."),
     ("Media", "Activar GitHub Pages (Settings → Pages → rama main, carpeta /docs) y poner el link público en el README."),
     ("Media", "Revisión intragrupal del informe: cada uno lo contrasta con el notebook."),
     ("Media", "README: instrucciones para descargar el dataset y links a informe, presentación y web."),
@@ -192,7 +193,7 @@ ENTREGABLES = [
         ("§5 Conclusiones", "falta", "Respuesta directa, limitaciones y extensiones."),
         ("§6 Reflexión metodológica", "falta", "Uso de IA, revisiones y aprendizajes."),
     ]),
-    ("Presentación", "presentacion/estructura_y_guion.md", [
+    ("Presentación", "presentacion/Presentacion_TP_F1.pdf", [
         ("1 Portada", "ok", "¿Piloto o auto? · Agustín (0:20)."),
         ("2 La pregunta", "ok", "Por qué importa: dónde invertir el presupuesto · Agustín (0:45)."),
         ("3 Datos y método", "ok", "El compañero como grupo de control · Joaquín (1:00)."),
@@ -200,7 +201,7 @@ ENTREGABLES = [
         ("5 Resultado 2", "parcial", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50). [PROVISORIO]"),
         ("6 Resultado 3", "parcial", "Desde 2021 los compañeros están más lejos (gráfico 4) · Joaquín (0:50). [PROVISORIO]"),
         ("7 Conclusión", "ok", "Respuesta y limitaciones · Agustín (0:50)."),
-        ("8 Cierre", "ok", "Uso de IA y links · Joaquín (0:25)."),
+        ("8 Cierre", "ok", "Uso de IA en lenguaje técnico (modelo, análisis, comunicación, validación) y links · Joaquín (0:25)."),
     ]),
     ("Sitio web", "docs/index.html", [
         ("Largada", "ok", "Intro animada con semáforo de largada."),
@@ -218,6 +219,8 @@ CAMBIOS = [
     ("27/10/2026", "v2", "Suma la web en docs/ (PR #3), la estructura y el guion de la presentación (PR #4) y la introducción "
                          "y metodología del informe (PR #5). Aviso de que el notebook se está rehaciendo y los resultados "
                          "son provisorios. Pendientes actualizados."),
+    ("27/10/2026", "v3", "Suma la presentación en PDF con diseño propio (PR #7) y reescribe en lenguaje técnico la "
+                         "diapositiva de uso de IA."),
 ]
 
 # ---------------------------------------------------------------------------
