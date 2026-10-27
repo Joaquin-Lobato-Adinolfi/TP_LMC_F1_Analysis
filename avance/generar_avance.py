@@ -24,8 +24,8 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAFICOS = os.path.join(RAIZ, "graficos")
 SALIDA = os.path.join(RAIZ, "avance", "Avance_TP_F1.pdf")
 
-VERSION = "v1"
-FECHA = date(2026, 10, 22)
+VERSION = "v2"
+FECHA = date(2026, 10, 27)
 
 # ---------------------------------------------------------------------------
 # Contenido (editar acá)
@@ -42,16 +42,19 @@ ENFOQUE = ("Comparamos <b>compañeros de equipo</b>: los dos pilotos de una escu
 # (entregable, estado, detalle)  estado: "ok" | "parcial" | "falta"
 ESTADO = [
     ("Notebook Colab (.ipynb)", "parcial",
-     "Análisis completo: exploración, pregunta, 3 transformaciones, 3 groupby, 4 gráficos y celdas de IA "
-     "marcadas. Falta re-ejecutarlo en Colab con la descarga oficial de Kaggle."),
+     "Hay una versión completa (exploración, pregunta, 3 transformaciones, 3 groupby, 4 gráficos, celdas de IA). "
+     "Joaquín la está rehaciendo a mano; los números de este documento son de la versión anterior y pueden cambiar."),
     ("Informe académico PDF (3–5 págs.)", "parcial",
-     "Esqueleto en LaTeX con portada, objetivos y secciones. Faltan resumen, resultados, conclusiones, "
-     "reflexión metodológica y el link de Overleaf en el repo."),
-    ("Presentación con IA (6–10 diapos.)", "falta", "Todavía no empezada."),
-    ("Complemento opcional: sitio web", "falta",
-     "Se decidió hacer un sitio web visual con los datos (opción 2 de la consigna)."),
+     "En informe/informe.tex: portada, introducción (motivación, pregunta, objetivos, dataset) y datos y metodología "
+     "redactados. Faltan resumen, resultados, conclusiones y reflexión metodológica, compilarlo y el link de Overleaf."),
+    ("Presentación con IA (6–10 diapos.)", "parcial",
+     "Estructura y guion listos en presentacion/estructura_y_guion.md (8 diapositivas, ~6 min, turnos repartidos). "
+     "El PDF de la presentación se está armando."),
+    ("Complemento opcional: sitio web", "parcial",
+     "Web interactiva en docs/ (largada, torre de tiempos, gráficos animados, duelos, simulador). "
+     "Falta activar GitHub Pages y actualizar los datos cuando esté el notebook final."),
     ("Commits de ambos integrantes", "parcial",
-     "Hay commits de Joaquín. Agustín necesita commits propios y significativos antes de la entrega."),
+     "Agustín ya tiene commits propios (notebook, presentación, informe). Joaquín suma los del notebook nuevo."),
 ]
 
 TABLAS = [
@@ -167,22 +170,54 @@ LIMITACIONES = [
 ]
 
 PENDIENTES = [
-    ("Alta", "Re-ejecutar el notebook en Colab con kagglehub (hoy corrió con el espejo de GitHub) y subirlo ejecutado."),
-    ("Alta", "Completar el informe: resumen, resultados con los 4 gráficos, conclusiones y reflexión metodológica. "
-             "Pasarlo a Overleaf y poner el link en el README."),
-    ("Alta", "Commits significativos de Agustín en el repo (la consigna lo revisa)."),
-    ("Alta", "Presentación de 6–10 diapositivas con IA (Canva o PowerPoint Copilot) y su link en el repo."),
-    ("Media", "Sitio web visual con los resultados (complemento opcional), publicado en GitHub Pages."),
+    ("Alta", "Terminar el notebook nuevo (Joaquín), ejecutarlo en Colab con kagglehub y exportar los gráficos definitivos."),
+    ("Alta", "Con el notebook final: actualizar los números marcados [PROVISORIO] en la presentación, el informe y la web."),
+    ("Alta", "Informe: redactar resumen, resultados con los gráficos, conclusiones y reflexión metodológica; "
+             "compilarlo en Overleaf y poner el link en el README."),
+    ("Alta", "Presentación: terminar el PDF de 6–10 diapositivas y subirlo (o su link) al repo. Ensayar el guion (~6 min)."),
+    ("Media", "Activar GitHub Pages (Settings → Pages → rama main, carpeta /docs) y poner el link público en el README."),
     ("Media", "Revisión intragrupal del informe: cada uno lo contrasta con el notebook."),
     ("Media", "README: instrucciones para descargar el dataset y links a informe, presentación y web."),
-    ("Baja", "Ideas para sumar al análisis: comparar por era de reglamento (V8 / híbrido / efecto suelo), "
-             "puntos por temporada piloto vs. compañero, y separar abandonos por fallas del auto vs. choques."),
     ("Baja", "PDF de entrega para el campus: portada con nombres, registro, usuarios de GitHub y links."),
+]
+
+# Entregables en curso: (título, archivo, [(parte, estado, detalle)])
+ENTREGABLES = [
+    ("Informe académico", "informe/informe.tex", [
+        ("Portada e índice", "ok", "Nombres, materia, facultad y cuatrimestre."),
+        ("§1 Resumen", "falta", "Se escribe al final, con los resultados definitivos."),
+        ("§2 Introducción", "ok", "Motivación (presupuesto y tope de gastos), pregunta, objetivo general y particulares, dataset y fuente."),
+        ("§3 Datos y metodología", "ok", "Variables, filtro 2010–2024, transformaciones, descomposición auto/piloto y herramientas."),
+        ("§4 Resultados", "falta", "Un apartado por gráfico con su interpretación; espera al notebook final."),
+        ("§5 Conclusiones", "falta", "Respuesta directa, limitaciones y extensiones."),
+        ("§6 Reflexión metodológica", "falta", "Uso de IA, revisiones y aprendizajes."),
+    ]),
+    ("Presentación", "presentacion/estructura_y_guion.md", [
+        ("1 Portada", "ok", "¿Piloto o auto? · Agustín (0:20)."),
+        ("2 La pregunta", "ok", "Por qué importa: dónde invertir el presupuesto · Agustín (0:45)."),
+        ("3 Datos y método", "ok", "El compañero como grupo de control · Joaquín (1:00)."),
+        ("4 Resultado 1", "parcial", "El auto explica la mayor parte (gráfico 1) · Joaquín (1:00). [PROVISORIO]"),
+        ("5 Resultado 2", "parcial", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50). [PROVISORIO]"),
+        ("6 Resultado 3", "parcial", "Desde 2021 los compañeros están más lejos (gráfico 4) · Joaquín (0:50). [PROVISORIO]"),
+        ("7 Conclusión", "ok", "Respuesta y limitaciones · Agustín (0:50)."),
+        ("8 Cierre", "ok", "Uso de IA y links · Joaquín (0:25)."),
+    ]),
+    ("Sitio web", "docs/index.html", [
+        ("Largada", "ok", "Intro animada con semáforo de largada."),
+        ("Torre de tiempos", "ok", "Grilla por temporada con logos y colores de cada escudería."),
+        ("Peso del auto", "ok", "Gráfico animado año por año (equivalente al gráfico 1)."),
+        ("Duelos y espejo", "ok", "Ranking de duelos y dispersión piloto vs. compañero, filtrable por equipo."),
+        ("Brecha y simulador", "ok", "Distancia entre compañeros y simulador \u201ccambio de asiento\u201d."),
+        ("Publicación", "falta", "Activar GitHub Pages; regenerar datos con docs/scripts/exportar_datos.py al cerrar el notebook."),
+    ]),
 ]
 
 # (fecha, versión, cambios)
 CAMBIOS = [
     ("22/10/2026", "v1", "Primera versión: datos, transformaciones, groupby, 4 gráficos, respuesta preliminar y pendientes."),
+    ("27/10/2026", "v2", "Suma la web en docs/ (PR #3), la estructura y el guion de la presentación (PR #4) y la introducción "
+                         "y metodología del informe (PR #5). Aviso de que el notebook se está rehaciendo y los resultados "
+                         "son provisorios. Pendientes actualizados."),
 ]
 
 # ---------------------------------------------------------------------------
@@ -372,7 +407,8 @@ def construir():
     s.append(PageBreak())
     s += seccion(6, "Gráficos")
     s.append(Paragraph("La consigna pide al menos 3 gráficos de tipos distintos; tenemos 4. Todos se exportan desde el "
-                       "notebook a <font name='Mono'>graficos/</font> con <font name='Mono'>plt.savefig()</font>.", base))
+                       "notebook a <font name='Mono'>graficos/</font> con <font name='Mono'>plt.savefig()</font>. "
+                       "<b>Provisorios:</b> salen de la versión anterior del notebook, que Joaquín está rehaciendo.", base))
     for g in GRAFICOS_INFO:
         ruta = os.path.join(GRAFICOS, g["archivo"])
         img = Image(ruta)
@@ -388,20 +424,36 @@ def construir():
     # 7. Respuesta
     s.append(PageBreak())
     s += seccion(7, "Respuesta preliminar")
+    s.append(Paragraph("Con la versión anterior del notebook; se revisa cuando esté el definitivo.", gris))
+    s.append(Spacer(1, 4))
     s += vinetas(RESPUESTA)
     s.append(Paragraph("Limitaciones", h2))
     s += vinetas(LIMITACIONES, chico)
 
-    # 8. Pendientes
-    s += seccion(8, "Qué falta")
+    # 8. Entregables en curso
+    s.append(PageBreak())
+    s += seccion(8, "Entregables en curso")
+    for titulo, archivo, partes in ENTREGABLES:
+        filas = [[Paragraph(x, cab) for x in ("Parte", "Estado", "Contenido")]]
+        for parte, est, det in partes:
+            txt, col = ESTADOS[est]
+            filas.append([Paragraph(parte, celda_b),
+                          Paragraph(f"<font color='{col.hexval().replace('0x', '#')}'>●</font> {txt}", celda),
+                          Paragraph(det, celda)])
+        s.append(KeepTogether([Paragraph(f"{titulo} &nbsp;<font name='Mono' color='#6b6b75' size='8'>{archivo}</font>", h2),
+                               tabla(filas, [4 * cm, 2.2 * cm, ancho - 6.2 * cm])]))
+
+    # 9. Pendientes
+    s.append(PageBreak())
+    s += seccion(9, "Qué falta")
     filas = [[Paragraph(x, cab) for x in ("Prioridad", "Tarea")]]
     for p, t_ in PENDIENTES:
         filas.append([Paragraph(f"<font color='{PRIORIDAD[p].hexval().replace('0x', '#')}'><b>{p}</b></font>", celda),
                       Paragraph(t_, celda)])
     s.append(tabla(filas, [2.2 * cm, ancho - 2.2 * cm]))
 
-    # 9. Cambios
-    s += seccion(9, "Registro de versiones")
+    # 10. Cambios
+    s += seccion(10, "Registro de versiones")
     filas = [[Paragraph(x, cab) for x in ("Fecha", "Versión", "Cambios")]]
     for f, v, c in CAMBIOS:
         filas.append([Paragraph(f, celda), Paragraph(v, celda_b), Paragraph(c, celda)])
