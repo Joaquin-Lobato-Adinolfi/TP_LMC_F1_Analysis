@@ -24,8 +24,8 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAFICOS = os.path.join(RAIZ, "graficos")
 SALIDA = os.path.join(RAIZ, "avance", "Avance_TP_F1.pdf")
 
-VERSION = "v3"
-FECHA = date(2026, 10, 27)
+VERSION = "v4"
+FECHA = date(2026, 11, 2)
 
 # ---------------------------------------------------------------------------
 # Contenido (editar acá)
@@ -42,8 +42,9 @@ ENFOQUE = ("Comparamos <b>compañeros de equipo</b>: los dos pilotos de una escu
 # (entregable, estado, detalle)  estado: "ok" | "parcial" | "falta"
 ESTADO = [
     ("Notebook Colab (.ipynb)", "parcial",
-     "Hay una versión completa (exploración, pregunta, 3 transformaciones, 3 groupby, 4 gráficos, celdas de IA). "
-     "Joaquín la está rehaciendo a mano; los números de este documento son de la versión anterior y pueden cambiar."),
+     "Joaquín lo rehace a mano (4 commits, 27–30/10): exploración de las 6 tablas 2010–2024, pregunta con motivación, "
+     "filtro de autos que terminaron (5.280 de 6.436), tablas carreras_analisis y qualifying_analisis, Lotterer como atípico "
+     "y un groupby de carreras terminadas por piloto. Faltan duelos, peso del auto, gráficos y conclusiones."),
     ("Informe académico PDF (3–5 págs.)", "parcial",
      "En informe/informe.tex: portada, introducción (motivación, pregunta, objetivos, dataset) y datos y metodología "
      "redactados. Faltan resumen, resultados, conclusiones y reflexión metodológica, compilarlo y el link de Overleaf."),
@@ -195,8 +196,8 @@ ENTREGABLES = [
     ]),
     ("Presentación", "presentacion/Presentacion_TP_F1.pdf", [
         ("1 Portada", "ok", "¿Piloto o auto? · Agustín (0:20)."),
-        ("2 La pregunta", "ok", "Por qué importa: dónde invertir el presupuesto · Agustín (0:45)."),
-        ("3 Datos y método", "ok", "El compañero como grupo de control · Joaquín (1:00)."),
+        ("2 La pregunta", "ok", "Motivación y definiciones de auto y talento, tomadas del notebook · Agustín (0:45)."),
+        ("3 Datos y método", "ok", "Compañero como grupo de control; filtro de autos que terminaron y cifras del notebook · Joaquín (1:00)."),
         ("4 Resultado 1", "parcial", "El auto explica la mayor parte (gráfico 1) · Joaquín (1:00). [PROVISORIO]"),
         ("5 Resultado 2", "parcial", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50). [PROVISORIO]"),
         ("6 Resultado 3", "parcial", "Desde 2021 los compañeros están más lejos (gráfico 4) · Joaquín (0:50). [PROVISORIO]"),
@@ -221,6 +222,8 @@ CAMBIOS = [
                          "son provisorios. Pendientes actualizados."),
     ("27/10/2026", "v3", "Suma la presentación en PDF con diseño propio (PR #7) y reescribe en lenguaje técnico la "
                          "diapositiva de uso de IA."),
+    ("02/11/2026", "v4", "Suma el avance del notebook de Joaquín y pasa sus definiciones, filtros y cifras a las "
+                         "diapositivas 2 y 3 de la presentación. Resultados siguen provisorios."),
 ]
 
 # ---------------------------------------------------------------------------

@@ -50,12 +50,16 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
 **En pantalla**
 - La pregunta en grande: *¿Qué parte del resultado se explica por el auto y qué parte por el piloto?*
 - Tres líneas de motivación:
-  - Para un equipo, define dónde invertir: un piloto estrella o el desarrollo del auto.
+  - Para un equipo, define dónde invertir: en el auto o en capacitar y buscar mejores pilotos.
   - Desde 2021 hay tope presupuestario, así que esa decisión pesa más.
   - Es una discusión de siempre entre los fanáticos, y se puede medir con datos.
+- Definiciones (las del notebook):
+  - **Auto:** rendimiento de la escudería en el período, sin importar quién maneja (posiciones, carreras terminadas).
+  - **Talento:** resultado del piloto contra su compañero, que tiene el mismo auto.
 
 **Guion**
-> "La pregunta es qué parte del resultado depende del auto y qué parte del piloto. No es solo una discusión de fanáticos: para una escudería es una decisión de presupuesto. ¿Conviene pagar un piloto estrella o poner esa plata en el auto? Y desde 2021, con el tope de gastos, cada peso cuenta más."
+> "La pregunta es qué parte del resultado depende del auto y qué parte del piloto. No es solo una discusión de fanáticos: para una escudería es una decisión de presupuesto. ¿Conviene poner el foco en el auto o en conseguir mejores pilotos? Y desde 2021, con el tope de gastos, cada peso cuenta más.
+> Para medirlo definimos dos cosas: el auto es el rendimiento de la escudería, maneje quien maneje, y el talento es cómo le va al piloto contra su compañero, que tiene el mismo auto."
 
 ---
 
@@ -69,11 +73,15 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
   - Efecto suelo (2022–2024)
 - Tablas usadas: races, results, qualifying, drivers, constructors, status
 - La idea clave, en un esquema: **mismo equipo + misma carrera = mismo auto → la diferencia entre los dos pilotos es el piloto**
-- Transformaciones: filtro de abandonos por fallas mecánicas, columna de duelo entre compañeros, variable de era
+- Cifras del notebook: 6.436 resultados de carrera → 5.280 autos que terminaron (82 %); 6.412 resultados de clasificación; 305 carreras, 79 pilotos, 23 escuderías
+- Transformaciones (las del notebook):
+  - Solo autos que terminaron: status *Finished* o *+N vueltas* (los doblados también terminaron)
+  - Dos tablas de análisis, `carreras_analisis` y `qualifying_analisis`, con año, nombre del piloto y de la escudería; se usan `positionOrder` y `grid`, y se descartan puntos y tiempos
+  - La clasificación se analiza aparte; Lotterer queda como atípico (clasificó en Bélgica 2014 y no terminó la carrera)
 
 **Guion**
 > "Usamos el dataset de Kaggle de Rohan Rao, que tiene todos los resultados del campeonato. Nos quedamos con 2010 a 2024: son tres eras de reglamento completas y todas las tablas tienen datos completos.
-> El truco del método es el compañero de equipo. Los dos pilotos de un equipo manejan el mismo auto, así que funciona como un grupo de control: si uno le gana al otro, esa diferencia no la explica el auto. Para no castigar al piloto por culpa del auto, sacamos los abandonos por fallas mecánicas."
+> El truco del método es el compañero de equipo. Los dos pilotos de un equipo manejan el mismo auto, así que funciona como un grupo de control: si uno le gana al otro, esa diferencia no la explica el auto. Para que un abandono no ensucie la comparación, trabajamos solo con los autos que terminaron, contando también a los doblados: de 6.436 resultados quedan 5.280. Usamos la posición final y la de largada, y dejamos afuera los puntos, porque el sistema de puntaje cambió en el período. La clasificación la analizamos por separado."
 
 ---
 

@@ -173,6 +173,18 @@ brecha = {d["year"]: d for d in DATOS["brecha"]}
 med_antes = brecha[2020]["med"]
 med_despues = brecha[2023]["med"]
 
+# Cifras de la exploración y el filtrado del notebook de Joaquín (commits del 27 al 30/10).
+# Se cargan a mano porque el notebook todavía no exporta estos valores.
+NB = dict(
+    resultados=6436,          # results 2010–2024
+    terminaron=5280,          # status "Finished" o "+N Laps"
+    clasificaciones=6412,     # qualifying 2010–2024
+    carreras=305,
+    pilotos_carrera=79,
+    pilotos_quali=80,         # el extra es André Lotterer: clasificó en Bélgica 2014 y abandonó en carrera
+    escuderias=23,
+)
+
 SLIDES = []
 
 SLIDES.append(f"""
@@ -199,9 +211,13 @@ SLIDES.append(marco(2, "La pregunta", f"""
   <div class="pregunta">
     <h2>¿Qué parte del resultado se explica por el <em class="a">auto</em> y qué parte por el <em class="p">piloto</em>?</h2>
     <div class="tarjetas">
-      <div class="tarjeta"><div class="num">01</div><h3>Una decisión de presupuesto</h3><p>Para una escudería: ¿pagar un piloto estrella o invertir en el auto?</p></div>
+      <div class="tarjeta"><div class="num">01</div><h3>Dónde invertir</h3><p>Le indica a una escudería si poner el foco en el auto o en capacitar y buscar mejores pilotos.</p></div>
       <div class="tarjeta"><div class="num">02</div><h3>Desde 2021, cada peso cuenta</h3><p>El tope presupuestario limita cuánto se puede gastar en desarrollo.</p></div>
       <div class="tarjeta"><div class="num">03</div><h3>El debate de siempre</h3><p>Todo fanático tiene una opinión. Nosotros lo medimos con datos.</p></div>
+    </div>
+    <div class="definiciones">
+      <div><b class="a">Auto</b> = rendimiento de la escudería en el período, sin importar quién maneja: posiciones y carreras terminadas.</div>
+      <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que tiene el mismo auto.</div>
     </div>
   </div>"""))
 
@@ -216,15 +232,19 @@ SLIDES.append(marco(3, "Datos y método", f"""
       </div>
       <div class="ecuacion">diferencia entre A y B &nbsp;→&nbsp; <b class="p">efecto piloto</b></div>
       <ul class="pasos">
-        <li>Se sacan los abandonos por fallas mecánicas: no son culpa del piloto.</li>
-        <li>Se arma un duelo por carrera y por clasificación entre los dos pilotos de cada equipo.</li>
-        <li>Se clasifica cada temporada en su era de reglamento.</li>
+        <li>Solo autos que terminaron (<i>Finished</i> o <i>+N vueltas</i>): un abandono es un atípico que no mide ni auto ni piloto.</li>
+        <li>Dos tablas de análisis, carrera y clasificación, con año, piloto y escudería. Variables: <i>positionOrder</i> y <i>grid</i>; se descartan puntos (el sistema cambió) y tiempos.</li>
+        <li>La clasificación se analiza aparte. Atípico: Lotterer, que clasificó en 2014 pero no terminó ninguna carrera.</li>
       </ul>
     </div>
     <div class="metodo-der">
-      <div class="dato"><b>{miles(RES['resultados'])}</b><span>resultados de carrera</span></div>
-      <div class="dato"><b>{miles(RES['pares_clasificacion'])}</b><span>duelos de clasificación</span></div>
-      <div class="dato"><b>{miles(RES['pares_carrera'])}</b><span>duelos de carrera</span></div>
+      <div class="embudo">
+        <div class="dato"><b>{miles(NB['resultados'])}</b><span>resultados de carrera</span></div>
+        <div class="flecha">filtro: terminaron · −{miles(NB['resultados'] - NB['terminaron'])}</div>
+        <div class="dato fin"><b>{miles(NB['terminaron'])}</b><span>autos que terminaron ({NB['terminaron'] / NB['resultados']:.0%})</span></div>
+      </div>
+      <div class="dato"><b>{miles(NB['clasificaciones'])}</b><span>resultados de clasificación</span></div>
+      <div class="mini">{NB['carreras']} carreras · {NB['pilotos_carrera']} pilotos · {NB['escuderias']} escuderías</div>
       <div class="fuente">Kaggle · Rohan Rao · <i>Formula 1 World Championship (1950–2024)</i></div>
     </div>
   </div>
@@ -372,33 +392,43 @@ b.p {{ color: {PILOTO}; }}
 .cifras b {{ display: block; font-family: 'JetBrains Mono'; font-size: 44px; color: {TEXTO}; letter-spacing: -.02em; }}
 
 /* pregunta */
-.pregunta h2 {{ font-size: 62px; max-width: 1000px; margin-top: 18px; }}
-.tarjetas {{ display: flex; gap: 22px; margin-top: 90px; }}
-.tarjeta {{ flex: 1; background: #151821; border: 1px solid {LINEA}; border-radius: 16px; padding: 30px 28px 34px; min-height: 250px; position: relative; overflow: hidden; }}
+.pregunta h2 {{ font-size: 56px; max-width: 1000px; margin-top: 8px; }}
+.definiciones {{ display: flex; gap: 22px; margin-top: 22px; }}
+.definiciones div {{ flex: 1; font-size: 17px; line-height: 1.4; color: #C4C8D2; padding: 14px 18px; background: #12151D; border-left: 4px solid {LINEA}; border-radius: 0 10px 10px 0; }}
+.definiciones div:first-child {{ border-color: {AUTO}; }} .definiciones div:last-child {{ border-color: {PILOTO}; }}
+.definiciones b {{ font-family: 'Inter Display'; font-weight: 800; font-style: italic; font-size: 19px; }}
+.tarjetas {{ display: flex; gap: 22px; margin-top: 44px; }}
+.tarjeta {{ flex: 1; background: #151821; border: 1px solid {LINEA}; border-radius: 16px; padding: 24px 26px 26px; min-height: 0; position: relative; overflow: hidden; }}
 .tarjeta::before {{ content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, {AUTO}, {PILOTO}); }}
 .tarjeta .num {{ font-family: 'JetBrains Mono'; color: {AUTO}; font-size: 40px; font-weight: 800; }}
-.tarjeta h3 {{ font-size: 28px; margin: 40px 0 14px; font-weight: 700; }}
-.tarjeta p {{ color: #AEB3BF; font-size: 19px; line-height: 1.45; }}
+.tarjeta h3 {{ font-size: 26px; margin: 16px 0 10px; font-weight: 700; }}
+.tarjeta p {{ color: #AEB3BF; font-size: 17px; line-height: 1.45; }}
 
 /* método */
 .metodo {{ display: flex; gap: 56px; }}
 .metodo-izq {{ flex: 1.55; }}
 .metodo-izq h2 {{ font-size: 40px; }}
-.garage {{ display: flex; align-items: center; gap: 22px; margin: 30px 0 18px; }}
+.garage {{ display: flex; align-items: center; gap: 22px; margin: 22px 0 14px; }}
 .auto-box {{ width: 170px; height: 92px; border-radius: 14px; background: #151821; border: 1px solid {LINEA};
   display: flex; align-items: center; gap: 14px; padding: 0 20px; font-weight: 600; font-size: 18px; }}
 .casco {{ width: 34px; height: 34px; border-radius: 50% 50% 40% 40%; }}
 .igual {{ text-align: center; font-family: 'JetBrains Mono'; font-size: 13px; color: {TENUE}; line-height: 1.5; text-transform: uppercase; letter-spacing: .08em; }}
 .igual b {{ font-size: 30px; color: {TEXTO}; }}
 .ecuacion {{ font-family: 'JetBrains Mono'; font-size: 18px; color: #C4C8D2; padding: 12px 16px; border-left: 4px solid {PILOTO}; background: #3EE0FF10; display: inline-block; }}
-.pasos {{ margin-top: 22px; list-style: none; }}
-.pasos li {{ font-size: 17px; color: #AEB3BF; padding: 7px 0 7px 26px; position: relative; line-height: 1.35; }}
+.pasos {{ margin-top: 14px; list-style: none; }}
+.pasos li {{ font-size: 15.5px; color: #AEB3BF; padding: 5px 0 5px 26px; position: relative; line-height: 1.35; }}
 .pasos li::before {{ content: ""; position: absolute; left: 0; top: 15px; width: 12px; height: 3px; background: {AUTO}; }}
 .metodo-der {{ flex: 1; display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }}
-.dato {{ background: #151821; border: 1px solid {LINEA}; border-radius: 14px; padding: 16px 22px; }}
-.dato b {{ font-family: 'JetBrains Mono'; font-size: 40px; display: block; letter-spacing: -.02em; }}
+.dato {{ background: #151821; border: 1px solid {LINEA}; border-radius: 14px; padding: 12px 20px; }}
+.dato b {{ font-family: 'JetBrains Mono'; font-size: 34px; display: block; letter-spacing: -.02em; }}
 .dato span {{ color: {TENUE}; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }}
-.fuente {{ font-size: 13px; color: {TENUE}; margin-top: 4px; }}
+.fuente {{ font-size: 13px; color: {TENUE}; margin-top: 2px; }}
+.embudo {{ display: flex; flex-direction: column; gap: 6px; }}
+.flecha {{ font-family: 'JetBrains Mono'; font-size: 12px; color: {AUTO}; text-transform: uppercase; letter-spacing: .08em; padding-left: 22px; }}
+.flecha::before {{ content: "↓ "; }}
+.dato.fin {{ border-color: {AUTO}66; background: #FF2D2D10; }}
+.mini {{ font-family: 'JetBrains Mono'; font-size: 14px; color: #C4C8D2; padding: 2px 4px; }}
+.pasos i {{ color: {TEXTO}; }}
 .eras {{ position: absolute; left: 88px; right: 72px; bottom: 62px; display: flex; gap: 4px; }}
 .eras div {{ background: #151821; border-top: 4px solid #B44DFF; padding: 8px 12px; border-radius: 0 0 8px 8px; display: flex; justify-content: space-between; font-size: 14px; }}
 .eras div:nth-child(2) {{ border-color: {PILOTO}; }} .eras div:nth-child(3) {{ border-color: {AUTO}; }}
