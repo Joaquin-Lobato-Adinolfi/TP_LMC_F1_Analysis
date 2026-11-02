@@ -282,3 +282,59 @@ footer code { font-family: var(--f-tiempo); background: var(--pista); padding: 2
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Vuelta 0: los datos ---------- */
+.sub { font-size: clamp(1.3rem, 2.6vw, 1.7rem); margin-bottom: 14px; }
+.texto { color: #c3c9d6; margin-bottom: 14px; }
+.texto b { color: var(--tiza); }
+.mono { font-family: var(--f-tiempo); font-size: .92em; color: var(--tiza); background: var(--pista-2); padding: 0 5px; border-radius: 2px; }
+.definiciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 44px; }
+.definiciones > div { background: var(--pista); border-left: 3px solid var(--celeste); padding: 14px 16px; border-radius: 0 var(--radio) var(--radio) 0; display: grid; gap: 6px; }
+.definiciones p { color: #d3d8e3; font-size: .97rem; }
+.tablas { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--linea); border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; margin-bottom: 48px; }
+.tablas > div { background: var(--pista); padding: 16px; display: grid; gap: 6px; align-content: start; }
+.tablas .nom { font-family: var(--f-tiempo); color: var(--amarillo); font-size: .95rem; }
+.tablas .dim { font-family: var(--f-tiempo); font-size: 1.6rem; line-height: 1; }
+.tablas .dim small { font-size: .55em; color: var(--niebla); }
+.tablas p { font-size: .85rem; color: var(--niebla); line-height: 1.4; }
+.filtro-layout, .carreras-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+@media (max-width: 860px) { .filtro-layout, .carreras-layout { grid-template-columns: minmax(0, 1fr); } }
+.embudo { display: grid; gap: 8px; }
+.embudo .barra-emb { display: flex; height: 34px; border-radius: 3px; overflow: hidden; background: var(--pista-2); }
+.embudo .si { background: var(--verde); transition: width 1.4s cubic-bezier(.2,.8,.2,1); }
+.embudo .no { background: repeating-linear-gradient(135deg, #ff6b6b 0 8px, #c94f4f 8px 16px); flex: 1; }
+.embudo .cifras { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--f-tiempo); }
+.embudo .cifras b { font-size: 1.6rem; display: block; line-height: 1.1; }
+.motivos { display: grid; gap: 4px; }
+.motivo { display: grid; grid-template-columns: 130px minmax(0, 1fr) 44px; gap: 10px; align-items: center; font-size: .88rem; }
+.motivo .rielm { height: 10px; background: var(--pista-2); border-radius: 2px; overflow: hidden; }
+.motivo .rielm span { display: block; height: 100%; background: #ff6b6b; }
+.motivo .n { font-family: var(--f-tiempo); text-align: right; color: var(--niebla); }
+.atipico { margin-top: 24px; background: var(--pista); border: 1px solid var(--linea); border-radius: var(--radio); padding: 16px 18px; display: grid; gap: 8px; }
+.atipico .cara { display: flex; align-items: center; gap: 12px; }
+.atipico .cara .cod { font-family: var(--f-display); font-weight: 800; font-style: italic; font-size: 2rem; color: var(--morado); }
+.atipico p { color: #c3c9d6; font-size: .95rem; }
+.tablas-finales { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.tabla-final { background: var(--pista); border: 1px solid var(--linea); border-radius: var(--radio); padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.tf-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.tf-cab .mono { font-size: 1.05rem; color: var(--amarillo); }
+.columnas { display: flex; flex-wrap: wrap; gap: 5px; }
+.col { font-family: var(--f-tiempo); font-size: .76rem; padding: 3px 7px; border-radius: 2px; border: 1px solid var(--linea); }
+.col.si { color: var(--tiza); background: var(--pista-2); }
+.col.si.nueva { color: var(--verde); border-color: color-mix(in srgb, var(--verde) 50%, transparent); }
+.col.no { color: var(--niebla); text-decoration: line-through; opacity: .7; }
+.razones { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 5px; color: #c3c9d6; font-size: .9rem; }
+.razones b { color: var(--tiza); font-weight: 600; }
+.leyenda-cols { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+
+/* ---------- Marca de resultado provisorio ---------- */
+.provisorio {
+  display: inline-block; vertical-align: middle; margin-left: 8px; padding: 2px 8px; border-radius: 2px;
+  font-family: var(--f-tiempo); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--asfalto); background: var(--amarillo); line-height: 1.5;
+}
+.nota .provisorio { margin: 0 6px 0 0; }
+.aviso-provisorio { background: repeating-linear-gradient(135deg, #f5c51814 0 18px, transparent 18px 36px); border-bottom: 1px solid var(--linea); }
+.aviso-provisorio .envoltura { display: flex; gap: 14px; align-items: center; padding-block: 18px; flex-wrap: wrap; }
+.aviso-provisorio .provisorio { margin: 0; }
+.aviso-provisorio p { color: #d3d8e3; font-size: .95rem; min-width: 0; flex: 1 1 280px; }

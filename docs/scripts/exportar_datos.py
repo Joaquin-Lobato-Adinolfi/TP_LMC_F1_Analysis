@@ -156,6 +156,49 @@ data = {
     "brecha": [{"year": int(y), **caja(g["brecha"])} for y, g in brecha.groupby("year")],
 }
 
+# ---------- Exploración y filtros del notebook actual (sección "Preanálisis" y "Filtro de datos") ----------
+status_finalizados = status[status["status"].str.startswith("+") | (status["status"] == "Finished")]
+carreras_finalizadas = results[results["statusId"].isin(status_finalizados["statusId"])]
+no_terminaron = results[~results["statusId"].isin(status_finalizados["statusId"])].merge(status, on="statusId")
+motivos = no_terminaron["status"].value_counts()
+top_motivos = [{"motivo": k, "n": int(v)} for k, v in motivos.head(8).items()]
+top_motivos.append({"motivo": "Otros", "n": int(motivos.iloc[8:].sum())})
+por_anio = (results.merge(races[["raceId", "year"]], on="raceId")
+            .assign(fin=lambda t: t["statusId"].isin(status_finalizados["statusId"]))
+            .groupby("year")["fin"].agg(["mean", "size"]))
+cant = (carreras_finalizadas.groupby("driverId")["raceId"].count().rename("n").reset_index()
+        .sort_values("n", ascending=False))
+equipo_frecuente = (carreras_finalizadas.groupby(["driverId", "constructorId"]).size().reset_index(name="k")
+                    .sort_values("k", ascending=False).drop_duplicates("driverId").set_index("driverId")["constructorId"])
+nombre = (drivers["forename"] + " " + drivers["surname"]).set_axis(drivers["driverId"])
+desc = cant["n"].describe()
+pilotos_quali = set(qualifying["driverId"])
+pilotos_carrera = set(carreras_finalizadas["driverId"])
+atipicos = sorted(pilotos_quali - pilotos_carrera)
+tablas = [
+    ("races", races, "Carreras: año, ronda, circuito y fechas de cada sesión."),
+    ("results", results, "Resultado de cada auto en cada carrera: grilla, posición final, vueltas y estado."),
+    ("drivers", drivers, "Pilotos: nombre, código de tres letras y nacionalidad."),
+    ("constructors", constructors, "Escuderías: nombre y nacionalidad."),
+    ("qualifying", qualifying, "Clasificación: posición y tiempos de Q1, Q2 y Q3."),
+    ("status", status, "Catálogo de estados finales: Finished, +1 Lap, Engine, Collision…"),
+]
+exploracion = {
+    "tablas": [{"nombre": n, "filas": int(t.shape[0]), "columnas": int(t.shape[1]),
+                "descripcion": d} for n, t, d in tablas],
+    "filtro": {"total": int(len(results)), "terminaron": int(len(carreras_finalizadas)),
+               "no_terminaron": int(len(results) - len(carreras_finalizadas)),
+               "estados_validos": int(len(status_finalizados)), "motivos": top_motivos},
+    "terminaron_por_anio": [{"year": int(y), "pct": round(float(r["mean"]) * 100, 1), "n": int(r["size"])}
+                            for y, r in por_anio.iterrows()],
+    "pilotos_carrera": len(pilotos_carrera), "pilotos_quali": len(pilotos_quali),
+    "atipicos": [{"piloto": nombre[i], **pil(i)} for i in atipicos],
+    "carreras_por_piloto": [{"piloto": nombre[r.driverId], **pil(r.driverId), "n": int(r.n),
+                             "equipo": ref[equipo_frecuente[r.driverId]]} for r in cant.itertuples()],
+    "carreras_por_piloto_resumen": {k: round(float(desc[k]), 2) for k in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]},
+}
+data["exploracion"] = exploracion
+
 salida.parent.mkdir(parents=True, exist_ok=True)
 salida.write_text("// Generado por web/scripts/exportar_datos.py. No editar a mano.\n"
                   "window.F1_DATA = " + json.dumps(data, ensure_ascii=False) + ";\n", encoding="utf-8")
