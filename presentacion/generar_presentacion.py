@@ -49,45 +49,32 @@ def miles(n):
 # Gráficos en SVG
 # ---------------------------------------------------------------------------
 
-def grafico_peso_auto(ancho=760, alto=380):
-    """Líneas: % de la variación explicada por la escudería, por temporada."""
-    m = dict(izq=48, der=20, arr=20, aba=36)
-    serie = DATOS["peso_auto"]
-    anios = [d["year"] for d in serie]
-    x0, x1 = min(anios), max(anios)
-    y0, y1 = 40, 100
-
-    def px(a):
-        return m["izq"] + (a - x0) / (x1 - x0) * (ancho - m["izq"] - m["der"])
+def grafico_autos(ancho=760, alto=380):
+    """Puntos: posición media de clasificación de cada escudería, por temporada."""
+    m = dict(izq=40, der=14, arr=16, aba=34)
+    por_anio = {}
+    for a in DATOS["autos"]:
+        por_anio.setdefault(a["year"], []).append(a)
+    anios = sorted(por_anio)
+    y0, y1 = 1, 24
+    paso = (ancho - m["izq"] - m["der"]) / len(anios)
 
     def py(v):
-        return m["arr"] + (y1 - v) / (y1 - y0) * (alto - m["arr"] - m["aba"])
+        return m["arr"] + (v - y0) / (y1 - y0) * (alto - m["arr"] - m["aba"])
 
     partes = [f'<svg viewBox="0 0 {ancho} {alto}" width="{ancho}" height="{alto}">']
-    # zona 2021+
-    xa = px(2020.5)
-    partes.append(f'<rect x="{xa}" y="{m["arr"]}" width="{ancho - m["der"] - xa + 10}" '
-                  f'height="{py(y0) - m["arr"]}" fill="#ffffff" opacity="0.04"/>')
-    partes.append(f'<text x="{xa + 10}" y="{m["arr"] + 16}" class="nota">tope presupuestario</text>')
-    partes.append(f'<text x="{xa + 10}" y="{m["arr"] + 32}" class="nota">+ reglamento 2022</text>')
-    for v in range(40, 101, 20):
-        partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(v)}" y2="{py(v)}" '
-                      f'stroke="{LINEA}"/>')
-        partes.append(f'<text x="{m["izq"] - 10}" y="{py(v) + 4}" class="eje" text-anchor="end">{v}%</text>')
-    for a in anios:
-        if a % 2 == 0:
-            partes.append(f'<text x="{px(a)}" y="{alto - 10}" class="eje" text-anchor="middle">{a}</text>')
-    # referencia: el auto no importa
-    partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(47)}" y2="{py(47)}" '
-                  f'stroke="{TENUE}" stroke-dasharray="5 6"/>')
-    partes.append(f'<text x="{m["izq"] + 8}" y="{py(47) - 8}" class="nota">≈47%: lo esperable si el auto no importara</text>')
-    for clave, color in (("carrera", AUTO), ("clasificacion", AUTO_CLARO)):
-        pts = " ".join(f"{px(d['year']):.1f},{py(d[clave]):.1f}" for d in serie)
-        partes.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="3.5" '
-                      f'stroke-linejoin="round" stroke-linecap="round"/>')
-        for d in serie:
-            partes.append(f'<circle cx="{px(d["year"]):.1f}" cy="{py(d[clave]):.1f}" r="4" fill="#0B0D12" '
-                          f'stroke="{color}" stroke-width="2.5"/>')
+    for v in (1, 5, 10, 15, 20):
+        partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(v)}" y2="{py(v)}" stroke="{LINEA}"/>')
+        partes.append(f'<text x="{m["izq"] - 10}" y="{py(v) + 4}" class="eje" text-anchor="end">P{v}</text>')
+    for i, anio in enumerate(anios):
+        cx = m["izq"] + paso * (i + 0.5)
+        pos = [a["pos"] for a in por_anio[anio]]
+        partes.append(f'<line x1="{cx}" x2="{cx}" y1="{py(min(pos))}" y2="{py(max(pos))}" stroke="{AUTO}" '
+                      f'stroke-opacity=".35" stroke-width="10" stroke-linecap="round"/>')
+        for a in por_anio[anio]:
+            color = EQUIPOS.get(a["equipo"], {}).get("color", TENUE)
+            partes.append(f'<circle cx="{cx:.1f}" cy="{py(a["pos"]):.1f}" r="5.5" fill="{color}" stroke="#0B0D12" stroke-width="1.5"/>')
+        partes.append(f'<text x="{cx}" y="{alto - 10}" class="eje" text-anchor="middle">{str(anio)[2:]}</text>')
     partes.append("</svg>")
     return "".join(partes)
 
@@ -163,10 +150,17 @@ def marco(n, titulo_corto, cuerpo, clase="", provisorio=False):
 </section>"""
 
 
-peso = DATOS["peso_auto"]
-auto_total = RES["auto_total_clasificacion"]
-min_auto = min(min(d["carrera"], d["clasificacion"]) for d in peso)
-max_auto = max(max(d["carrera"], d["clasificacion"]) for d in peso)
+# Distancia en la grilla entre el mejor y el peor auto de cada temporada, y entre compañeros.
+rango_autos = {}
+for a in DATOS["autos"]:
+    rango_autos.setdefault(a["year"], []).append(a["pos"])
+rango_autos = {y: max(v) - min(v) for y, v in rango_autos.items()}
+dist_autos = sum(rango_autos.values()) / len(rango_autos)
+dist_compas = sum(b["media"] for b in DATOS["brecha"]) / len(DATOS["brecha"])
+
+
+def coma(x, dec=1):
+    return f"{x:.{dec}f}".replace(".", ",")
 lider = DATOS["duelos"][0]
 alonso = next(d for d in DATOS["duelos"] if d["codigo"] == "ALO")
 brecha = {d["year"]: d for d in DATOS["brecha"]}
@@ -216,8 +210,8 @@ SLIDES.append(marco(2, "La pregunta", f"""
       <div class="tarjeta"><div class="num">03</div><h3>El debate de siempre</h3><p>Todo fanático tiene una opinión. Nosotros lo medimos con datos.</p></div>
     </div>
     <div class="definiciones">
-      <div><b class="a">Auto</b> = rendimiento de la escudería en el período, sin importar quién maneja: posiciones y carreras terminadas.</div>
-      <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que tiene el mismo auto.</div>
+      <div><b class="a">Auto</b> = desempeño de la escudería en el período, con independencia de sus pilotos.</div>
+      <div><b class="p">Talento</b> = desempeño del piloto por sí mismo y, sobre todo, contra su compañero, que tiene el mismo auto.</div>
     </div>
   </div>"""))
 
@@ -257,13 +251,12 @@ SLIDES.append(marco(3, "Datos y método", f"""
 SLIDES.append(marco(4, "Resultado 1", f"""
   <div class="resultado">
     <div class="res-texto">
-      <div class="enorme a">{auto_total:.0f}<small>%</small></div>
-      <h2>de la diferencia entre pilotos la explica <em class="a">la escudería</em></h2>
-      <p>Todos los años queda entre el {min_auto:.0f}% y el {max_auto:.0f}%, muy por encima del 47% que daría si el auto no importara.</p>
-      <p>Desde 2021 la curva baja: con el tope presupuestario y los autos de 2022, <b>el auto pesa un poco menos</b>.</p>
-      <div class="leyenda"><span><i style="background:{AUTO}"></i>Carrera</span><span><i style="background:{AUTO_CLARO}"></i>Clasificación</span></div>
+      <div class="enorme a">{dist_autos:.0f}</div>
+      <h2>posiciones separan al mejor y al peor <em class="a">auto</em> de cada temporada</h2>
+      <p>Cada punto es una escudería: su posición media en clasificación en el año. Entre compañeros, la distancia media es de {coma(dist_compas)} posiciones.</p>
+      <p>Desde 2022 la franja se achica (de {rango_autos[2010]:.0f} posiciones en 2010 a {rango_autos[2023]:.0f} en 2023): <b>los autos están más parejos</b>.</p>
     </div>
-    <div class="res-grafico">{grafico_peso_auto()}</div>
+    <div class="res-grafico">{grafico_autos()}</div>
   </div>""", provisorio=True))
 
 SLIDES.append(marco(5, "Resultado 2", f"""
@@ -292,14 +285,14 @@ SLIDES.append(marco(7, "Conclusión", f"""
   <div class="conclusion">
     <h2>Pesa más el <em class="a">auto</em>. Pero el <em class="p">piloto</em> decide quién lo aprovecha.</h2>
     <div class="medidor">
-      <div class="m-auto" style="flex:{auto_total}">AUTO {auto_total:.0f}%</div>
-      <div class="m-piloto" style="flex:{100 - auto_total}">PILOTO Y AZAR {100 - auto_total:.0f}%</div>
+      <div class="fila-medidor"><span>Entre autos</span><div class="m-auto" style="width:{dist_autos / 20 * 100:.1f}%">≈ {dist_autos:.0f} posiciones</div></div>
+      <div class="fila-medidor"><span>Entre compañeros</span><div class="m-piloto" style="width:{dist_compas / 20 * 100:.1f}%">≈ {dist_compas:.0f}</div></div>
     </div>
     <div class="col2">
       <div>
         <h3>Lo que encontramos</h3>
         <ol>
-          <li>La escudería explica la mayor parte de la diferencia, todos los años.</li>
+          <li>La distancia entre el mejor y el peor auto es casi {dist_autos / dist_compas:.0f} veces la que hay entre compañeros.</li>
           <li>Dentro de un mismo auto, algunos pilotos ganan siempre.</li>
           <li>Con autos más parejos (desde 2021) el piloto pesa más.</li>
         </ol>
@@ -464,10 +457,12 @@ b.p {{ color: {PILOTO}; }}
 
 /* conclusión */
 .conclusion h2 {{ font-size: 50px; max-width: 1080px; margin-top: 16px; }}
-.medidor {{ display: flex; margin: 40px 0 44px; height: 72px; border-radius: 12px; overflow: hidden; font-family: 'JetBrains Mono'; font-weight: 800; font-size: 20px; letter-spacing: .06em; }}
-.medidor div {{ display: flex; align-items: center; padding: 0 20px; }}
+.medidor {{ margin: 30px 0 34px; font-family: 'JetBrains Mono'; font-weight: 800; font-size: 18px; letter-spacing: .04em; }}
+.fila-medidor {{ display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }}
+.fila-medidor > span {{ width: 190px; flex: none; font-family: 'Inter'; font-weight: 600; font-size: 15px; color: {TENUE}; text-transform: uppercase; letter-spacing: .1em; }}
+.fila-medidor > div {{ height: 46px; border-radius: 10px; display: flex; align-items: center; padding: 0 16px; white-space: nowrap; }}
 .m-auto {{ background: repeating-linear-gradient(115deg, {AUTO} 0 22px, #E52222 22px 44px); }}
-.m-piloto {{ background: {PILOTO}; color: #0B0D12; justify-content: center; white-space: nowrap; font-size: 16px; }}
+.m-piloto {{ background: {PILOTO}; color: #0B0D12; min-width: 70px; }}
 .col2 {{ display: flex; gap: 40px; }}
 .col2 > div {{ flex: 1; }}
 .col2 h3 {{ font-size: 15px; text-transform: uppercase; letter-spacing: .14em; color: {TENUE}; margin-bottom: 12px; font-weight: 700; }}

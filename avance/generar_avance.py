@@ -157,6 +157,9 @@ GRAFICOS_INFO = [
 ]
 
 RESPUESTA = [
+    "<b>Atención:</b> estos resultados son de la versión anterior del notebook. El notebook nuevo de Joaquín "
+    "ya no usa la descomposición 85/15% y el informe y la presentación tampoco; quedan como referencia hasta "
+    "tener los resultados nuevos.",
     "<b>El auto pesa mucho más:</b> la escudería explica ~85% de la variación de posiciones; ningún año baja del 70%.",
     "<b>El piloto explica el ~15% restante</b>, y ese efecto es real y persistente (Verstappen, Alonso, Russell).",
     "<b>Pero mueve pocos lugares:</b> correlación 0,91 entre compañeros y brecha típica de 2–3 posiciones.",
@@ -198,10 +201,10 @@ ENTREGABLES = [
         ("1 Portada", "ok", "¿Piloto o auto? · Agustín (0:20)."),
         ("2 La pregunta", "ok", "Motivación y definiciones de auto y talento, tomadas del notebook · Agustín (0:45)."),
         ("3 Datos y método", "ok", "Compañero como grupo de control; filtro de autos que terminaron y cifras del notebook · Joaquín (1:00)."),
-        ("4 Resultado 1", "parcial", "El auto explica la mayor parte (gráfico 1) · Joaquín (1:00). [PROVISORIO]"),
+        ("4 Resultado 1", "parcial", "Auto contra auto: ≈16 posiciones entre el mejor y el peor auto vs. ≈3 entre compañeros · Joaquín (1:00). [PROVISORIO]"),
         ("5 Resultado 2", "parcial", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50). [PROVISORIO]"),
         ("6 Resultado 3", "parcial", "Desde 2021 los compañeros están más lejos (gráfico 4) · Joaquín (0:50). [PROVISORIO]"),
-        ("7 Conclusión", "ok", "Respuesta y limitaciones · Agustín (0:50)."),
+        ("7 Conclusión", "ok", "Respuesta, barras autos vs. compañeros y limitaciones · Agustín (0:50)."),
         ("8 Cierre", "ok", "Uso de IA en lenguaje técnico (modelo, análisis, comunicación, validación) y links · Joaquín (0:25)."),
     ]),
     ("Sitio web", "docs/index.html", [
@@ -223,7 +226,9 @@ CAMBIOS = [
     ("27/10/2026", "v3", "Suma la presentación en PDF con diseño propio (PR #7) y reescribe en lenguaje técnico la "
                          "diapositiva de uso de IA."),
     ("02/11/2026", "v4", "Suma el avance del notebook de Joaquín y pasa sus definiciones, filtros y cifras a las "
-                         "diapositivas 2 y 3 de la presentación. Resultados siguen provisorios."),
+                         "diapositivas 2 y 3 de la presentación. Como el notebook nuevo ya no usa el 85/15%, las "
+                         "diapositivas 4 y 7 pasan a comparar auto contra auto y piloto contra compañero, igual "
+                         "que el informe. Resultados siguen provisorios."),
 ]
 
 # ---------------------------------------------------------------------------
