@@ -85,15 +85,15 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
 
 ---
 
-### 4. Resultado 1: el auto explica la mayor parte (J, 1:00) [PROVISORIO]
+### 4. Resultado 1: auto contra auto (J, 1:00) [PROVISORIO]
 
 **En pantalla**
-- Gráfico: `graficos/01_peso_auto_por_anio.png`
-- Dato destacado: **el equipo explica entre el 70 % y el 94 % de la diferencia entre pilotos, según el año** [PROVISORIO]
-- Referencia: si el auto no importara, sería ≈ 47 %
+- Gráfico: posición media en clasificación de cada escudería, por temporada (un punto por escudería, con su color)
+- Dato destacado: **≈ 16 posiciones separan, en promedio, al mejor y al peor auto de cada temporada; entre compañeros la distancia media es de 3,4** [PROVISORIO]
+- Desde 2022 la franja se achica (21 posiciones en 2010, 10 en 2023)
 
 **Guion**
-> "Este es el resultado central. La línea muestra qué parte de la diferencia entre pilotos se explica solo por saber en qué equipo corren. Está siempre entre 70 y 90 y pico por ciento, muy por encima del 47 % que esperaríamos si el auto no importara. O sea: en la F1 de este período, el auto define la mayor parte del resultado. Y fíjense que desde 2021 la línea baja: con el tope presupuestario y el reglamento nuevo, el auto pesa un poco menos."
+> "Primero comparamos auto contra auto, como definimos en el notebook: el rendimiento de cada escudería, maneje quien maneje. Cada punto es un equipo en una temporada. Entre el mejor y el peor auto hay, en promedio, 16 posiciones de clasificación. Entre dos compañeros, con el mismo auto, hay poco más de 3. O sea, la diferencia entre autos es casi cinco veces la diferencia entre pilotos. Y fíjense que desde 2022 la franja se achica: con el tope presupuestario y el reglamento nuevo, los autos están más parejos."
 
 ---
 
@@ -125,6 +125,7 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
 
 **En pantalla**
 - Respuesta directa: **pesa más el auto, pero el piloto define quién aprovecha ese auto** [ajustar al resultado final]
+- Barras comparadas: ≈ 16 posiciones entre autos contra ≈ 3 entre compañeros [PROVISORIO]
 - Tres conclusiones cortas (una por resultado)
 - Limitaciones:
   - Solo 2010–2024: no se puede generalizar a otras épocas.
@@ -132,7 +133,7 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
   - El compañero es un piloto, no una vara absoluta: medimos al piloto contra otro piloto.
 
 **Guion**
-> "Entonces, la respuesta: en 2010–2024 pesa más el auto, que explica la mayor parte de la diferencia entre pilotos. Pero dentro de un mismo auto el piloto sí marca diferencia, y esa diferencia crece cuando los autos están más parejos, como desde 2021. Como limitaciones, el período es acotado, hay pocos equipos por año, y comparar contra el compañero mide al piloto en relación con otro piloto, no en términos absolutos."
+> "Entonces, la respuesta: en 2010–2024 pesa más el auto: la distancia entre el mejor y el peor auto es casi cinco veces la que hay entre dos compañeros. Pero dentro de un mismo auto el piloto sí marca diferencia, y esa diferencia crece cuando los autos están más parejos, como desde 2021. Como limitaciones, el período es acotado, hay pocos equipos por año, y comparar contra el compañero mide al piloto en relación con otro piloto, no en términos absolutos."
 
 ---
 
@@ -151,7 +152,8 @@ Esta propuesta tiene **8 diapositivas** y unos **6 minutos** de guion. Los turno
 ## Preguntas probables y respuestas cortas
 
 - **¿Por qué 2010–2024 y no desde 1950?** Porque son tres eras de reglamento completas, los datos de clasificación están completos y la F1 de antes es otra tecnología. Lo marcamos como limitación.
-- **¿Cómo calculan el "porcentaje que explica el auto"?** Es la parte de la variación de posiciones entre pilotos que se explica solo con el equipo (comparando la dispersión entre equipos con la dispersión total). [Ajustar a la definición del notebook final.]
+- **¿Cómo comparan auto y piloto?** Auto contra auto: la posición media de cada escudería por temporada. Piloto contra piloto: la distancia con el compañero, que tiene el mismo auto. Si la primera es mucho mayor que la segunda, pesa más el auto. [Ajustar a las medidas del notebook final.]
+- **¿Por qué sacan los abandonos?** Un auto que no termina aparece como un atípico severo que no mide ni al auto ni al piloto. Se cuentan como terminados también los doblados (+N vueltas): quedan 5.280 de 6.436 resultados.
 - **¿Qué pasa con los reemplazos a mitad de temporada?** Generan duelos con pocas carreras; por eso el ranking pide un mínimo de 50 duelos.
 - **¿Clasificación o carrera?** Usamos las dos. La clasificación aísla mejor al piloto porque no hay estrategia ni abandonos.
 
