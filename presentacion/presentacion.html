@@ -53,33 +53,43 @@ b.p { color: #3EE0FF; }
 .cifras b { display: block; font-family: 'JetBrains Mono'; font-size: 44px; color: #F2F3F5; letter-spacing: -.02em; }
 
 /* pregunta */
-.pregunta h2 { font-size: 62px; max-width: 1000px; margin-top: 18px; }
-.tarjetas { display: flex; gap: 22px; margin-top: 90px; }
-.tarjeta { flex: 1; background: #151821; border: 1px solid #262A36; border-radius: 16px; padding: 30px 28px 34px; min-height: 250px; position: relative; overflow: hidden; }
+.pregunta h2 { font-size: 56px; max-width: 1000px; margin-top: 8px; }
+.definiciones { display: flex; gap: 22px; margin-top: 22px; }
+.definiciones div { flex: 1; font-size: 17px; line-height: 1.4; color: #C4C8D2; padding: 14px 18px; background: #12151D; border-left: 4px solid #262A36; border-radius: 0 10px 10px 0; }
+.definiciones div:first-child { border-color: #FF2D2D; } .definiciones div:last-child { border-color: #3EE0FF; }
+.definiciones b { font-family: 'Inter Display'; font-weight: 800; font-style: italic; font-size: 19px; }
+.tarjetas { display: flex; gap: 22px; margin-top: 44px; }
+.tarjeta { flex: 1; background: #151821; border: 1px solid #262A36; border-radius: 16px; padding: 24px 26px 26px; min-height: 0; position: relative; overflow: hidden; }
 .tarjeta::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF2D2D, #3EE0FF); }
 .tarjeta .num { font-family: 'JetBrains Mono'; color: #FF2D2D; font-size: 40px; font-weight: 800; }
-.tarjeta h3 { font-size: 28px; margin: 40px 0 14px; font-weight: 700; }
-.tarjeta p { color: #AEB3BF; font-size: 19px; line-height: 1.45; }
+.tarjeta h3 { font-size: 26px; margin: 16px 0 10px; font-weight: 700; }
+.tarjeta p { color: #AEB3BF; font-size: 17px; line-height: 1.45; }
 
 /* método */
 .metodo { display: flex; gap: 56px; }
 .metodo-izq { flex: 1.55; }
 .metodo-izq h2 { font-size: 40px; }
-.garage { display: flex; align-items: center; gap: 22px; margin: 30px 0 18px; }
+.garage { display: flex; align-items: center; gap: 22px; margin: 22px 0 14px; }
 .auto-box { width: 170px; height: 92px; border-radius: 14px; background: #151821; border: 1px solid #262A36;
   display: flex; align-items: center; gap: 14px; padding: 0 20px; font-weight: 600; font-size: 18px; }
 .casco { width: 34px; height: 34px; border-radius: 50% 50% 40% 40%; }
 .igual { text-align: center; font-family: 'JetBrains Mono'; font-size: 13px; color: #8A90A0; line-height: 1.5; text-transform: uppercase; letter-spacing: .08em; }
 .igual b { font-size: 30px; color: #F2F3F5; }
 .ecuacion { font-family: 'JetBrains Mono'; font-size: 18px; color: #C4C8D2; padding: 12px 16px; border-left: 4px solid #3EE0FF; background: #3EE0FF10; display: inline-block; }
-.pasos { margin-top: 22px; list-style: none; }
-.pasos li { font-size: 17px; color: #AEB3BF; padding: 7px 0 7px 26px; position: relative; line-height: 1.35; }
+.pasos { margin-top: 14px; list-style: none; }
+.pasos li { font-size: 15.5px; color: #AEB3BF; padding: 5px 0 5px 26px; position: relative; line-height: 1.35; }
 .pasos li::before { content: ""; position: absolute; left: 0; top: 15px; width: 12px; height: 3px; background: #FF2D2D; }
 .metodo-der { flex: 1; display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
-.dato { background: #151821; border: 1px solid #262A36; border-radius: 14px; padding: 16px 22px; }
-.dato b { font-family: 'JetBrains Mono'; font-size: 40px; display: block; letter-spacing: -.02em; }
+.dato { background: #151821; border: 1px solid #262A36; border-radius: 14px; padding: 12px 20px; }
+.dato b { font-family: 'JetBrains Mono'; font-size: 34px; display: block; letter-spacing: -.02em; }
 .dato span { color: #8A90A0; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
-.fuente { font-size: 13px; color: #8A90A0; margin-top: 4px; }
+.fuente { font-size: 13px; color: #8A90A0; margin-top: 2px; }
+.embudo { display: flex; flex-direction: column; gap: 6px; }
+.flecha { font-family: 'JetBrains Mono'; font-size: 12px; color: #FF2D2D; text-transform: uppercase; letter-spacing: .08em; padding-left: 22px; }
+.flecha::before { content: "↓ "; }
+.dato.fin { border-color: #FF2D2D66; background: #FF2D2D10; }
+.mini { font-family: 'JetBrains Mono'; font-size: 14px; color: #C4C8D2; padding: 2px 4px; }
+.pasos i { color: #F2F3F5; }
 .eras { position: absolute; left: 88px; right: 72px; bottom: 62px; display: flex; gap: 4px; }
 .eras div { background: #151821; border-top: 4px solid #B44DFF; padding: 8px 12px; border-radius: 0 0 8px 8px; display: flex; justify-content: space-between; font-size: 14px; }
 .eras div:nth-child(2) { border-color: #3EE0FF; } .eras div:nth-child(3) { border-color: #FF2D2D; }
@@ -173,9 +183,13 @@ b.p { color: #3EE0FF; }
   <div class="pregunta">
     <h2>¿Qué parte del resultado se explica por el <em class="a">auto</em> y qué parte por el <em class="p">piloto</em>?</h2>
     <div class="tarjetas">
-      <div class="tarjeta"><div class="num">01</div><h3>Una decisión de presupuesto</h3><p>Para una escudería: ¿pagar un piloto estrella o invertir en el auto?</p></div>
+      <div class="tarjeta"><div class="num">01</div><h3>Dónde invertir</h3><p>Le indica a una escudería si poner el foco en el auto o en capacitar y buscar mejores pilotos.</p></div>
       <div class="tarjeta"><div class="num">02</div><h3>Desde 2021, cada peso cuenta</h3><p>El tope presupuestario limita cuánto se puede gastar en desarrollo.</p></div>
       <div class="tarjeta"><div class="num">03</div><h3>El debate de siempre</h3><p>Todo fanático tiene una opinión. Nosotros lo medimos con datos.</p></div>
+    </div>
+    <div class="definiciones">
+      <div><b class="a">Auto</b> = rendimiento de la escudería en el período, sin importar quién maneja: posiciones y carreras terminadas.</div>
+      <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que tiene el mismo auto.</div>
     </div>
   </div>
   <footer>
@@ -201,15 +215,19 @@ b.p { color: #3EE0FF; }
       </div>
       <div class="ecuacion">diferencia entre A y B &nbsp;→&nbsp; <b class="p">efecto piloto</b></div>
       <ul class="pasos">
-        <li>Se sacan los abandonos por fallas mecánicas: no son culpa del piloto.</li>
-        <li>Se arma un duelo por carrera y por clasificación entre los dos pilotos de cada equipo.</li>
-        <li>Se clasifica cada temporada en su era de reglamento.</li>
+        <li>Solo autos que terminaron (<i>Finished</i> o <i>+N vueltas</i>): un abandono es un atípico que no mide ni auto ni piloto.</li>
+        <li>Dos tablas de análisis, carrera y clasificación, con año, piloto y escudería. Variables: <i>positionOrder</i> y <i>grid</i>; se descartan puntos (el sistema cambió) y tiempos.</li>
+        <li>La clasificación se analiza aparte. Atípico: Lotterer, que clasificó en 2014 pero no terminó ninguna carrera.</li>
       </ul>
     </div>
     <div class="metodo-der">
-      <div class="dato"><b>6.436</b><span>resultados de carrera</span></div>
-      <div class="dato"><b>3.194</b><span>duelos de clasificación</span></div>
-      <div class="dato"><b>2.209</b><span>duelos de carrera</span></div>
+      <div class="embudo">
+        <div class="dato"><b>6.436</b><span>resultados de carrera</span></div>
+        <div class="flecha">filtro: terminaron · −1.156</div>
+        <div class="dato fin"><b>5.280</b><span>autos que terminaron (82%)</span></div>
+      </div>
+      <div class="dato"><b>6.412</b><span>resultados de clasificación</span></div>
+      <div class="mini">305 carreras · 79 pilotos · 23 escuderías</div>
       <div class="fuente">Kaggle · Rohan Rao · <i>Formula 1 World Championship (1950–2024)</i></div>
     </div>
   </div>
