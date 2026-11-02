@@ -308,6 +308,138 @@
     };
   }
 
+  /* ---------------- Vuelta 0: los datos (exploración y filtros del notebook) ---------------- */
+  function formacion() {
+    const X = D.exploracion;
+    $("#tablas").innerHTML = X.tablas.map((t) =>
+      `<div><span class="nom">${t.nombre}.csv</span><span class="dim">${nf0.format(t.filas)} <small>× ${t.columnas} col.</small></span><p>${t.descripcion}</p></div>`).join("");
+
+    const f = X.filtro;
+    $("#estados-validos").textContent = f.estados_validos;
+    const pct = (f.terminaron / f.total) * 100;
+    $("#embudo").innerHTML = `
+      <div class="barra-emb" role="img" aria-label="${nf0.format(f.terminaron)} de ${nf0.format(f.total)} resultados terminaron la carrera">
+        <div class="si" id="emb-si" style="width:${pct}%"></div><div class="no"></div></div>
+      <div class="cifras"><span style="color:var(--verde)"><b>${nf0.format(f.terminaron)}</b>terminaron (${nf1.format(pct)}%)</span>
+        <span style="color:#ff6b6b;text-align:right"><b>${nf0.format(f.no_terminaron)}</b>no terminaron</span></div>
+      <span class="etiqueta">de ${nf0.format(f.total)} resultados de carrera</span>`;
+    const maxM = Math.max(...f.motivos.map((m) => m.n));
+    $("#motivos").innerHTML = f.motivos.map((m) =>
+      `<div class="motivo"><span>${m.motivo}</span><span class="rielm"><span style="width:${(m.n / maxM) * 100}%"></span></span><span class="n">${m.n}</span></div>`).join("");
+    alEntrar($("#embudo"), (est) => {
+      if (est) return;
+      const b = $("#emb-si"); b.style.transition = "none"; b.style.width = "0%";
+      requestAnimationFrame(() => requestAnimationFrame(() => { b.style.transition = ""; b.style.width = pct + "%"; }));
+    });
+
+    const a = X.atipicos[0];
+    if (a) {
+      $("#atipico").innerHTML = `<span class="etiqueta">El piloto que sobra</span>
+        <div class="cara"><span class="cod">${codigo(a)}</span><span><b>${a.piloto}</b> ${bandera(a.nac)}</span></div>
+        <p>En clasificación hay ${X.pilotos_quali} pilotos, pero en carreras terminadas hay ${X.pilotos_carrera}. El que falta es ${a.piloto}: corrió solo el GP de Bélgica 2014 con Caterham y abandonó en la primera vuelta por una falla de la unidad de potencia. Lo encontramos con <span class="mono">np.setdiff1d</span> y queda como dato atípico.</p>`;
+    }
+    const r = X.carreras_por_piloto_resumen;
+    $("#n-pilotos").textContent = r.count;
+    $("#tf-carreras").textContent = `${nf0.format(f.terminaron)} filas × 11 col.`;
+    $("#tf-quali").textContent = `${nf0.format(X.tablas.find((t) => t.nombre === "qualifying").filas)} filas × 11 col.`;
+    const top = X.carreras_por_piloto;
+    $("#lectura-carreras").innerHTML = `<b>Lectura.</b> La mitad de los pilotos terminó ${nf0.format(r["50%"])} carreras o menos, pero el promedio es ${nf1.format(r.mean)}. ` +
+      `La media supera a la mediana porque unos pocos pilotos con carreras muy largas, como ${top[0].piloto} (${top[0].n}) o ${top[1].piloto} (${top[1].n}), tiran el promedio para arriba: la distribución tiene cola a la derecha. ` +
+      `Por ahora el notebook no descarta pilotos, pero conviene exigir un mínimo de carreras para comparar.`;
+
+    document.querySelectorAll("[data-cp]").forEach((b) => b.addEventListener("click", () => {
+      document.querySelectorAll("[data-cp]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+      modoCarreras = b.dataset.cp; graficoCarreras(!quieto);
+    }));
+  }
+
+  function graficoTerminaron(animar) {
+    const cont = $("#g-terminaron");
+    cont.innerHTML = "";
+    const datos = D.exploracion.terminaron_por_anio;
+    const W = cont.clientWidth; const H = Math.max(220, Math.min(280, W * 0.55));
+    const m = { t: 20, r: 12, b: 30, l: 42 };
+    const x = d3.scaleLinear().domain([2010, 2024]).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([60, 100]).range([H - m.b, m.t]);
+    const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
+      .attr("aria-label", "Porcentaje de autos que terminaron la carrera por temporada");
+    svg.append("g").attr("class", "grilla").attr("transform", `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat("")).call((g) => g.select(".domain").remove());
+    svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(W < 420 ? 4 : 8).tickFormat(d3.format("d")));
+    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((d) => d + "%"));
+    const area = d3.area().x((d) => x(d.year)).y0(y(60)).y1((d) => y(d.pct)).curve(d3.curveMonotoneX);
+    svg.append("path").datum(datos).attr("d", area).attr("fill", css("--verde")).attr("fill-opacity", 0.12);
+    const p = svg.append("path").datum(datos).attr("fill", "none").attr("stroke", css("--verde")).attr("stroke-width", 2.5)
+      .attr("d", d3.line().x((d) => x(d.year)).y((d) => y(d.pct)).curve(d3.curveMonotoneX));
+    if (animar) { const L = p.node().getTotalLength(); p.attr("stroke-dasharray", `${L} ${L}`).attr("stroke-dashoffset", L).transition().duration(1600).attr("stroke-dashoffset", 0); }
+    [datos[0], datos[datos.length - 1]].forEach((d, i) => {
+      svg.append("circle").attr("cx", x(d.year)).attr("cy", y(d.pct)).attr("r", 4).attr("fill", css("--verde"));
+      svg.append("text").attr("x", x(d.year) + (i ? -6 : 6)).attr("y", y(d.pct) - 10).attr("text-anchor", i ? "end" : "start")
+        .attr("fill", css("--tiza")).style("font-family", css("--f-tiempo")).style("font-size", "12px").text(`${d.year}: ${nf1.format(d.pct)}%`);
+    });
+    const tip = tooltip(cont); const esc = cont.clientWidth / W;
+    svg.append("g").selectAll("rect").data(datos).enter().append("rect")
+      .attr("x", (d) => x(d.year) - (x(2011) - x(2010)) / 2).attr("width", x(2011) - x(2010)).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+      .on("pointerenter", (ev, d) => tip.mostrar(`<div class="t">${d.year}</div>Terminaron: <b>${nf1.format(d.pct)}%</b><br>${d.n} autos largaron`, x(d.year) * esc, y(d.pct) * esc))
+      .on("pointerleave", () => tip.ocultar());
+  }
+
+  let modoCarreras = "20";
+  function graficoCarreras(animar) {
+    const cont = $("#g-carreras");
+    cont.innerHTML = "";
+    const todos = D.exploracion.carreras_por_piloto;
+    const datos = modoCarreras === "20" ? todos.slice(0, 20) : todos;
+    const W = cont.clientWidth; const fila = modoCarreras === "20" ? 22 : 15;
+    const m = { t: 8, r: 40, b: 26, l: W < 480 ? 104 : 140 };
+    const H = m.t + m.b + datos.length * fila;
+    const x = d3.scaleLinear().domain([0, d3.max(todos, (d) => d.n)]).nice().range([m.l, W - m.r]);
+    const y = d3.scaleBand().domain(datos.map((d) => d.piloto)).range([m.t, H - m.b]).padding(0.22);
+    const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
+      .attr("aria-label", "Carreras terminadas por piloto, 2010 a 2024");
+    svg.append("g").attr("class", "grilla").attr("transform", `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat("")).call((g) => g.select(".domain").remove());
+    svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5));
+    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickSize(0).tickPadding(8).tickFormat((n) => (W < 480 ? n.split(" ").slice(-1)[0] : n)))
+      .call((g) => g.select(".domain").remove()).selectAll("text").style("font-family", css("--f-texto")).style("font-size", fila > 18 ? "12px" : "10px");
+    const barras = svg.append("g").selectAll("rect").data(datos).enter().append("rect")
+      .attr("x", m.l).attr("y", (d) => y(d.piloto)).attr("height", y.bandwidth()).attr("rx", 1)
+      .attr("width", (d) => x(d.n) - m.l).attr("fill", (d) => EQ[d.equipo].color);
+    if (fila > 18) svg.append("g").selectAll("text").data(datos).enter().append("text")
+      .attr("x", (d) => x(d.n) + 5).attr("y", (d) => y(d.piloto) + y.bandwidth() / 2).attr("dy", "0.35em")
+      .attr("fill", css("--niebla")).style("font-family", css("--f-tiempo")).style("font-size", "11px").text((d) => d.n);
+    const tip = tooltip(cont); const esc = cont.clientWidth / W;
+    barras.on("pointerenter", (ev, d) => tip.mostrar(`<div class="t" style="color:${EQ[d.equipo].color}">${d.piloto}</div>${d.n} carreras terminadas<br><span class="etiqueta">Equipo con más carreras: ${EQ[d.equipo].nombre}</span>`, x(d.n) * esc, y(d.piloto) * esc))
+      .on("pointerleave", () => tip.ocultar());
+    if (animar) barras.attr("width", 0).transition().delay((d, i) => i * 18).duration(700).ease(d3.easeCubicOut).attr("width", (d) => x(d.n) - m.l);
+  }
+
+  function graficoHisto() {
+    const cont = $("#g-histo");
+    cont.innerHTML = "";
+    const valores = D.exploracion.carreras_por_piloto.map((d) => d.n);
+    const r = D.exploracion.carreras_por_piloto_resumen;
+    const W = cont.clientWidth; const H = Math.max(220, Math.min(280, W * 0.6));
+    const m = { t: 30, r: 12, b: 38, l: 36 };
+    const x = d3.scaleLinear().domain([0, 280]).range([m.l, W - m.r]);
+    const bins = d3.bin().domain([0, 280]).thresholds(d3.range(0, 281, 20))(valores);
+    const y = d3.scaleLinear().domain([0, d3.max(bins, (b) => b.length)]).nice().range([H - m.b, m.t]);
+    const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
+      .attr("aria-label", "Histograma de carreras terminadas por piloto");
+    svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([0, 40, 80, 120, 160, 200, 240, 280]));
+    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4));
+    svg.append("text").attr("class", "titulo-eje").attr("x", (m.l + W - m.r) / 2).attr("y", H - 4).attr("text-anchor", "middle").text("Carreras terminadas (cantidad de pilotos por rango)");
+    svg.append("g").selectAll("rect").data(bins).enter().append("rect")
+      .attr("x", (b) => x(b.x0) + 1).attr("width", (b) => Math.max(0, x(b.x1) - x(b.x0) - 2))
+      .attr("y", (b) => y(b.length)).attr("height", (b) => y(0) - y(b.length)).attr("fill", css("--celeste")).attr("fill-opacity", 0.75);
+    [[r["50%"], "mediana " + nf0.format(r["50%"]), css("--amarillo"), "end"], [r.mean, "media " + nf1.format(r.mean), css("--morado"), "start"]].forEach(([v, t, c, anc]) => {
+      svg.append("line").attr("x1", x(v)).attr("x2", x(v)).attr("y1", m.t - 6).attr("y2", H - m.b).attr("stroke", c).attr("stroke-width", 2).attr("stroke-dasharray", "4 3");
+      svg.append("text").attr("x", x(v) + (anc === "end" ? -5 : 5)).attr("y", m.t - 10).attr("text-anchor", anc).attr("fill", c)
+        .style("font-family", css("--f-tiempo")).style("font-size", "12px").text(t);
+    });
+  }
+
   /* ---------------- Vuelta 2: peso del auto ---------------- */
   function graficoPeso(animar) {
     const cont = $("#g-peso");
@@ -560,12 +692,14 @@
 
   /* ---------------- Arranque ---------------- */
   function dibujarGraficos(animar) {
+    graficoTerminaron(animar); graficoCarreras(animar); graficoHisto();
     graficoPeso(animar); graficoDispersion(animar); graficoBrecha(animar);
   }
 
   hero(false);
   estelas();
   barra();
+  formacion();
   torre();
   duelos();
   filtrosEquipo();
@@ -573,6 +707,8 @@
   dibujarGraficos(false);
 
   // Animaciones al entrar en pantalla
+  alEntrar($("#g-terminaron"), (est) => { if (!est) graficoTerminaron(true); });
+  alEntrar($("#g-carreras"), (est) => { if (!est) graficoCarreras(true); });
   alEntrar($("#g-peso"), (est) => { if (!est) graficoPeso(true); });
   alEntrar($("#g-dispersion"), (est) => { if (!est) graficoDispersion(true); });
   alEntrar($("#g-brecha"), (est) => { if (!est) graficoBrecha(true); });
