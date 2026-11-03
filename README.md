@@ -6,7 +6,8 @@ Repositorio para todo aquello referido al Trabajo Practico Grupal de Laboratorio
 - **Notebook:** `TP_LMC_F1_Analysis.ipynb` (Google Colab). Descarga el dataset de Kaggle con `kagglehub` (`rohanrao/formula-1-world-championship-1950-2020`), así que no hace falta subirlo al repo.
 - **Gráficos:** `graficos/` (los tres que exporta el notebook con `plt.savefig()`).
 - **Informe académico:** `informe/informe.pdf` (fuente LaTeX en `informe/informe.tex`; para compilarlo: `cd informe && pdflatex informe.tex`).
-- **Presentación:** `presentacion/Presentacion_TP_F1.pdf`, con la estructura y el guion en `presentacion/estructura_y_guion.md`.
+- **Presentación:** `presentacion/Presentacion_TP_F1.pdf` y `presentacion/Presentacion_TP_F1.pptx` (PowerPoint, con el guion en las notas de cada diapositiva). Estructura y guion en `presentacion/estructura_y_guion.md`; las diapositivas sueltas en PNG, para Canva, en `presentacion/png/`.
+- **PDF de entrega para el campus:** `entrega/entrega.pdf` (completar los números de registro en `entrega/entrega.tex`).
 - **Sitio web:** `docs/` (ver abajo).
 
 **Resultado:** entre 2010 y 2024 el auto pesa unas 2,4 veces más que el piloto en el resultado de una carrera (4,75 contra 1,97 posiciones), y es así en las 15 temporadas.
