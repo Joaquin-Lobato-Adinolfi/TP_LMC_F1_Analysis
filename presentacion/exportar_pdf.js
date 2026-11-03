@@ -6,7 +6,7 @@ const { chromium } = require('playwright');
 (async () => {
   const dir = __dirname;
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 2 });
   await page.goto('file://' + path.join(dir, 'presentacion.html'));
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({ path: path.join(dir, 'Presentacion_TP_F1.pdf'), width: '1280px', height: '720px', printBackground: true });

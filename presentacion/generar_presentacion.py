@@ -42,6 +42,15 @@ EQUIPOS = cargar_js(RAIZ / "docs/js/equipos.js", "F1_EQUIPOS")
 RES = DATOS["resumen"]
 
 
+_PLANTILLA = (RAIZ / "docs/js/auto.js").read_text(encoding="utf-8")
+_PLANTILLA = _PLANTILLA[_PLANTILLA.index("`") + 1:_PLANTILLA.index("`;")]
+
+
+def auto(color, ident, acento="#F5F6F8"):
+    """Auto de F1 visto desde arriba (el mismo dibujo que usa la web)."""
+    return _PLANTILLA.replace("__C__", color).replace("__A__", acento).replace("__ID__", ident)
+
+
 def miles(n):
     return f"{n:,}".replace(",", ".")
 
@@ -52,7 +61,7 @@ def miles(n):
 
 def grafico_efectos(ancho=760, alto=400):
     """Líneas: efecto típico del auto y del piloto sobre la posición final, por temporada."""
-    m = dict(izq=44, der=16, arr=30, aba=34)
+    m = dict(izq=44, der=26, arr=30, aba=34)
     serie = DATOS["efectos"]
     y1 = 6.5
     x0, x1 = 2010, 2024
@@ -73,6 +82,13 @@ def grafico_efectos(ancho=760, alto=400):
         partes.append(f'<text x="{px(a)}" y="{alto - 10}" class="eje" text-anchor="middle">{str(a)[2:]}</text>')
     partes.append(f'<line x1="{px(2021)}" x2="{px(2021)}" y1="{m["arr"]}" y2="{alto - m["aba"]}" stroke="#2BD47D" stroke-opacity=".5" stroke-dasharray="4 4"/>')
     partes.append(f'<text x="{px(2021) - 6}" y="{py(0.35)}" class="nota" text-anchor="end" style="fill:#2BD47D">tope presupuestario</text>')
+    banda = " ".join(f"{px(d['year']):.1f},{py(d['auto']):.1f}" for d in serie) + " " + \
+        " ".join(f"{px(d['year']):.1f},{py(d['piloto']):.1f}" for d in reversed(serie))
+    partes.append(f'<defs><linearGradient id="banda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{AUTO}" stop-opacity=".28"/>'
+                  f'<stop offset="1" stop-color="{PILOTO}" stop-opacity=".12"/></linearGradient></defs>')
+    partes.append(f'<polygon points="{banda}" fill="url(#banda)"/>')
+    u = serie[-1]
+    partes.append(f'<path d="M{px(2024) + 2} {py(u["auto"])} h6 V{py(u["piloto"])} h-6" fill="none" stroke="{TEXTO}" stroke-width="1.5"/>')
     for clave, color in (("auto", AUTO), ("piloto", PILOTO)):
         pts = " ".join(f"{px(d['year']):.1f},{py(d[clave]):.1f}" for d in serie)
         partes.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="4" stroke-linejoin="round"/>')
@@ -190,6 +206,9 @@ SLIDES.append(f"""
     <p class="bajada">Qué pesa más en el resultado de una carrera de Fórmula 1, 2010–2024</p>
   </div>
   <div class="semaforo"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="velocidad"><i style="top:18%;width:62%"></i><i style="top:34%;width:78%"></i><i style="top:50%;width:90%"></i><i style="top:66%;width:74%"></i><i style="top:82%;width:58%"></i></div>
+  <div class="auto-portada">{auto(AUTO, "portada", "#F5F6F8")}</div>
+  <div class="kerb"></div>
   <div class="portada-pie">
     <div><b>Agustín Mier Torre</b><b>Joaquín Lobato Adinolfi</b></div>
     <div class="cifras">
@@ -212,6 +231,10 @@ SLIDES.append(marco(2, "La pregunta", f"""
       <div><b class="a">Auto</b> = posición media de los dos pilotos de la escudería en cada carrera, analizada por escudería y año.</div>
       <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que maneja el mismo auto en la misma carrera.</div>
     </div>
+    <div class="tira">
+      <span><b>{RES['carreras']}</b>Grandes Premios</span><span><b>{miles(RES['pares'])}</b>duelos entre compañeros</span>
+      <span><b>{RES['escuderias']}</b>escuderías</span><span><b>3</b>reglamentos</span>
+    </div>
   </div>"""))
 
 SLIDES.append(marco(3, "Datos y método", f"""
@@ -219,9 +242,9 @@ SLIDES.append(marco(3, "Datos y método", f"""
     <div class="metodo-izq">
       <h2>El compañero de equipo es el <em class="p">grupo de control</em></h2>
       <div class="garage">
-        <div class="auto-box"><div class="casco" style="background:{PILOTO}"></div><span>Piloto A</span></div>
+        <div class="auto-box">{auto("#3671C6", "ga", "#F5C518")}<span>Piloto A</span></div>
         <div class="igual">mismo auto<br><b>=</b><br>misma carrera</div>
-        <div class="auto-box"><div class="casco" style="background:#C77DFF"></div><span>Piloto B</span></div>
+        <div class="auto-box">{auto("#3671C6", "gb", "#F5C518")}<span>Piloto B</span></div>
       </div>
       <div class="ecuacion">posición = media de la carrera − <b class="a">auto</b> − <b class="p">piloto</b></div>
       <ul class="pasos">
@@ -289,8 +312,8 @@ SLIDES.append(marco(7, "Conclusión", f"""
   <div class="conclusion">
     <h2>Pesa más el <em class="a">auto</em>. El <em class="p">piloto</em> decide dentro de lo que el auto permite.</h2>
     <div class="medidor">
-      <div class="fila-medidor"><span>Efecto del auto</span><div class="m-auto" style="width:{RES['efecto_auto'] / 6 * 100:.1f}%">{coma(RES['efecto_auto'], 2)} posiciones</div></div>
-      <div class="fila-medidor"><span>Efecto del piloto</span><div class="m-piloto" style="width:{RES['efecto_piloto'] / 6 * 100:.1f}%">{coma(RES['efecto_piloto'], 2)}</div></div>
+      <div class="fila-medidor"><span>Efecto del auto</span><div class="m-auto" style="width:{RES['efecto_auto'] / 6.6 * 100:.1f}%">{coma(RES['efecto_auto'], 2)} posiciones<span class="m-coche">{auto(AUTO, "ma")}</span></div></div>
+      <div class="fila-medidor"><span>Efecto del piloto</span><div class="m-piloto" style="width:{RES['efecto_piloto'] / 6.6 * 100:.1f}%">{coma(RES['efecto_piloto'], 2)}<span class="m-coche">{auto(PILOTO, "mp", "#0B0D12")}</span></div></div>
     </div>
     <div class="col2">
       <div>
@@ -317,6 +340,7 @@ SLIDES.append(f"""
   <div class="bandera"></div>
   <div class="cuadros"></div>
   <div class="cierre-texto">
+    <div class="auto-cierre">{auto(AUTO, "cierre")}</div>
     <div class="kicker">Vuelta 08/08 · Bandera a cuadros</div>
     <h1>¿Preguntas?</h1>
     <div class="ia">
@@ -389,16 +413,16 @@ b.p {{ color: {PILOTO}; }}
 .cifras b {{ display: block; font-family: 'JetBrains Mono'; font-size: 44px; color: {TEXTO}; letter-spacing: -.02em; }}
 
 /* pregunta */
-.pregunta h2 {{ font-size: 56px; max-width: 1000px; margin-top: 8px; }}
+.pregunta h2 {{ font-size: 48px; max-width: 1000px; margin-top: 0; }}
 .definiciones {{ display: flex; gap: 22px; margin-top: 22px; }}
 .definiciones div {{ flex: 1; font-size: 17px; line-height: 1.4; color: #C4C8D2; padding: 14px 18px; background: #12151D; border-left: 4px solid {LINEA}; border-radius: 0 10px 10px 0; }}
 .definiciones div:first-child {{ border-color: {AUTO}; }} .definiciones div:last-child {{ border-color: {PILOTO}; }}
 .definiciones b {{ font-family: 'Inter Display'; font-weight: 800; font-style: italic; font-size: 19px; }}
-.tarjetas {{ display: flex; gap: 22px; margin-top: 44px; }}
-.tarjeta {{ flex: 1; background: #151821; border: 1px solid {LINEA}; border-radius: 16px; padding: 24px 26px 26px; min-height: 0; position: relative; overflow: hidden; }}
+.tarjetas {{ display: flex; gap: 22px; margin-top: 22px; }}
+.tarjeta {{ flex: 1; background: #151821; border: 1px solid {LINEA}; border-radius: 16px; padding: 18px 24px 20px; min-height: 0; position: relative; overflow: hidden; }}
 .tarjeta::before {{ content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, {AUTO}, {PILOTO}); }}
 .tarjeta .num {{ font-family: 'JetBrains Mono'; color: {AUTO}; font-size: 40px; font-weight: 800; }}
-.tarjeta h3 {{ font-size: 26px; margin: 16px 0 10px; font-weight: 700; }}
+.tarjeta h3 {{ font-size: 24px; margin: 8px 0 8px; font-weight: 700; }}
 .tarjeta p {{ color: #AEB3BF; font-size: 17px; line-height: 1.45; }}
 
 /* método */
@@ -406,7 +430,7 @@ b.p {{ color: {PILOTO}; }}
 .metodo-izq {{ flex: 1.55; }}
 .metodo-izq h2 {{ font-size: 40px; }}
 .garage {{ display: flex; align-items: center; gap: 22px; margin: 22px 0 14px; }}
-.auto-box {{ width: 170px; height: 92px; border-radius: 14px; background: #151821; border: 1px solid {LINEA};
+.auto-box {{ width: 250px; height: 124px; flex-direction: column; justify-content: center; gap: 2px !important; padding: 6px 14px !important; border-radius: 14px; background: #151821; border: 1px solid {LINEA};
   display: flex; align-items: center; gap: 14px; padding: 0 20px; font-weight: 600; font-size: 18px; }}
 .casco {{ width: 34px; height: 34px; border-radius: 50% 50% 40% 40%; }}
 .igual {{ text-align: center; font-family: 'JetBrains Mono'; font-size: 13px; color: {TENUE}; line-height: 1.5; text-transform: uppercase; letter-spacing: .08em; }}
@@ -464,6 +488,21 @@ b.p {{ color: {PILOTO}; }}
 .cuatro {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; padding: 16px 14px 10px; }}
 .tray .res-texto {{ flex: 0 0 330px; }}
 .tray .res-texto h2 {{ font-size: 32px; }}
+
+.velocidad {{ position: absolute; right: 0; top: 300px; width: 760px; height: 210px; }}
+.velocidad i {{ position: absolute; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFFFFF55 70%, transparent); }}
+.auto-portada {{ position: absolute; right: 90px; top: 318px; width: 520px; height: 200px; transform: rotate(-4deg);
+  filter: drop-shadow(0 26px 30px #000C) drop-shadow(0 0 40px {AUTO}44); }}
+.auto-portada svg, .auto-box svg, .m-coche svg, .auto-cierre svg {{ width: 100%; height: 100%; display: block; }}
+.kerb {{ position: absolute; left: 22px; right: 0; bottom: 0; height: 14px;
+  background: repeating-linear-gradient(90deg, {AUTO} 0 46px, #F2F3F5 46px 92px); opacity: .9; }}
+.tira {{ display: flex; gap: 0; margin-top: 18px; border-top: 1px solid {LINEA}; border-bottom: 1px solid {LINEA}; }}
+.tira span {{ flex: 1; padding: 10px 20px; font-size: 13px; color: {TENUE}; text-transform: uppercase; letter-spacing: .1em; border-left: 1px solid {LINEA}; }}
+.tira span:first-child {{ border-left: 0; padding-left: 0; }}
+.tira b {{ display: block; font-family: 'JetBrains Mono'; font-size: 28px; color: {TEXTO}; letter-spacing: -.02em; margin-bottom: 2px; }}
+.m-coche {{ position: absolute; right: -96px; top: -6px; width: 150px; height: 58px; }}
+.fila-medidor > div {{ position: relative; }}
+.auto-cierre {{ position: absolute; right: -60px; top: 150px; width: 300px; height: 115px; transform: rotate(-12deg); filter: drop-shadow(0 18px 22px #000C); }}
 
 /* conclusión */
 .conclusion h2 {{ font-size: 50px; max-width: 1080px; margin-top: 16px; }}

@@ -24,7 +24,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAFICOS = os.path.join(RAIZ, "graficos")
 SALIDA = os.path.join(RAIZ, "avance", "Avance_TP_F1.pdf")
 
-VERSION = "v5"
+VERSION = "v6"
 FECHA = date(2026, 11, 3)
 
 # ---------------------------------------------------------------------------
@@ -50,8 +50,8 @@ ESTADO = [
      "informe/informe.tex e informe/informe.pdf: 5 páginas sin portada, con resumen, resultados (3 figuras y una "
      "tabla), conclusiones, limitaciones y reflexión metodológica. Falta subirlo a Overleaf y poner el link."),
     ("Presentación con IA (6–10 diapos.)", "parcial",
-     "presentacion/Presentacion_TP_F1.pdf: 8 diapositivas con los resultados finales, y el guion en "
-     "presentacion/estructura_y_guion.md. Falta pasarla a Canva o PowerPoint Copilot, como pide la consigna."),
+     "Diseño final en presentacion/Presentacion_TP_F1.pdf y .pptx (PowerPoint, con el guion en las notas), "
+     "8 diapositivas con los resultados finales. Falta darle la pasada con Copilot o Canva, como pide la consigna."),
     ("Complemento opcional: sitio web", "parcial",
      "docs/ con los cálculos del notebook final y los tres gráficos (efectos por año, duelos, trayectorias). "
      "Falta activar GitHub Pages."),
@@ -163,12 +163,12 @@ PENDIENTES = [
     ("Alta", "Joaquín: correcciones del notebook (revisar duplicados, texto de Lotterer, celdas de texto antes de las "
              "celdas 189 y 190, signos de la fórmula en la celda 171). Detalle en notebook/correcciones_notebook.md "
              "de los archivos del proyecto."),
-    ("Alta", "Presentación: pasarla a Canva o PowerPoint Copilot con el guion y los gráficos de graficos/, y ensayar (~6 min)."),
+    ("Alta", "Presentación: abrir el .pptx en PowerPoint y darle una pasada con Copilot (o importarlo en Canva), y ensayar (~6 min)."),
+    ("Alta", "PDF de entrega para el campus: completar los números de registro en entrega/entrega.tex y compilarlo."),
     ("Alta", "Informe: subir informe.tex y los gráficos a Overleaf y poner el link en el README."),
     ("Media", "Activar GitHub Pages (Settings → Pages → rama main, carpeta /docs) y poner el link público en el README."),
     ("Media", "Revisión intragrupal del informe: cada uno lo contrasta con el notebook."),
     ("Media", "Video (complemento opcional): se arma después."),
-    ("Baja", "PDF de entrega para el campus: portada con nombres, registro, usuarios de GitHub y links."),
 ]
 
 # Entregables en curso: (título, archivo, [(parte, estado, detalle)])
@@ -192,12 +192,14 @@ ENTREGABLES = [
         ("6 Resultado 3", "ok", "Talento sostenido de cuatro campeones (gráfico 3) · Joaquín (0:50)."),
         ("7 Conclusión", "ok", "Respuesta, barras 4,75 contra 1,97 y limitaciones · Agustín (0:50)."),
         ("8 Cierre", "ok", "Uso de IA y links · Joaquín (0:25)."),
-        ("Canva / Copilot", "falta", "La consigna pide hacerla con una de esas herramientas."),
+        ("PowerPoint", "ok", "Presentacion_TP_F1.pptx con el guion en las notas."),
+        ("Canva / Copilot", "falta", "La consigna pide hacerla con una de esas herramientas: abrir el .pptx y darle una pasada."),
     ]),
     ("Sitio web", "docs/index.html", [
         ("Largada y vuelta 0", "ok", "Intro animada y exploración y filtros del notebook."),
         ("Auto vs piloto", "ok", "Efecto del auto y del piloto por año (gráfico 1)."),
         ("Duelos y trayectorias", "ok", "Ranking de duelos (gráfico 2) y trayectorias de cuatro campeones (gráfico 3)."),
+        ("Autos", "ok", "Dibujo nuevo de un F1 2022 visto desde arriba (js/auto.js), también usado en la presentación."),
         ("Espejo, brecha y simulador", "ok", "Piloto contra compañero (r = 0,92), distancia entre compañeros y \u201ccambio de asiento\u201d."),
         ("Publicación", "falta", "Activar GitHub Pages."),
     ]),
@@ -219,6 +221,8 @@ CAMBIOS = [
                          "en PDF, presentación y web con las cifras y los tres gráficos finales, sin marcas de provisorio. "
                          "Corrige las tablas de datos con los tamaños del dataset que usa el notebook. Suma las correcciones "
                          "pendientes del notebook."),
+    ("03/11/2026", "v6", "Diseño final de la presentación (autos de F1, franjas de pianito, banda entre curvas) y versión "
+                         "PowerPoint con el guion en las notas. Autos nuevos en la web. Suma el PDF de entrega para el campus."),
 ]
 
 # ---------------------------------------------------------------------------

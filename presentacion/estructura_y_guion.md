@@ -6,7 +6,7 @@
 
 Formato pedido por la consigna: 6 a 10 diapositivas, hechas con Canva (Magic Design / Canva IA) o PowerPoint con Copilot, para una exposición de 5 a 7 minutos (10 minutos en total con preguntas). El PDF o el link de la presentación se sube al repositorio.
 
-**Versión en PDF:** [`Presentacion_TP_F1.pdf`](Presentacion_TP_F1.pdf), generada con `python3 presentacion/generar_presentacion.py` y `node presentacion/exportar_pdf.js`. Los gráficos se dibujan con los datos de `docs/data/f1_data.js`, que reproduce los cálculos del notebook final. Los gráficos del notebook, para insertar en Canva, están en `graficos/`.
+**Versión en PDF:** [`Presentacion_TP_F1.pdf`](Presentacion_TP_F1.pdf), generada con `python3 presentacion/generar_presentacion.py` y `node presentacion/exportar_pdf.js --png presentacion/png`. **Versión PowerPoint:** [`Presentacion_TP_F1.pptx`](Presentacion_TP_F1.pptx) (`python3 presentacion/exportar_pptx.py`), con este guion en las notas de cada diapositiva, para abrirla en PowerPoint y terminarla con Copilot. Los gráficos se dibujan con los datos de `docs/data/f1_data.js`, que reproduce los cálculos del notebook final. Los gráficos del notebook, para insertar en Canva, están en `graficos/`.
 
 Son **8 diapositivas** y unos **6 minutos** de guion. Los turnos de habla están repartidos entre Agustín (A) y Joaquín (J), porque tienen que estar los dos conectados.
 

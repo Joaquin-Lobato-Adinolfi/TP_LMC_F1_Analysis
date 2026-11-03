@@ -1,0 +1,52 @@
+% PDF de entrega para el campus (lo pide la consigna: portada del grupo + links de la Parte 3).
+% Completar los números de registro y compilar: cd entrega && pdflatex entrega.tex
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\registro}[1]{#1}
+\pagestyle{empty}
+\begin{document}
+\begin{center}
+{\large Universidad de Buenos Aires · Facultad de Ciencias Económicas\par}
+{\normalsize Laboratorio de Métodos Cuantitativos Aplicados a la Gestión · 2do Cuatrimestre 2026\par}
+\vspace{2.2cm}
+{\Huge\bfseries ¿Piloto o auto?\par}
+\vspace{0.4cm}
+{\Large Qué pesa más en el resultado de una carrera de Fórmula 1, 2010--2024\par}
+\vspace{0.3cm}
+{\large Trabajo Práctico Grupal\par}
+\vspace{2cm}
+\begin{tabular}{lll}
+\toprule
+\textbf{Integrante} & \textbf{N.º de registro} & \textbf{Usuario de GitHub} \\
+\midrule
+Agustín Mier Torre      & \registro{\rule{3cm}{0.4pt}} & \texttt{agusmiertorre} \\
+Joaquín Lobato Adinolfi & \registro{\rule{3cm}{0.4pt}} & \texttt{Joaquin-Lobato-Adinolfi} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{1.6cm}
+\noindent\textbf{Repositorio del grupo}\\
+\url{https://github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis}
+
+\vspace{0.6cm}
+\noindent\textbf{Parte 3: presentación y complemento}
+\begin{itemize}
+  \item Presentación (PDF): \url{https://github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis/blob/main/presentacion/Presentacion_TP_F1.pdf}
+  \item Presentación (PowerPoint): \url{https://github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis/blob/main/presentacion/Presentacion_TP_F1.pptx}
+  \item Sitio web: \url{https://joaquin-lobato-adinolfi.github.io/TP_LMC_F1_Analysis/}
+\end{itemize}
+
+\vspace{0.6cm}
+\noindent\textbf{Otros entregables en el repositorio}
+\begin{itemize}
+  \item Notebook: \texttt{TP\_LMC\_F1\_Analysis.ipynb} (descarga el dataset con \texttt{kagglehub}).
+  \item Informe académico: \texttt{informe/informe.pdf}.
+\end{itemize}
+\end{document}

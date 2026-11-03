@@ -49,22 +49,10 @@
     return `<span class="chapa" title="${e.nombre}" style="background:${e.color};color:${contraste(e.color)}">${e.sigla}</span>`;
   }
 
-  // Auto de F1 visto desde arriba, apuntando a la derecha
+  // Auto de F1 visto desde arriba (dibujo en js/auto.js), con un acento por equipo
+  const ACENTO = { "#3671C6": "#f5c518", "#E8002D": "#ffe14d", "#27F4D2": "#c9ccd3", "#FF8000": "#47c7fc" };
   function autoSVG(color, id) {
-    const g = "g" + id;
-    return `<svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="${color}"/><stop offset=".5" stop-color="${color}"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient></defs>
-      <rect x="4" y="9" width="15" height="52" rx="2" fill="#1a1d24"/><rect x="6" y="11" width="11" height="48" rx="1" fill="${color}"/>
-      <rect x="24" y="1" width="32" height="17" rx="5" fill="#0b0c0f"/><rect x="24" y="52" width="32" height="17" rx="5" fill="#0b0c0f"/>
-      <path d="M18 29 L46 22 L72 18 L118 20 L150 29 L190 32.5 L190 37.5 L150 41 L118 50 L72 52 L46 48 L18 41 Z" fill="url(#${g})"/>
-      <path d="M60 22 L112 21 L112 49 L60 48 Z" fill="#000" opacity=".18"/>
-      <ellipse cx="98" cy="35" rx="16" ry="6.5" fill="#07080a"/>
-      <circle cx="95" cy="35" r="5" fill="#f5c518"/>
-      <path d="M86 35 C 92 26, 104 26, 112 35 C 104 44, 92 44, 86 35 Z" fill="none" stroke="#2b2f38" stroke-width="2.5"/>
-      <rect x="138" y="3" width="26" height="15" rx="4" fill="#0b0c0f"/><rect x="138" y="52" width="26" height="15" rx="4" fill="#0b0c0f"/>
-      <rect x="182" y="8" width="11" height="54" rx="2" fill="${color}"/><rect x="188" y="8" width="5" height="54" rx="1" fill="#000" opacity=".35"/>
-    </svg>`;
+    return window.F1_AUTO(color, id, ACENTO[color] || "#f5f6f8");
   }
 
   // Animación al entrar en pantalla. El contenido queda visible si no hay IntersectionObserver.
