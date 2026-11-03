@@ -53,16 +53,16 @@ b.p { color: #3EE0FF; }
 .cifras b { display: block; font-family: 'JetBrains Mono'; font-size: 44px; color: #F2F3F5; letter-spacing: -.02em; }
 
 /* pregunta */
-.pregunta h2 { font-size: 56px; max-width: 1000px; margin-top: 8px; }
+.pregunta h2 { font-size: 48px; max-width: 1000px; margin-top: 0; }
 .definiciones { display: flex; gap: 22px; margin-top: 22px; }
 .definiciones div { flex: 1; font-size: 17px; line-height: 1.4; color: #C4C8D2; padding: 14px 18px; background: #12151D; border-left: 4px solid #262A36; border-radius: 0 10px 10px 0; }
 .definiciones div:first-child { border-color: #FF2D2D; } .definiciones div:last-child { border-color: #3EE0FF; }
 .definiciones b { font-family: 'Inter Display'; font-weight: 800; font-style: italic; font-size: 19px; }
-.tarjetas { display: flex; gap: 22px; margin-top: 44px; }
-.tarjeta { flex: 1; background: #151821; border: 1px solid #262A36; border-radius: 16px; padding: 24px 26px 26px; min-height: 0; position: relative; overflow: hidden; }
+.tarjetas { display: flex; gap: 22px; margin-top: 22px; }
+.tarjeta { flex: 1; background: #151821; border: 1px solid #262A36; border-radius: 16px; padding: 18px 24px 20px; min-height: 0; position: relative; overflow: hidden; }
 .tarjeta::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF2D2D, #3EE0FF); }
 .tarjeta .num { font-family: 'JetBrains Mono'; color: #FF2D2D; font-size: 40px; font-weight: 800; }
-.tarjeta h3 { font-size: 26px; margin: 16px 0 10px; font-weight: 700; }
+.tarjeta h3 { font-size: 24px; margin: 8px 0 8px; font-weight: 700; }
 .tarjeta p { color: #AEB3BF; font-size: 17px; line-height: 1.45; }
 
 /* método */
@@ -70,7 +70,7 @@ b.p { color: #3EE0FF; }
 .metodo-izq { flex: 1.55; }
 .metodo-izq h2 { font-size: 40px; }
 .garage { display: flex; align-items: center; gap: 22px; margin: 22px 0 14px; }
-.auto-box { width: 170px; height: 92px; border-radius: 14px; background: #151821; border: 1px solid #262A36;
+.auto-box { width: 250px; height: 124px; flex-direction: column; justify-content: center; gap: 2px !important; padding: 6px 14px !important; border-radius: 14px; background: #151821; border: 1px solid #262A36;
   display: flex; align-items: center; gap: 14px; padding: 0 20px; font-weight: 600; font-size: 18px; }
 .casco { width: 34px; height: 34px; border-radius: 50% 50% 40% 40%; }
 .igual { text-align: center; font-family: 'JetBrains Mono'; font-size: 13px; color: #8A90A0; line-height: 1.5; text-transform: uppercase; letter-spacing: .08em; }
@@ -129,6 +129,21 @@ b.p { color: #3EE0FF; }
 .tray .res-texto { flex: 0 0 330px; }
 .tray .res-texto h2 { font-size: 32px; }
 
+.velocidad { position: absolute; right: 0; top: 300px; width: 760px; height: 210px; }
+.velocidad i { position: absolute; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFFFFF55 70%, transparent); }
+.auto-portada { position: absolute; right: 90px; top: 318px; width: 520px; height: 200px; transform: rotate(-4deg);
+  filter: drop-shadow(0 26px 30px #000C) drop-shadow(0 0 40px #FF2D2D44); }
+.auto-portada svg, .auto-box svg, .m-coche svg, .auto-cierre svg { width: 100%; height: 100%; display: block; }
+.kerb { position: absolute; left: 22px; right: 0; bottom: 0; height: 14px;
+  background: repeating-linear-gradient(90deg, #FF2D2D 0 46px, #F2F3F5 46px 92px); opacity: .9; }
+.tira { display: flex; gap: 0; margin-top: 18px; border-top: 1px solid #262A36; border-bottom: 1px solid #262A36; }
+.tira span { flex: 1; padding: 10px 20px; font-size: 13px; color: #8A90A0; text-transform: uppercase; letter-spacing: .1em; border-left: 1px solid #262A36; }
+.tira span:first-child { border-left: 0; padding-left: 0; }
+.tira b { display: block; font-family: 'JetBrains Mono'; font-size: 28px; color: #F2F3F5; letter-spacing: -.02em; margin-bottom: 2px; }
+.m-coche { position: absolute; right: -96px; top: -6px; width: 150px; height: 58px; }
+.fila-medidor > div { position: relative; }
+.auto-cierre { position: absolute; right: -60px; top: 150px; width: 300px; height: 115px; transform: rotate(-12deg); filter: drop-shadow(0 18px 22px #000C); }
+
 /* conclusión */
 .conclusion h2 { font-size: 50px; max-width: 1080px; margin-top: 16px; }
 .medidor { margin: 30px 0 34px; font-family: 'JetBrains Mono'; font-weight: 800; font-size: 18px; letter-spacing: .04em; }
@@ -171,6 +186,72 @@ b.p { color: #3EE0FF; }
     <p class="bajada">Qué pesa más en el resultado de una carrera de Fórmula 1, 2010–2024</p>
   </div>
   <div class="semaforo"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="velocidad"><i style="top:18%;width:62%"></i><i style="top:34%;width:78%"></i><i style="top:50%;width:90%"></i><i style="top:66%;width:74%"></i><i style="top:82%;width:58%"></i></div>
+  <div class="auto-portada"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cuportada" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="goportada" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="caportada" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#caportada)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#goportada)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#goportada)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#goportada)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#goportada)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#FF2D2D"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cuportada)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#FF2D2D"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cuportada)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#F5F6F8" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#F5F6F8" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#F5F6F8" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#F5F6F8"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#FF2D2D"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cuportada)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#F5F6F8" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#FF2D2D"/>
+</svg></div>
+  <div class="kerb"></div>
   <div class="portada-pie">
     <div><b>Agustín Mier Torre</b><b>Joaquín Lobato Adinolfi</b></div>
     <div class="cifras">
@@ -199,6 +280,10 @@ b.p { color: #3EE0FF; }
       <div><b class="a">Auto</b> = posición media de los dos pilotos de la escudería en cada carrera, analizada por escudería y año.</div>
       <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que maneja el mismo auto en la misma carrera.</div>
     </div>
+    <div class="tira">
+      <span><b>305</b>Grandes Premios</span><span><b>2.209</b>duelos entre compañeros</span>
+      <span><b>23</b>escuderías</span><span><b>3</b>reglamentos</span>
+    </div>
   </div>
   <footer>
     <span>¿Piloto o auto? · F1 2010–2024</span>
@@ -217,9 +302,135 @@ b.p { color: #3EE0FF; }
     <div class="metodo-izq">
       <h2>El compañero de equipo es el <em class="p">grupo de control</em></h2>
       <div class="garage">
-        <div class="auto-box"><div class="casco" style="background:#3EE0FF"></div><span>Piloto A</span></div>
+        <div class="auto-box"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cuga" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="goga" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="caga" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#caga)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#goga)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#goga)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#goga)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#goga)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#3671C6"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cuga)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#3671C6"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cuga)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#F5C518" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#F5C518" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#F5C518" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#F5C518"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#3671C6"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cuga)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#F5C518" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#3671C6"/>
+</svg><span>Piloto A</span></div>
         <div class="igual">mismo auto<br><b>=</b><br>misma carrera</div>
-        <div class="auto-box"><div class="casco" style="background:#C77DFF"></div><span>Piloto B</span></div>
+        <div class="auto-box"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cugb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="gogb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="cagb" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#cagb)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#gogb)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#gogb)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#gogb)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#gogb)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#3671C6"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cugb)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#3671C6"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cugb)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#F5C518" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#F5C518" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#F5C518" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#F5C518"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#3671C6"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cugb)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#F5C518" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#3671C6"/>
+</svg><span>Piloto B</span></div>
       </div>
       <div class="ecuacion">posición = media de la carrera − <b class="a">auto</b> − <b class="p">piloto</b></div>
       <ul class="pasos">
@@ -265,7 +476,7 @@ b.p { color: #3EE0FF; }
       <p>El auto aleja a su equipo <b>4,75</b> posiciones del promedio de la carrera; el piloto se aleja <b>1,97</b> de su compañero.</p>
       <p>Pasa en <b>las 15 temporadas</b>: el cociente va de 2,0 (2021) a 3,3 (2011).</p>
     </div>
-    <div class="res-grafico"><svg viewBox="0 0 760 400" width="760" height="400"><text x="119.0" y="18" class="eje" text-anchor="middle">V8</text><text x="419.0" y="18" class="eje" text-anchor="middle">TURBO HÍBRIDO</text><text x="694.0" y="18" class="eje" text-anchor="middle">EFECTO SUELO</text><line x1="44" x2="744" y1="366.0" y2="366.0" stroke="#262A36"/><text x="34" y="370.0" class="eje" text-anchor="end">0</text><line x1="44" x2="744" y1="314.3076923076923" y2="314.3076923076923" stroke="#262A36"/><text x="34" y="318.3076923076923" class="eje" text-anchor="end">1</text><line x1="44" x2="744" y1="262.61538461538464" y2="262.61538461538464" stroke="#262A36"/><text x="34" y="266.61538461538464" class="eje" text-anchor="end">2</text><line x1="44" x2="744" y1="210.9230769230769" y2="210.9230769230769" stroke="#262A36"/><text x="34" y="214.9230769230769" class="eje" text-anchor="end">3</text><line x1="44" x2="744" y1="159.23076923076923" y2="159.23076923076923" stroke="#262A36"/><text x="34" y="163.23076923076923" class="eje" text-anchor="end">4</text><line x1="44" x2="744" y1="107.53846153846155" y2="107.53846153846155" stroke="#262A36"/><text x="34" y="111.53846153846155" class="eje" text-anchor="end">5</text><line x1="44" x2="744" y1="55.84615384615385" y2="55.84615384615385" stroke="#262A36"/><text x="34" y="59.84615384615385" class="eje" text-anchor="end">6</text><text x="44.0" y="390" class="eje" text-anchor="middle">10</text><text x="94.0" y="390" class="eje" text-anchor="middle">11</text><text x="144.0" y="390" class="eje" text-anchor="middle">12</text><text x="194.0" y="390" class="eje" text-anchor="middle">13</text><text x="244.0" y="390" class="eje" text-anchor="middle">14</text><text x="294.0" y="390" class="eje" text-anchor="middle">15</text><text x="344.0" y="390" class="eje" text-anchor="middle">16</text><text x="394.0" y="390" class="eje" text-anchor="middle">17</text><text x="444.0" y="390" class="eje" text-anchor="middle">18</text><text x="494.00000000000006" y="390" class="eje" text-anchor="middle">19</text><text x="544.0" y="390" class="eje" text-anchor="middle">20</text><text x="594.0" y="390" class="eje" text-anchor="middle">21</text><text x="644.0" y="390" class="eje" text-anchor="middle">22</text><text x="694.0" y="390" class="eje" text-anchor="middle">23</text><text x="744.0" y="390" class="eje" text-anchor="middle">24</text><line x1="594.0" x2="594.0" y1="30" y2="366" stroke="#2BD47D" stroke-opacity=".5" stroke-dasharray="4 4"/><text x="588.0" y="347.90769230769234" class="nota" text-anchor="end" style="fill:#2BD47D">tope presupuestario</text><polyline points="44.0,115.3 94.0,76.0 144.0,97.2 194.0,102.4 244.0,128.7 294.0,129.2 344.0,106.0 394.0,153.5 444.0,140.6 494.0,121.5 544.0,134.9 594.0,132.9 644.0,136.0 694.0,129.2 744.0,125.1" fill="none" stroke="#FF2D2D" stroke-width="4" stroke-linejoin="round"/><circle cx="44.0" cy="115.3" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="94.0" cy="76.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="144.0" cy="97.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="194.0" cy="102.4" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="244.0" cy="128.7" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="294.0" cy="129.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="344.0" cy="106.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="394.0" cy="153.5" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="444.0" cy="140.6" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="494.0" cy="121.5" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="544.0" cy="134.9" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="594.0" cy="132.9" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="644.0" cy="136.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="694.0" cy="129.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="744.0" cy="125.1" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><polyline points="44.0,258.5 94.0,277.6 144.0,243.5 194.0,268.3 244.0,269.9 294.0,281.2 344.0,278.6 394.0,284.3 444.0,278.1 494.0,266.8 544.0,255.4 594.0,248.7 644.0,261.6 694.0,261.6 744.0,250.7" fill="none" stroke="#3EE0FF" stroke-width="4" stroke-linejoin="round"/><circle cx="44.0" cy="258.5" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="94.0" cy="277.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="144.0" cy="243.5" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="194.0" cy="268.3" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="244.0" cy="269.9" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="294.0" cy="281.2" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="344.0" cy="278.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="394.0" cy="284.3" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="444.0" cy="278.1" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="494.0" cy="266.8" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="544.0" cy="255.4" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="594.0" cy="248.7" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="644.0" cy="261.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="694.0" cy="261.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="744.0" cy="250.7" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><text x="394.0" y="179.54461538461538" class="rotulo" style="fill:#FF2D2D" text-anchor="middle">auto</text><text x="394.0" y="310.32615384615383" class="rotulo" style="fill:#3EE0FF" text-anchor="middle">piloto</text></svg>
+    <div class="res-grafico"><svg viewBox="0 0 760 400" width="760" height="400"><text x="117.92857142857143" y="18" class="eje" text-anchor="middle">V8</text><text x="413.6428571428571" y="18" class="eje" text-anchor="middle">TURBO HÍBRIDO</text><text x="684.7142857142858" y="18" class="eje" text-anchor="middle">EFECTO SUELO</text><line x1="44" x2="734" y1="366.0" y2="366.0" stroke="#262A36"/><text x="34" y="370.0" class="eje" text-anchor="end">0</text><line x1="44" x2="734" y1="314.3076923076923" y2="314.3076923076923" stroke="#262A36"/><text x="34" y="318.3076923076923" class="eje" text-anchor="end">1</text><line x1="44" x2="734" y1="262.61538461538464" y2="262.61538461538464" stroke="#262A36"/><text x="34" y="266.61538461538464" class="eje" text-anchor="end">2</text><line x1="44" x2="734" y1="210.9230769230769" y2="210.9230769230769" stroke="#262A36"/><text x="34" y="214.9230769230769" class="eje" text-anchor="end">3</text><line x1="44" x2="734" y1="159.23076923076923" y2="159.23076923076923" stroke="#262A36"/><text x="34" y="163.23076923076923" class="eje" text-anchor="end">4</text><line x1="44" x2="734" y1="107.53846153846155" y2="107.53846153846155" stroke="#262A36"/><text x="34" y="111.53846153846155" class="eje" text-anchor="end">5</text><line x1="44" x2="734" y1="55.84615384615385" y2="55.84615384615385" stroke="#262A36"/><text x="34" y="59.84615384615385" class="eje" text-anchor="end">6</text><text x="44.0" y="390" class="eje" text-anchor="middle">10</text><text x="93.28571428571428" y="390" class="eje" text-anchor="middle">11</text><text x="142.57142857142856" y="390" class="eje" text-anchor="middle">12</text><text x="191.85714285714286" y="390" class="eje" text-anchor="middle">13</text><text x="241.14285714285714" y="390" class="eje" text-anchor="middle">14</text><text x="290.42857142857144" y="390" class="eje" text-anchor="middle">15</text><text x="339.7142857142857" y="390" class="eje" text-anchor="middle">16</text><text x="389.0" y="390" class="eje" text-anchor="middle">17</text><text x="438.2857142857143" y="390" class="eje" text-anchor="middle">18</text><text x="487.5714285714286" y="390" class="eje" text-anchor="middle">19</text><text x="536.8571428571429" y="390" class="eje" text-anchor="middle">20</text><text x="586.1428571428571" y="390" class="eje" text-anchor="middle">21</text><text x="635.4285714285714" y="390" class="eje" text-anchor="middle">22</text><text x="684.7142857142858" y="390" class="eje" text-anchor="middle">23</text><text x="734.0" y="390" class="eje" text-anchor="middle">24</text><line x1="586.1428571428571" x2="586.1428571428571" y1="30" y2="366" stroke="#2BD47D" stroke-opacity=".5" stroke-dasharray="4 4"/><text x="580.1428571428571" y="347.90769230769234" class="nota" text-anchor="end" style="fill:#2BD47D">tope presupuestario</text><defs><linearGradient id="banda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF2D2D" stop-opacity=".28"/><stop offset="1" stop-color="#3EE0FF" stop-opacity=".12"/></linearGradient></defs><polygon points="44.0,115.3 93.3,76.0 142.6,97.2 191.9,102.4 241.1,128.7 290.4,129.2 339.7,106.0 389.0,153.5 438.3,140.6 487.6,121.5 536.9,134.9 586.1,132.9 635.4,136.0 684.7,129.2 734.0,125.1 734.0,250.7 684.7,261.6 635.4,261.6 586.1,248.7 536.9,255.4 487.6,266.8 438.3,278.1 389.0,284.3 339.7,278.6 290.4,281.2 241.1,269.9 191.9,268.3 142.6,243.5 93.3,277.6 44.0,258.5" fill="url(#banda)"/><path d="M736.0 125.11384615384615 h6 V250.7261538461538 h-6" fill="none" stroke="#F2F3F5" stroke-width="1.5"/><polyline points="44.0,115.3 93.3,76.0 142.6,97.2 191.9,102.4 241.1,128.7 290.4,129.2 339.7,106.0 389.0,153.5 438.3,140.6 487.6,121.5 536.9,134.9 586.1,132.9 635.4,136.0 684.7,129.2 734.0,125.1" fill="none" stroke="#FF2D2D" stroke-width="4" stroke-linejoin="round"/><circle cx="44.0" cy="115.3" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="93.3" cy="76.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="142.6" cy="97.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="191.9" cy="102.4" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="241.1" cy="128.7" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="290.4" cy="129.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="339.7" cy="106.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="389.0" cy="153.5" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="438.3" cy="140.6" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="487.6" cy="121.5" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="536.9" cy="134.9" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="586.1" cy="132.9" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="635.4" cy="136.0" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="684.7" cy="129.2" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><circle cx="734.0" cy="125.1" r="5" fill="#0B0D12" stroke="#FF2D2D" stroke-width="2.5"/><polyline points="44.0,258.5 93.3,277.6 142.6,243.5 191.9,268.3 241.1,269.9 290.4,281.2 339.7,278.6 389.0,284.3 438.3,278.1 487.6,266.8 536.9,255.4 586.1,248.7 635.4,261.6 684.7,261.6 734.0,250.7" fill="none" stroke="#3EE0FF" stroke-width="4" stroke-linejoin="round"/><circle cx="44.0" cy="258.5" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="93.3" cy="277.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="142.6" cy="243.5" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="191.9" cy="268.3" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="241.1" cy="269.9" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="290.4" cy="281.2" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="339.7" cy="278.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="389.0" cy="284.3" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="438.3" cy="278.1" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="487.6" cy="266.8" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="536.9" cy="255.4" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="586.1" cy="248.7" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="635.4" cy="261.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="684.7" cy="261.6" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><circle cx="734.0" cy="250.7" r="5" fill="#0B0D12" stroke="#3EE0FF" stroke-width="2.5"/><text x="389.0" y="179.54461538461538" class="rotulo" style="fill:#FF2D2D" text-anchor="middle">auto</text><text x="389.0" y="310.32615384615383" class="rotulo" style="fill:#3EE0FF" text-anchor="middle">piloto</text></svg>
       <div class="leyenda"><span><i style="background:#FF2D2D"></i>Efecto del auto</span><span><i style="background:#3EE0FF"></i>Efecto del piloto</span><span style="color:#8A90A0">posiciones, por temporada</span></div>
     </div>
   </div>
@@ -411,8 +622,134 @@ b.p { color: #3EE0FF; }
   <div class="conclusion">
     <h2>Pesa más el <em class="a">auto</em>. El <em class="p">piloto</em> decide dentro de lo que el auto permite.</h2>
     <div class="medidor">
-      <div class="fila-medidor"><span>Efecto del auto</span><div class="m-auto" style="width:79.2%">4,75 posiciones</div></div>
-      <div class="fila-medidor"><span>Efecto del piloto</span><div class="m-piloto" style="width:32.8%">1,97</div></div>
+      <div class="fila-medidor"><span>Efecto del auto</span><div class="m-auto" style="width:72.0%">4,75 posiciones<span class="m-coche"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cuma" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="goma" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="cama" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#cama)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#goma)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#goma)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#goma)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#goma)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#FF2D2D"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cuma)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#FF2D2D"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cuma)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#F5F6F8" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#F5F6F8" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#F5F6F8" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#F5F6F8"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#FF2D2D"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cuma)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#F5F6F8" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#FF2D2D"/>
+</svg></span></div></div>
+      <div class="fila-medidor"><span>Efecto del piloto</span><div class="m-piloto" style="width:29.8%">1,97<span class="m-coche"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cump" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="gomp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="camp" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#camp)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#gomp)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#gomp)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#gomp)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#gomp)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#3EE0FF"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cump)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#3EE0FF"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cump)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#0B0D12" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#0B0D12" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#0B0D12" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#0B0D12"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#3EE0FF"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cump)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#0B0D12" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#3EE0FF"/>
+</svg></span></div></div>
     </div>
     <div class="col2">
       <div>
@@ -442,6 +779,70 @@ b.p { color: #3EE0FF; }
   <div class="bandera"></div>
   <div class="cuadros"></div>
   <div class="cierre-texto">
+    <div class="auto-cierre"><svg viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="cucierre" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+    <linearGradient id="gocierre" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3d45"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#2a2c33"/></linearGradient>
+    <radialGradient id="cacierre" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="130" cy="52" rx="122" ry="40" fill="url(#cacierre)"/>
+  <!-- piso -->
+  <path d="M40 30 L70 22 L160 24 L196 36 L196 64 L160 76 L70 78 L40 70 Z" fill="#101114"/>
+  <!-- suspensión -->
+  <g stroke="#2b2d33" stroke-width="2.2" stroke-linecap="round">
+    <path d="M58 16 L84 38 M58 84 L84 62 M56 16 L96 42 M56 84 L96 58"/>
+    <path d="M186 16 L170 40 M186 84 L170 60 M188 16 L200 44 M188 84 L200 56"/>
+  </g>
+  <!-- gomas traseras y delanteras -->
+  <g>
+    <rect x="38" y="4" width="38" height="20" rx="6" fill="url(#gocierre)"/><rect x="38" y="76" width="38" height="20" rx="6" fill="url(#gocierre)"/>
+    <rect x="170" y="6" width="32" height="17" rx="6" fill="url(#gocierre)"/><rect x="170" y="77" width="32" height="17" rx="6" fill="url(#gocierre)"/>
+    <g stroke="#e8c341" stroke-width="1.4" opacity=".9"><path d="M44 8.5 h26 M44 91.5 h26 M175 10 h22 M175 90 h22"/></g>
+  </g>
+  <!-- alerón trasero -->
+  <rect x="6" y="14" width="10" height="72" rx="2" fill="#15161a"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="#FF2D2D"/>
+  <rect x="9" y="17" width="16" height="66" rx="3" fill="url(#cucierre)"/>
+  <rect x="20" y="20" width="4" height="60" rx="1" fill="#000" opacity=".35"/>
+  <rect x="4" y="12" width="20" height="5" rx="1.5" fill="#1d1f24"/><rect x="4" y="83" width="20" height="5" rx="1.5" fill="#1d1f24"/>
+  <!-- carrocería: pontones, cubierta de motor y morro -->
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="#FF2D2D"/>
+  <path d="M30 42 C 44 40, 56 34, 72 27 C 90 20, 116 20, 136 26 C 148 30, 156 36, 166 41
+           L 214 45.5 C 226 46.5, 234 48, 236 50 C 234 52, 226 53.5, 214 54.5 L 166 59
+           C 156 64, 148 70, 136 74 C 116 80, 90 80, 72 73 C 56 66, 44 60, 30 58 Z" fill="url(#cucierre)"/>
+  <!-- entradas de aire de los pontones -->
+  <path d="M128 27 C 138 29, 146 33, 152 38 L 140 39 C 136 35, 132 31, 128 27 Z" fill="#07080a"/>
+  <path d="M128 73 C 138 71, 146 67, 152 62 L 140 61 C 136 65, 132 69, 128 73 Z" fill="#07080a"/>
+  <!-- franja de acento -->
+  <path d="M40 48.2 L 214 48.8 L 214 51.2 L 40 51.8 Z" fill="#F5F6F8" opacity=".95"/>
+  <path d="M84 30 C 100 26, 118 26, 130 30 L 126 33 C 114 30, 100 30, 86 33 Z" fill="#F5F6F8" opacity=".85"/>
+  <path d="M84 70 C 100 74, 118 74, 130 70 L 126 67 C 114 70, 100 70, 86 67 Z" fill="#F5F6F8" opacity=".85"/>
+  <!-- aleta de tiburón y toma de aire -->
+  <path d="M34 47 L 104 46 L 104 54 L 34 53 Z" fill="#000" opacity=".22"/>
+  <ellipse cx="108" cy="50" rx="9" ry="6" fill="#07080a"/>
+  <!-- cockpit, halo y casco -->
+  <path d="M118 42 C 128 40, 142 41, 150 45 L 150 55 C 142 59, 128 60, 118 58 Z" fill="#07080a"/>
+  <circle cx="130" cy="50" r="6.5" fill="#F5F6F8"/>
+  <path d="M126 46 a6.5 6.5 0 0 1 9 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+  <rect x="131" y="47.6" width="5" height="4.8" rx="1.6" fill="#0d0e11"/>
+  <path d="M116 43 C 128 39, 146 40, 156 50 C 146 60, 128 61, 116 57" fill="none" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 50 L 166 50" stroke="#2c2e35" stroke-width="3" stroke-linecap="round"/>
+  <!-- espejos -->
+  <rect x="146" y="33" width="6" height="4" rx="1.5" fill="#1a1b20"/><rect x="146" y="63" width="6" height="4" rx="1.5" fill="#1a1b20"/>
+  <!-- alerón delantero -->
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="#FF2D2D"/>
+  <path d="M226 8 H246 Q252 8 252 14 V86 Q252 92 246 92 H226 Q236 72 238 50 Q236 28 226 8 Z" fill="url(#cucierre)"/>
+  <path d="M232 10 Q241 30 243 50 Q241 70 232 90" fill="none" stroke="#07080a" stroke-width="1.6" opacity=".65"/>
+  <path d="M238 10 Q246 30 247 50 Q246 70 238 90" fill="none" stroke="#F5F6F8" stroke-width="1.5" opacity=".9"/>
+  <rect x="224" y="5" width="26" height="4" rx="1.5" fill="#1d1f24"/><rect x="224" y="91" width="26" height="4" rx="1.5" fill="#1d1f24"/>
+  <path d="M212 46 L 248 48.5 L 248 51.5 L 212 54 Z" fill="#FF2D2D"/>
+</svg></div>
     <div class="kicker">Vuelta 08/08 · Bandera a cuadros</div>
     <h1>¿Preguntas?</h1>
     <div class="ia">
