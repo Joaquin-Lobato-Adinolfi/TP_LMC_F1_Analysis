@@ -1,6 +1,6 @@
 """Exporta los datos que usa la web (docs/data/f1_data.js) a partir del dataset de Kaggle.
 
-Reproduce los mismos cálculos del notebook (secciones 3 a 5) y los guarda en un
+Reproduce los mismos cálculos del notebook final (exploración, filtros y análisis) y los guarda en un
 archivo JS (window.F1_DATA = {...}) para que la web funcione abriendo index.html
 directamente, sin servidor.
 
@@ -53,74 +53,78 @@ df["piloto"] = df["forename"] + " " + df["surname"]
 df["termino"] = df["status"].eq("Finished") | df["status"].str.match(r"^\+\d+ Laps?$")
 resumen["pct_terminaron"] = round(float(df["termino"].mean()) * 100, 1)
 
-quali = qualifying.merge(races[["raceId", "year"]], on="raceId").replace("\\N", np.nan)
-quali = quali.merge(drivers[["driverId", "forename", "surname"]], on="driverId")
-quali["piloto"] = quali["forename"] + " " + quali["surname"]
 
 
-def comparar_companeros(tabla, col):
-    t = tabla.dropna(subset=[col]).copy()
-    t["autos_equipo"] = t.groupby(["raceId", "constructorId"])[col].transform("size")
-    t = t[t["autos_equipo"] == 2].copy()
-    t["media_carrera"] = t.groupby("raceId")[col].transform("mean")
-    t["media_equipo"] = t.groupby(["raceId", "constructorId"])[col].transform("mean")
-    t["dif_vs_companero"] = t[col] - t["media_equipo"]
-    return t
+# ---------- Análisis del notebook final (secciones "Análisis" y "Final") ----------
+# Mismas cuentas que TP_LMC_F1_Analysis.ipynb: solo autos que terminaron y solo las
+# carreras en que terminaron los dos pilotos de la escudería (pares_finalizados).
+status_ok = status[status["status"].str.startswith("+") | (status["status"] == "Finished")]
+ca = results[results["statusId"].isin(status_ok["statusId"])][["raceId", "driverId", "constructorId", "positionOrder"]].copy()
+ca["year"] = ca["raceId"].map(dict(zip(races["raceId"], races["year"])))
+ca["piloto"] = ca["driverId"].map(dict(zip(drivers["driverId"], drivers["forename"] + " " + drivers["surname"])))
+pf = ca[ca.groupby(["raceId", "constructorId"])["driverId"].transform("size") == 2].copy()
+pf["team_mean"] = pf.groupby(["raceId", "constructorId"])["positionOrder"].transform("mean")
+pf["driver_measure"] = pf["team_mean"] - pf["positionOrder"]
+pf["won_duel"] = pf["driver_measure"] > 0
+pf["teammate_abs_dif"] = pf["driver_measure"].abs() * 2
+pf["race_mean"] = pf.groupby("raceId")["positionOrder"].transform("mean")
+pf["car_measure"] = pf["race_mean"] - pf["team_mean"]
+pf["c2"] = pf["car_measure"] ** 2
+pf["d2"] = pf["driver_measure"] ** 2
+pf["teammate_pos"] = 2 * pf["team_mean"] - pf["positionOrder"]
 
+resumen["pares"] = len(pf) // 2
+resumen["efecto_auto"] = round(float(pf["c2"].mean() ** 0.5), 2)
+resumen["efecto_piloto"] = round(float(pf["d2"].mean() ** 0.5), 2)
+resumen["ratio"] = round(resumen["efecto_auto"] / resumen["efecto_piloto"], 1)
 
-carrera = comparar_companeros(df[df["termino"]], "positionOrder")
-clasif = comparar_companeros(quali, "position")
-resumen["pares_carrera"] = len(carrera) // 2
-resumen["pares_clasificacion"] = len(clasif) // 2
+# Groupby por año: efecto del auto y del piloto (auto_vs_piloto del notebook)
+avp = pf.groupby("year")[["c2", "d2"]].mean()
+efectos = [{"year": int(y), "auto": round(float(r.c2 ** 0.5), 2), "piloto": round(float(r.d2 ** 0.5), 2),
+            "ratio": round(float((r.c2 / r.d2) ** 0.5), 2)} for y, r in avp.iterrows()]
 
+# Groupby por piloto: duelos ganados al compañero, mínimo 33 duelos (la mediana)
+MIN_DUELOS = 33
+resumen["min_duelos"] = MIN_DUELOS
+equipo_principal = (pf.groupby(["driverId", "constructorId"]).size().reset_index(name="n")
+                    .sort_values("n", ascending=False).drop_duplicates("driverId")
+                    .set_index("driverId")["constructorId"])
+equipos_piloto = pf.sort_values("raceId").groupby("driverId")["constructorId"].agg(lambda s: list(dict.fromkeys(s)))
+duelos = (pf.groupby(["driverId", "piloto"])
+          .agg(duelos=("won_duel", "size"), ganados=("won_duel", "sum"), pct=("won_duel", "mean"),
+               mean_dif=("driver_measure", "mean"), temporadas=("year", "nunique"))
+          .reset_index())
+duelos = duelos[duelos["duelos"] >= MIN_DUELOS].sort_values("pct", ascending=False)
 
-# ---------- Groupby 1: peso del auto por año ----------
-def descomponer(t, col):
-    t = t.assign(total=(t[col] - t["media_carrera"]) ** 2,
-                 auto=(t["media_equipo"] - t["media_carrera"]) ** 2)
-    g = t.groupby("year")[["total", "auto"]].sum()
-    return (g["auto"] / g["total"] * 100).round(1)
+# Groupby por año y piloto: duelos por temporada (gráfico 3 del notebook)
+duelos_anio = (pf.groupby(["year", "driverId", "constructorId"])
+               .agg(duelos=("won_duel", "size"), pct=("won_duel", "mean")).reset_index())
+duelos_anio = duelos_anio[duelos_anio["driverId"].isin(duelos["driverId"]) & (duelos_anio["duelos"] >= 5)]
 
+# Groupby por escudería y año: posición media del auto (escuderias_year)
+autos = (pf.groupby(["year", "constructorId"])
+         .agg(pos=("team_mean", "mean"), carreras=("raceId", "nunique")).reset_index())
+rango = autos.groupby("year")["pos"].agg(lambda s: s.max() - s.min())
+resumen["rango_autos"] = round(float(rango.mean()), 1)
+resumen["dif_companeros_media"] = round(float(pf["teammate_abs_dif"].mean()), 1)
+resumen["dif_companeros_mediana"] = float(pf["teammate_abs_dif"].median())
 
-peso = pd.DataFrame({"carrera": descomponer(carrera, "positionOrder"),
-                     "clasificacion": descomponer(clasif, "position")})
-tot = lambda t, col: ((t["media_equipo"] - t["media_carrera"]) ** 2).sum() / ((t[col] - t["media_carrera"]) ** 2).sum()
-resumen["auto_total_carrera"] = round(float(tot(carrera, "positionOrder")) * 100, 1)
-resumen["auto_total_clasificacion"] = round(float(tot(clasif, "position")) * 100, 1)
-
-# ---------- Groupby 2: duelos de clasificación por piloto ----------
-clasif["gano_duelo"] = clasif["dif_vs_companero"] < 0
-equipo_principal = (clasif.groupby(["piloto", "constructorId"]).size().reset_index(name="n")
-                    .sort_values("n", ascending=False).drop_duplicates("piloto")
-                    .set_index("piloto")["constructorId"])
-equipos_piloto = clasif.groupby("piloto")["constructorId"].agg(lambda s: list(dict.fromkeys(s)))
-duelos = (clasif.groupby("piloto")
-          .agg(duelos=("gano_duelo", "size"), pct=("gano_duelo", "mean"),
-               dif=("dif_vs_companero", "mean"), temporadas=("year", "nunique"),
-               driverId=("driverId", "first"))
-          .query("duelos >= 50").sort_values("pct", ascending=False).reset_index())
-
-# ---------- Groupby 3: nivel de cada auto por temporada ----------
-temporadas = (clasif.groupby(["year", "constructorId", "piloto", "driverId"])
-              .agg(pos_media=("position", "mean"), carreras=("raceId", "nunique"),
-                   duelos_ganados=("gano_duelo", "sum"))
+# Temporadas de cada piloto: su posición media contra la de su compañero (tabla temporadas)
+comp = pf[["raceId", "constructorId", "driverId", "piloto"]].rename(columns={"driverId": "compId", "piloto": "comp"})
+con_comp = pf.merge(comp, on=["raceId", "constructorId"])
+con_comp = con_comp[con_comp["driverId"] != con_comp["compId"]]
+comp_frecuente = (con_comp.groupby(["year", "constructorId", "driverId", "comp"]).size().reset_index(name="n")
+                  .sort_values("n", ascending=False).drop_duplicates(["year", "constructorId", "driverId"]))
+temporadas = (pf.groupby(["year", "constructorId", "driverId", "piloto"])
+              .agg(carreras=("raceId", "size"), pos=("positionOrder", "mean"), pos_comp=("teammate_pos", "mean"))
               .reset_index())
-temporadas = temporadas[temporadas["carreras"] >= 8]
-pares = temporadas.merge(temporadas[["year", "constructorId", "piloto", "pos_media", "carreras"]],
-                         on=["year", "constructorId"], suffixes=("", "_comp"))
-pares = pares[pares["piloto"] != pares["piloto_comp"]]
-pares = pares.sort_values("carreras_comp", ascending=False).drop_duplicates(["year", "constructorId", "piloto"])
-resumen["correlacion"] = round(float(pares["pos_media"].corr(pares["pos_media_comp"])), 2)
-resumen["temporadas_piloto"] = int(len(pares))
+temporadas = temporadas[temporadas["carreras"] >= 5].merge(
+    comp_frecuente[["year", "constructorId", "driverId", "comp"]], on=["year", "constructorId", "driverId"])
+resumen["correlacion"] = round(float(temporadas["pos"].corr(temporadas["pos_comp"])), 2)
+resumen["temporadas_piloto"] = int(len(temporadas))
 
-# Nivel del auto (posición media de clasificación del equipo) para el simulador
-autos = (clasif.groupby(["year", "constructorId"])
-         .agg(pos=("position", "mean"), carreras=("raceId", "nunique")).reset_index())
-autos = autos[autos["carreras"] >= 8]
-
-# ---------- Brecha entre compañeros (boxplot) ----------
-brecha = (clasif.groupby(["raceId", "constructorId", "year"])["position"]
-          .agg(lambda s: s.max() - s.min()).rename("brecha").reset_index())
+# Distancia entre compañeros por carrera (boxplot por temporada)
+brecha = pf.drop_duplicates(["raceId", "constructorId"])[["year", "teammate_abs_dif"]].rename(columns={"teammate_abs_dif": "brecha"})
 
 
 def caja(s):
@@ -140,18 +144,21 @@ ref = constructors.set_index("constructorId")["constructorRef"]
 
 data = {
     "resumen": resumen,
-    "peso_auto": [{"year": int(y), "carrera": float(r.carrera), "clasificacion": float(r.clasificacion)}
-                  for y, r in peso.iterrows()],
-    "duelos": [{"piloto": r.piloto, **pil(r.driverId), "duelos": int(r.duelos), "pct": round(r.pct * 100, 1),
-                "dif": round(r.dif, 2), "temporadas": int(r.temporadas),
-                "equipo": ref[equipo_principal[r.piloto]],
-                "equipos": list(dict.fromkeys(ref[c] for c in equipos_piloto[r.piloto]))}
+    "efectos": efectos,
+    "duelos": [{"piloto": r.piloto, **pil(r.driverId), "duelos": int(r.duelos), "ganados": int(r.ganados),
+                "pct": round(r.pct * 100, 1), "dif": round(-r.mean_dif, 2), "temporadas": int(r.temporadas),
+                "equipo": ref[equipo_principal[r.driverId]],
+                "equipos": list(dict.fromkeys(ref[c] for c in equipos_piloto[r.driverId]))}
                for r in duelos.itertuples()],
+    "duelos_anio": [{"year": int(r.year), "piloto": nombre_id, "equipo": ref[r.constructorId], "duelos": int(r.duelos),
+                     "pct": round(r.pct * 100, 1)}
+                    for r in duelos_anio.itertuples()
+                    for nombre_id in [info_pil.loc[r.driverId, "forename"] + " " + info_pil.loc[r.driverId, "surname"]]],
     "temporadas": [{"year": int(r.year), "equipo": ref[r.constructorId], "piloto": r.piloto, **pil(r.driverId),
-                    "pos": round(r.pos_media, 2), "carreras": int(r.carreras),
-                    "comp": r.piloto_comp, "pos_comp": round(r.pos_media_comp, 2)}
-                   for r in pares.itertuples()],
-    "autos": [{"year": int(r.year), "equipo": ref[r.constructorId], "pos": round(r.pos, 2)}
+                    "pos": round(r.pos, 2), "carreras": int(r.carreras),
+                    "comp": r.comp, "pos_comp": round(r.pos_comp, 2)}
+                   for r in temporadas.itertuples()],
+    "autos": [{"year": int(r.year), "equipo": ref[r.constructorId], "pos": round(r.pos, 2), "carreras": int(r.carreras)}
               for r in autos.itertuples()],
     "brecha": [{"year": int(y), **caja(g["brecha"])} for y, g in brecha.groupby("year")],
 }
@@ -200,6 +207,6 @@ exploracion = {
 data["exploracion"] = exploracion
 
 salida.parent.mkdir(parents=True, exist_ok=True)
-salida.write_text("// Generado por web/scripts/exportar_datos.py. No editar a mano.\n"
+salida.write_text("// Generado por docs/scripts/exportar_datos.py. No editar a mano.\n"
                   "window.F1_DATA = " + json.dumps(data, ensure_ascii=False) + ";\n", encoding="utf-8")
 print("OK ->", salida, "|", resumen)
