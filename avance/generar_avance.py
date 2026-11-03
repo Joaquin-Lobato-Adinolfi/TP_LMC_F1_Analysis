@@ -24,8 +24,8 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAFICOS = os.path.join(RAIZ, "graficos")
 SALIDA = os.path.join(RAIZ, "avance", "Avance_TP_F1.pdf")
 
-VERSION = "v4"
-FECHA = date(2026, 11, 2)
+VERSION = "v5"
+FECHA = date(2026, 11, 3)
 
 # ---------------------------------------------------------------------------
 # Contenido (editar acá)
@@ -35,185 +35,171 @@ PREGUNTA = ("¿Qué pesa más en el resultado de una carrera de Fórmula 1 (2010
             "el rendimiento del auto o el talento del piloto?")
 
 ENFOQUE = ("Comparamos <b>compañeros de equipo</b>: los dos pilotos de una escudería manejan el mismo "
-           "auto en la misma carrera. La diferencia entre ellos se atribuye al piloto; la diferencia "
-           "entre escuderías, al auto. El período 2010–2024 cubre tres eras de reglamento: motores V8 "
-           "(2010–13), turbo híbrido (2014–21) y efecto suelo con tope presupuestario (2022–24).")
+           "auto en la misma carrera. En cada carrera, la posición de cada piloto se separa en el aporte del "
+           "auto (cuánto se aleja su equipo del promedio de la carrera) y el del piloto (cuánto se aleja de la "
+           "media de su equipo). El período 2010–2024 cubre tres eras de reglamento: motores V8 "
+           "(2010–13), turbo híbrido (2014–21) y efecto suelo (2022–24), con tope presupuestario desde 2021.")
 
 # (entregable, estado, detalle)  estado: "ok" | "parcial" | "falta"
 ESTADO = [
-    ("Notebook Colab (.ipynb)", "parcial",
-     "Joaquín lo rehace a mano (4 commits, 27–30/10): exploración de las 6 tablas 2010–2024, pregunta con motivación, "
-     "filtro de autos que terminaron (5.280 de 6.436), tablas carreras_analisis y qualifying_analisis, Lotterer como atípico "
-     "y un groupby de carreras terminadas por piloto. Faltan duelos, peso del auto, gráficos y conclusiones."),
-    ("Informe académico PDF (3–5 págs.)", "parcial",
-     "En informe/informe.tex: portada, introducción (motivación, pregunta, objetivos, dataset) y datos y metodología "
-     "redactados. Faltan resumen, resultados, conclusiones y reflexión metodológica, compilarlo y el link de Overleaf."),
+    ("Notebook Colab (.ipynb)", "ok",
+     "Terminado por Joaquín (3/11): exploración, pregunta a/b/c, filtros, duelos entre compañeros, efecto del auto "
+     "y del piloto, 3 gráficos y celdas de IA con su prompt. Lo re-ejecutamos con el mismo dataset y todas las "
+     "cifras coinciden. Quedan correcciones menores para Joaquín (sección 9)."),
+    ("Informe académico PDF (3–5 págs.)", "ok",
+     "informe/informe.tex e informe/informe.pdf: 5 páginas sin portada, con resumen, resultados (3 figuras y una "
+     "tabla), conclusiones, limitaciones y reflexión metodológica. Falta subirlo a Overleaf y poner el link."),
     ("Presentación con IA (6–10 diapos.)", "parcial",
-     "Estructura y guion listos en presentacion/estructura_y_guion.md (8 diapositivas, ~6 min, turnos repartidos). "
-     "PDF con diseño propio en presentacion/Presentacion_TP_F1.pdf (PR #7), generado por código con los datos de la web. "
-     "Resultados marcados como provisorios."),
+     "presentacion/Presentacion_TP_F1.pdf: 8 diapositivas con los resultados finales, y el guion en "
+     "presentacion/estructura_y_guion.md. Falta pasarla a Canva o PowerPoint Copilot, como pide la consigna."),
     ("Complemento opcional: sitio web", "parcial",
-     "Web interactiva en docs/ (largada, torre de tiempos, gráficos animados, duelos, simulador). "
-     "Falta activar GitHub Pages y actualizar los datos cuando esté el notebook final."),
-    ("Commits de ambos integrantes", "parcial",
-     "Agustín ya tiene commits propios (notebook, presentación, informe). Joaquín suma los del notebook nuevo."),
+     "docs/ con los cálculos del notebook final y los tres gráficos (efectos por año, duelos, trayectorias). "
+     "Falta activar GitHub Pages."),
+    ("Commits de ambos integrantes", "ok",
+     "Joaquín: notebook. Agustín: informe, presentación, web y este avance."),
 ]
 
 TABLAS = [
     # (tabla, filas totales, filas 2010–2024, para qué la usamos)
-    ("races.csv", "1.172", "305", "Año, número de fecha y nombre de cada Gran Premio. Define el período."),
-    ("results.csv", "27.612", "6.436", "Resultado de cada auto en cada carrera: posición, puntos, estado."),
-    ("qualifying.csv", "11.342", "6.412", "Posición de clasificación (sábado). Medida “limpia” del ritmo."),
-    ("drivers.csv", "881", "80", "Nombre de los pilotos."),
-    ("constructors.csv", "214", "23", "Nombre de las escuderías."),
-    ("status.csv", "143", "143", "Motivo de abandono (motor, choque, etc.)."),
+    ("races.csv", "1.125", "305", "Año, número de fecha y nombre de cada Gran Premio. Define el período."),
+    ("results.csv", "26.759", "6.436", "Resultado de cada auto en cada carrera: posición, grilla, vueltas, estado."),
+    ("qualifying.csv", "10.494", "6.412", "Clasificación. Se exploró, pero el análisis final usa solo la carrera."),
+    ("drivers.csv", "861", "80", "Nombre de los pilotos."),
+    ("constructors.csv", "212", "23", "Nombre de las escuderías."),
+    ("status.csv", "139", "139", "Estado final de cada auto (Finished, +1 Lap, Engine, Collision…)."),
 ]
 
 VARIABLES = [
-    ("positionOrder", "results", "Posición final de carrera, sin faltantes (abandonos al final). Variable de resultado."),
-    ("position", "qualifying", "Posición de clasificación. Variable de resultado complementaria."),
-    ("constructorId", "results / qualifying", "Escudería: identifica el “auto”."),
-    ("driverId", "results / qualifying", "Piloto."),
-    ("status", "status", "Cómo terminó el auto; se usa para separar abandonos."),
-    ("year", "races", "Temporada; permite ver la evolución y las eras de reglamento."),
+    ("positionOrder", "results", "Posición final de carrera, completa para todos los autos. Variable de resultado."),
+    ("constructorId", "results", "Escudería: identifica el “auto”."),
+    ("driverId", "results", "Piloto."),
+    ("statusId", "results / status", "Cómo terminó el auto; se usa para quedarse con los que terminaron."),
+    ("year", "races", "Temporada; el auto se analiza siempre por escudería y año."),
 ]
 
 EXPLORACION = [
-    "Tabla principal: <b>6.436 resultados</b> (305 carreras, 80 pilotos, 23 escuderías), 25 columnas.",
-    "No hay filas duplicadas ni pilotos repetidos dentro de una misma carrera.",
-    "Los faltantes vienen como el texto <font name='Mono'>\\N</font>, no como celdas vacías: "
+    "<font name='Mono'>results</font> 2010–2024: <b>6.436 filas</b> × 18 columnas (305 carreras, 80 pilotos, 23 escuderías).",
+    "No hay filas duplicadas en ninguna tabla (lo verificamos aparte; el notebook todavía no lo muestra).",
+    "Los faltantes vienen como el texto <font name='Mono'>\\N</font>, no como nulos: "
     "<font name='Mono'>position</font> tiene 1.039 (autos que no terminaron) y "
-    "<font name='Mono'>time</font>/<font name='Mono'>milliseconds</font> 3.119 (solo el ganador tiene tiempo total).",
+    "<font name='Mono'>time</font>/<font name='Mono'>milliseconds</font> 3.126 (solo tienen tiempo los que terminan en la vuelta del líder).",
+    "En <font name='Mono'>qualifying</font> faltan 22 tiempos de Q2 y 46 de Q3 (pilotos eliminados antes).",
     "El 82% de los autos terminó la carrera. Los abandonos más comunes: choques (236), accidentes (137) y motor (105).",
-    "<font name='Mono'>grid</font> tiene mínimo 0: son largadas desde boxes.",
+    "Atípico: André Lotterer está en la clasificación pero no entre los que terminaron. Corrió solo Bélgica 2014 y abandonó en la primera vuelta.",
 ]
 
 TRANSFORMACIONES = [
-    ("1. Faltantes y tipos de dato",
-     "Reemplazamos <font name='Mono'>\\N</font> por <font name='Mono'>NaN</font> y pasamos a número "
-     "<font name='Mono'>position</font>, <font name='Mono'>milliseconds</font>, "
-     "<font name='Mono'>fastestLap</font> y <font name='Mono'>rank</font>. Creamos la columna "
-     "<font name='Mono'>piloto</font> (nombre + apellido).",
-     "Sin esto no se puede promediar ninguna posición."),
-    ("2. Clasificar el final de cada auto",
-     "Columna <font name='Mono'>termino</font>: True si el estado es “Finished” o “+N Laps”. "
-     "En carrera usamos solo autos que terminaron.",
-     "Un abandono por motor castiga al piloto por algo que no depende de él."),
-    ("3. Diferencia contra el compañero",
-     "Por carrera y escudería: promedio de los dos autos (<font name='Mono'>media_equipo</font>) y "
-     "distancia de cada piloto a ese promedio (<font name='Mono'>dif_vs_companero</font>, negativo = mejor). "
-     "Solo equipos con exactamente dos autos comparables.",
-     "Es el corazón del método: separa auto y piloto."),
+    ("1. Carreras finalizadas",
+     "Se conservan los estados “Finished” y “+N Laps” (34 estados válidos): quedan 5.280 de 6.436 resultados.",
+     "Un abandono es un atípico severo que no mide ni auto ni piloto."),
+    ("2. Tabla carreras_analisis",
+     "Se agregan año, nombre del piloto, escudería y estado con diccionarios y <font name='Mono'>map</font>. "
+     "Se descartan puntos, tiempos, número del auto y la grilla (largadas desde boxes).",
+     "Tener todo en una sola tabla, sin cruzar tablas a cada paso."),
+    ("3. Pares de compañeros",
+     "Con <font name='Mono'>groupby + transform</font> se dejan solo las carreras en que terminaron los dos pilotos "
+     "del equipo: 2.209 pares. Se calculan <font name='Mono'>team_mean</font>, <font name='Mono'>race_mean</font>, "
+     "<font name='Mono'>driver_measure</font> y <font name='Mono'>car_measure</font>.",
+     "Es el corazón del método: separa auto y piloto, con control de reconstrucción (error 0)."),
 ]
 
 GROUPBYS = [
-    ("1. Peso del auto por año", "groupby('year')",
-     "Descompone la variación de posiciones de cada carrera en parte “auto” (escudería vs. carrera) "
-     "y parte “piloto” (piloto vs. su escudería), como un ANOVA. Resultado: el auto explica "
-     "<b>85,3%</b> en carrera y en clasificación en todo el período."),
-    ("2. Duelos contra el compañero", "groupby('piloto')",
-     "Porcentaje de clasificaciones en que cada piloto le ganó a su compañero (mín. 50 duelos). "
-     "Arriba: Verstappen 77,9%, Glock 77,2%, Russell 75,0%, Alonso 74,7%."),
-    ("3. Nivel del auto por temporada", "groupby(['year', 'constructorId', 'piloto'])",
-     "Posición media de clasificación de cada piloto por temporada, cruzada con la de su compañero. "
-     "324 temporadas piloto-escudería; correlación <b>0,91</b>."),
+    ("1. Efecto del auto y del piloto por año", "groupby('year')",
+     "Raíz del promedio de <font name='Mono'>car_measure²</font> y <font name='Mono'>driver_measure²</font>. "
+     "En todo el período el auto mueve <b>4,75</b> posiciones y el piloto <b>1,97</b>: el auto pesa <b>2,4 veces más</b>."),
+    ("2. Duelos contra el compañero", "groupby('driverName')",
+     "Porcentaje de carreras en que cada piloto terminó adelante de su compañero (mín. 33 duelos, la mediana; 39 pilotos). "
+     "Arriba: Verstappen 81,9%, Alonso 77,7%, Russell 66,0%, Norris 64,8%."),
+    ("3. Escuderías por año", "groupby(['year', 'constructorName'])",
+     "Posición media de cada auto por temporada. Entre el mejor y el peor auto hay en promedio 13,5 posiciones; "
+     "entre compañeros, 3,1 (mediana 2)."),
 ]
 
-# (año, carrera % auto, clasificación % auto)
-PESO_AUTO = [
-    (2010, 84.5, 89.9), (2011, 91.5, 94.0), (2012, 82.8, 87.2), (2013, 87.9, 88.0),
-    (2014, 86.0, 87.6), (2015, 88.7, 87.9), (2016, 89.8, 87.7), (2017, 87.2, 83.8),
-    (2018, 86.9, 86.3), (2019, 85.8, 84.9), (2020, 81.4, 88.5), (2021, 79.8, 80.4),
-    (2022, 82.9, 80.8), (2023, 83.7, 70.2), (2024, 81.4, 76.5),
+# (año, efecto auto, efecto piloto, cociente) — tabla auto_vs_piloto del notebook
+EFECTOS = [
+    (2010, 4.85, 2.08, 2.33), (2011, 5.61, 1.71, 3.29), (2012, 5.20, 2.37, 2.19), (2013, 5.10, 1.89, 2.70),
+    (2014, 4.59, 1.86, 2.47), (2015, 4.58, 1.64, 2.80), (2016, 5.03, 1.69, 2.97), (2017, 4.11, 1.58, 2.60),
+    (2018, 4.36, 1.70, 2.57), (2019, 4.73, 1.92, 2.46), (2020, 4.47, 2.14, 2.09), (2021, 4.51, 2.27, 1.99),
+    (2022, 4.45, 2.02, 2.20), (2023, 4.58, 2.02, 2.27), (2024, 4.66, 2.23, 2.09),
 ]
+EFECTO_TOTAL = (4.75, 1.97, 2.41)
 
 GRAFICOS_INFO = [
-    dict(archivo="01_peso_auto_por_anio.png", ancho=16,
-         titulo="Gráfico 1 · Peso del auto por año",
-         tipo="Líneas (evolución temporal)",
-         datos="Groupby 1: % de la variación de posiciones explicada por la escudería, por temporada, "
-               "en clasificación y en carrera. Línea punteada: ~47%, lo esperable por azar con 10 equipos de 2 autos.",
-         lectura="Siempre muy por encima del azar (70–94%). Pico en 2011 (dominio de Red Bull) y caída desde "
-                 "2021: con autos más parejos el piloto pesa más, sobre todo en clasificación (2023: 70%)."),
-    dict(archivo="02_duelos_companeros.png", ancho=15,
-         titulo="Gráfico 2 · Duelos de clasificación ganados",
+    dict(archivo="grafico_1_auto_vs_piloto.png", ancho=16,
+         titulo="Gráfico 1 · Efecto del auto y del piloto por temporada",
+         tipo="Líneas superpuestas (evolución temporal)",
+         datos="Groupby 1: efecto típico del auto y del piloto sobre la posición final, por temporada.",
+         lectura="El auto está siempre por encima: nunca baja de 4,1 posiciones y el piloto nunca pasa de 2,4. "
+                 "Desde el tope presupuestario (2021) los dos efectos quedan más estables."),
+    dict(archivo="grafico_2_duelos_ganados.png", ancho=14,
+         titulo="Gráfico 2 · Duelos ganados al compañero",
          tipo="Barras horizontales (comparación entre categorías)",
-         datos="Groupby 2: los 15 pilotos con mayor % de clasificaciones ganadas a su compañero (mín. 50 duelos).",
-         lectura="El talento existe y es persistente: algunos le ganan al compañero 3 de cada 4 veces, en varios "
-                 "equipos. Ojo: depende de quién fue el compañero (caso Glock, con compañeros debutantes)."),
-    dict(archivo="03_piloto_vs_companero.png", ancho=11,
-         titulo="Gráfico 3 · Piloto vs. compañero",
-         tipo="Dispersión (relación entre dos variables)",
-         datos="Groupby 3: cada punto es un piloto en una temporada; eje X la posición media del compañero, "
-               "eje Y la propia. Diagonal = misma posición.",
-         lectura="r = 0,91: los puntos se pegan a la diagonal. El auto los ubica a lo largo de toda la grilla; "
-                 "el piloto los separa de la diagonal apenas 1 a 3 lugares."),
-    dict(archivo="04_brecha_companeros_boxplot.png", ancho=16,
-         titulo="Gráfico 4 · Distancia entre compañeros",
-         tipo="Boxplot (distribución)",
-         datos="Posiciones de diferencia entre los dos pilotos de un equipo en cada clasificación, por temporada.",
-         lectura="Mediana de 2 posiciones hasta 2020 y 3 desde 2021, contra ~19 entre el primero y el último. "
-                 "Las cajas se estiran desde 2021, coherente con el gráfico 1."),
+         datos="Groupby 2: los 15 pilotos con mayor % de carreras ganadas a su compañero (mín. 33 duelos).",
+         lectura="El talento existe: Verstappen y Alonso le ganan al compañero cerca de 4 de cada 5 carreras. "
+                 "Pero eso equivale a unas 2,4 posiciones de ventaja, mucho menos que la distancia entre autos."),
+    dict(archivo="grafico_3_talento_sostenido.png", ancho=16,
+         titulo="Gráfico 3 · Talento sostenido de cuatro campeones",
+         tipo="Líneas y puntos por equipo (cuatro paneles)",
+         datos="% de duelos ganados por temporada de Alonso, Hamilton, Vettel y Verstappen, con el color del equipo.",
+         lectura="Alonso 81–100% en Ferrari y 44% en su primer año en McLaren; Vettel del 100% (2013) al 21% (2014); "
+                 "Verstappen crece hasta el 100%. El talento se sostiene, pero el auto y el compañero lo condicionan."),
 ]
 
 RESPUESTA = [
-    "<b>Atención:</b> estos resultados son de la versión anterior del notebook. El notebook nuevo de Joaquín "
-    "ya no usa la descomposición 85/15% y el informe y la presentación tampoco; quedan como referencia hasta "
-    "tener los resultados nuevos.",
-    "<b>El auto pesa mucho más:</b> la escudería explica ~85% de la variación de posiciones; ningún año baja del 70%.",
-    "<b>El piloto explica el ~15% restante</b>, y ese efecto es real y persistente (Verstappen, Alonso, Russell).",
-    "<b>Pero mueve pocos lugares:</b> correlación 0,91 entre compañeros y brecha típica de 2–3 posiciones.",
-    "<b>El balance cambió en 2021–2024:</b> con tope presupuestario y reglamento 2022, el piloto pesa más.",
+    "<b>Pesa más el auto:</b> mueve la posición unas 4,75 posiciones contra 1,97 del piloto, <b>2,4 veces más</b>.",
+    "<b>Todos los años:</b> el cociente va de 1,99 (2021) a 3,29 (2011); por era, 2,57 (V8), 2,44 (híbrido) y 2,18 (efecto suelo).",
+    "<b>El talento existe:</b> Verstappen (81,9%) y Alonso (77,7%) le ganan a su compañero cerca de 4 de cada 5 carreras.",
+    "<b>Desde 2021 algo más parejo</b>, pero el piloto nunca se acerca al auto. Para un equipo, conviene priorizar el auto.",
 ]
 
 LIMITACIONES = [
-    "El “auto” incluye todo lo que comparten los compañeros (estrategia, equipo técnico) y el hecho de que "
-    "los mejores pilotos van a los mejores autos: el 85% es una cota superior.",
-    "Ganarle al compañero depende de quién sea el compañero.",
-    "En carrera se excluyen los abandonos, que mezclan auto (roturas) y piloto (choques).",
-    "Las escuderías cambian de nombre (Toro Rosso → AlphaTauri → RB); no afecta la comparación dentro de cada carrera.",
+    "El talento se mide contra el compañero, no en términos absolutos: dos pilotos muy buenos en un mismo equipo parecen promedio.",
+    "Solo carreras en que terminaron los dos pilotos: los abandonos (auto o piloto) quedan afuera.",
+    "La posición final también refleja estrategia, órdenes de equipo e incidentes.",
+    "Solo 2010–2024: no se generaliza a otras épocas.",
 ]
 
 PENDIENTES = [
-    ("Alta", "Terminar el notebook nuevo (Joaquín), ejecutarlo en Colab con kagglehub y exportar los gráficos definitivos."),
-    ("Alta", "Con el notebook final: actualizar los números marcados [PROVISORIO] en la presentación, el informe y la web."),
-    ("Alta", "Informe: redactar resumen, resultados con los gráficos, conclusiones y reflexión metodológica; "
-             "compilarlo en Overleaf y poner el link en el README."),
-    ("Alta", "Presentación: regenerarla con los datos finales (PROVISORIO = False) y ensayar el guion (~6 min). Consultar al profe si vale hecha con Claude en vez de Canva/Copilot."),
+    ("Alta", "Joaquín: correcciones del notebook (revisar duplicados, texto de Lotterer, celdas de texto antes de las "
+             "celdas 189 y 190, signos de la fórmula en la celda 171). Detalle en notebook/correcciones_notebook.md "
+             "de los archivos del proyecto."),
+    ("Alta", "Presentación: pasarla a Canva o PowerPoint Copilot con el guion y los gráficos de graficos/, y ensayar (~6 min)."),
+    ("Alta", "Informe: subir informe.tex y los gráficos a Overleaf y poner el link en el README."),
     ("Media", "Activar GitHub Pages (Settings → Pages → rama main, carpeta /docs) y poner el link público en el README."),
     ("Media", "Revisión intragrupal del informe: cada uno lo contrasta con el notebook."),
-    ("Media", "README: instrucciones para descargar el dataset y links a informe, presentación y web."),
+    ("Media", "Video (complemento opcional): se arma después."),
     ("Baja", "PDF de entrega para el campus: portada con nombres, registro, usuarios de GitHub y links."),
 ]
 
 # Entregables en curso: (título, archivo, [(parte, estado, detalle)])
 ENTREGABLES = [
-    ("Informe académico", "informe/informe.tex", [
-        ("Portada e índice", "ok", "Nombres, materia, facultad y cuatrimestre."),
-        ("§1 Resumen", "falta", "Se escribe al final, con los resultados definitivos."),
-        ("§2 Introducción", "ok", "Motivación (presupuesto y tope de gastos), pregunta, objetivo general y particulares, dataset y fuente."),
-        ("§3 Datos y metodología", "ok", "Variables, filtro 2010–2024, transformaciones, descomposición auto/piloto y herramientas."),
-        ("§4 Resultados", "falta", "Un apartado por gráfico con su interpretación; espera al notebook final."),
-        ("§5 Conclusiones", "falta", "Respuesta directa, limitaciones y extensiones."),
-        ("§6 Reflexión metodológica", "falta", "Uso de IA, revisiones y aprendizajes."),
+    ("Informe académico", "informe/informe.pdf", [
+        ("Portada", "ok", "Nombres, materia, facultad, cuatrimestre y repositorio."),
+        ("§1 Resumen", "ok", "Pregunta, datos, método y resultado (2,4 veces)."),
+        ("§2 Introducción", "ok", "Motivación, pregunta, objetivos, dataset y fuente."),
+        ("§3 Datos y metodología", "ok", "Variables, 4 transformaciones, descomposición de la posición y método."),
+        ("§4 Resultados", "ok", "Auto contra auto, efectos por año (figura 1 y tabla por era), duelos (figura 2) y trayectorias (figura 3)."),
+        ("§5 Conclusiones", "ok", "Respuesta directa, limitaciones y extensiones."),
+        ("§6 Reflexión metodológica", "ok", "Uso de IA, verificaciones y aprendizajes."),
+        ("Overleaf", "falta", "Subirlo y poner el link en el repositorio."),
     ]),
     ("Presentación", "presentacion/Presentacion_TP_F1.pdf", [
         ("1 Portada", "ok", "¿Piloto o auto? · Agustín (0:20)."),
-        ("2 La pregunta", "ok", "Motivación y definiciones de auto y talento, tomadas del notebook · Agustín (0:45)."),
-        ("3 Datos y método", "ok", "Compañero como grupo de control; filtro de autos que terminaron y cifras del notebook · Joaquín (1:00)."),
-        ("4 Resultado 1", "parcial", "Auto contra auto: ≈16 posiciones entre el mejor y el peor auto vs. ≈3 entre compañeros · Joaquín (1:00). [PROVISORIO]"),
-        ("5 Resultado 2", "parcial", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50). [PROVISORIO]"),
-        ("6 Resultado 3", "parcial", "Desde 2021 los compañeros están más lejos (gráfico 4) · Joaquín (0:50). [PROVISORIO]"),
-        ("7 Conclusión", "ok", "Respuesta, barras autos vs. compañeros y limitaciones · Agustín (0:50)."),
-        ("8 Cierre", "ok", "Uso de IA en lenguaje técnico (modelo, análisis, comunicación, validación) y links · Joaquín (0:25)."),
+        ("2 La pregunta", "ok", "Motivación y definiciones de auto y talento del notebook · Agustín (0:45)."),
+        ("3 Datos y método", "ok", "Compañero como grupo de control; 6.436 → 5.280 → 2.209 duelos · Joaquín (1:00)."),
+        ("4 Resultado 1", "ok", "El auto pesa 2,4 veces más (gráfico 1) · Joaquín (1:00)."),
+        ("5 Resultado 2", "ok", "Pilotos que marcan diferencia (gráfico 2) · Agustín (0:50)."),
+        ("6 Resultado 3", "ok", "Talento sostenido de cuatro campeones (gráfico 3) · Joaquín (0:50)."),
+        ("7 Conclusión", "ok", "Respuesta, barras 4,75 contra 1,97 y limitaciones · Agustín (0:50)."),
+        ("8 Cierre", "ok", "Uso de IA y links · Joaquín (0:25)."),
+        ("Canva / Copilot", "falta", "La consigna pide hacerla con una de esas herramientas."),
     ]),
     ("Sitio web", "docs/index.html", [
-        ("Largada", "ok", "Intro animada con semáforo de largada."),
-        ("Torre de tiempos", "ok", "Grilla por temporada con logos y colores de cada escudería."),
-        ("Peso del auto", "ok", "Gráfico animado año por año (equivalente al gráfico 1)."),
-        ("Duelos y espejo", "ok", "Ranking de duelos y dispersión piloto vs. compañero, filtrable por equipo."),
-        ("Brecha y simulador", "ok", "Distancia entre compañeros y simulador \u201ccambio de asiento\u201d."),
-        ("Publicación", "falta", "Activar GitHub Pages; regenerar datos con docs/scripts/exportar_datos.py al cerrar el notebook."),
+        ("Largada y vuelta 0", "ok", "Intro animada y exploración y filtros del notebook."),
+        ("Auto vs piloto", "ok", "Efecto del auto y del piloto por año (gráfico 1)."),
+        ("Duelos y trayectorias", "ok", "Ranking de duelos (gráfico 2) y trayectorias de cuatro campeones (gráfico 3)."),
+        ("Espejo, brecha y simulador", "ok", "Piloto contra compañero (r = 0,92), distancia entre compañeros y \u201ccambio de asiento\u201d."),
+        ("Publicación", "falta", "Activar GitHub Pages."),
     ]),
 ]
 
@@ -229,6 +215,10 @@ CAMBIOS = [
                          "diapositivas 2 y 3 de la presentación. Como el notebook nuevo ya no usa el 85/15%, las "
                          "diapositivas 4 y 7 pasan a comparar auto contra auto y piloto contra compañero, igual "
                          "que el informe. Resultados siguen provisorios."),
+    ("03/11/2026", "v5", "Notebook final de Joaquín: resultados definitivos (el auto pesa 2,4 veces más). Informe completo "
+                         "en PDF, presentación y web con las cifras y los tres gráficos finales, sin marcas de provisorio. "
+                         "Corrige las tablas de datos con los tamaños del dataset que usa el notebook. Suma las correcciones "
+                         "pendientes del notebook."),
 ]
 
 # ---------------------------------------------------------------------------
@@ -372,7 +362,7 @@ def construir():
 
     # 3. Datos
     s += seccion(3, "Qué datos usamos")
-    s.append(Paragraph("Del dataset de Kaggle (esquema Ergast, actualizado hasta 2026) usamos 6 de sus 14 tablas. "
+    s.append(Paragraph("Del dataset de Kaggle (esquema Ergast, actualizado hasta 2024) usamos 6 de sus 14 tablas. "
                        "Filtramos <font name='Mono'>races</font> a 2010–2024 y con esos "
                        "<font name='Mono'>raceId</font> filtramos el resto.", base))
     s.append(Spacer(1, 6))
@@ -401,25 +391,23 @@ def construir():
     for t, code, d in GROUPBYS:
         s.append(KeepTogether([Paragraph(f"{t} &nbsp;<font name='Mono' color='#6b6b75' size='8'>{code}</font>", h2),
                                Paragraph(d, base)]))
-    s.append(Paragraph("Groupby 1 completo: % de la variación explicada por el auto", h2))
-    filas = [[Paragraph(x, cab) for x in ("Año", "Carrera: auto", "Carrera: piloto", "Clasif.: auto", "Clasif.: piloto")]]
-    for a, c, q_ in PESO_AUTO:
+    s.append(Paragraph("Groupby 1 completo: efecto del auto y del piloto, en posiciones", h2))
+    filas = [[Paragraph(x, cab) for x in ("Año", "Efecto del auto", "Efecto del piloto", "Cociente")]]
+    for a, c, d, r in EFECTOS:
         filas.append([Paragraph(str(a), celda_b)] +
-                     [Paragraph(f"{v:.1f}%".replace(".", ","), celda) for v in (c, 100 - c, q_, 100 - q_)])
-    prom_c = sum(x[1] for x in PESO_AUTO) / len(PESO_AUTO)
-    prom_q = sum(x[2] for x in PESO_AUTO) / len(PESO_AUTO)
-    filas.append([Paragraph("Promedio", celda_b)] +
-                 [Paragraph(f"<b>{v:.1f}%</b>".replace(".", ","), celda) for v in (prom_c, 100 - prom_c, prom_q, 100 - prom_q)])
-    t = tabla(filas, [2.4 * cm] + [(ancho - 2.4 * cm) / 4] * 4)
+                     [Paragraph(f"{v:.2f}".replace(".", ","), celda) for v in (c, d, r)])
+    filas.append([Paragraph("Total", celda_b)] +
+                 [Paragraph(f"<b>{v:.2f}</b>".replace(".", ","), celda) for v in EFECTO_TOTAL])
+    t = tabla(filas, [2.4 * cm] + [(ancho - 2.4 * cm) / 3] * 3)
     t.setStyle(TableStyle([("LINEABOVE", (0, -1), (-1, -1), 1, TINTA)]))
     s.append(t)
 
     # 6. Gráficos
     s.append(PageBreak())
     s += seccion(6, "Gráficos")
-    s.append(Paragraph("La consigna pide al menos 3 gráficos de tipos distintos; tenemos 4. Todos se exportan desde el "
-                       "notebook a <font name='Mono'>graficos/</font> con <font name='Mono'>plt.savefig()</font>. "
-                       "<b>Provisorios:</b> salen de la versión anterior del notebook, que Joaquín está rehaciendo.", base))
+    s.append(Paragraph("La consigna pide al menos 3 gráficos de tipos distintos. Son los tres del notebook final, "
+                       "exportados con <font name='Mono'>plt.savefig()</font> y guardados en "
+                       "<font name='Mono'>graficos/</font>.", base))
     for g in GRAFICOS_INFO:
         ruta = os.path.join(GRAFICOS, g["archivo"])
         img = Image(ruta)
@@ -434,8 +422,8 @@ def construir():
 
     # 7. Respuesta
     s.append(PageBreak())
-    s += seccion(7, "Respuesta preliminar")
-    s.append(Paragraph("Con la versión anterior del notebook; se revisa cuando esté el definitivo.", gris))
+    s += seccion(7, "Respuesta")
+    s.append(Paragraph("Con los resultados del notebook final, los mismos del informe, la presentación y la web.", gris))
     s.append(Spacer(1, 4))
     s += vinetas(RESPUESTA)
     s.append(Paragraph("Limitaciones", h2))

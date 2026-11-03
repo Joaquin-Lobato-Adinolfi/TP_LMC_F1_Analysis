@@ -9,6 +9,7 @@
   const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const nf1 = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const nf0 = new Intl.NumberFormat("es-AR");
+  const nf2 = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const $ = (s) => document.querySelector(s);
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
@@ -110,9 +111,10 @@
   /* ---------------- Hero ---------------- */
   function hero(animar) {
     const r = D.resumen;
-    const pa = r.auto_total_clasificacion;
-    $("#pct-auto").textContent = nf1.format(pa) + "%";
-    $("#pct-piloto").textContent = nf1.format(100 - pa) + "%";
+    const pa = (r.efecto_auto / (r.efecto_auto + r.efecto_piloto)) * 100;
+    $("#pct-auto").textContent = nf2.format(r.efecto_auto);
+    $("#pct-piloto").textContent = nf2.format(r.efecto_piloto);
+    $("#ratio-hero").textContent = nf1.format(r.ratio);
     $("#seg-auto").style.width = pa + "%";
 
     const fichas = [
@@ -120,7 +122,7 @@
       [r.pilotos, "Pilotos"],
       [r.escuderias, "Escuderías"],
       [r.resultados, "Resultados de carrera"],
-      [r.pares_clasificacion, "Duelos de clasificación", "morado"],
+      [r.pares, "Duelos entre compañeros", "morado"],
       [r.pct_terminaron, "% de autos que terminaron", "verde"],
     ];
     $("#tablero").innerHTML = fichas.map(([v, t, c]) =>
@@ -252,7 +254,7 @@
       });
 
       // Panel lateral del año
-      const p = D.peso_auto.find((d) => d.year === y);
+      const p = D.efectos.find((d) => d.year === y);
       const autosAnio = D.autos.filter((a) => a.year === y).sort((a, b) => a.pos - b.pos);
       const mejor = autosAnio[0];
       const pegados = (() => {
@@ -263,8 +265,7 @@
       })();
       panel.innerHTML = `
         <div><span class="grande">${y}</span><br><span class="era">${era(y)}</span></div>
-        <div class="dato"><span class="etiqueta">El auto explica (clasificación)</span><span class="num" style="color:var(--celeste)">${nf1.format(p.clasificacion)}%</span></div>
-        <div class="dato"><span class="etiqueta">El auto explica (carrera)</span><span class="num" style="color:var(--amarillo)">${nf1.format(p.carrera)}%</span></div>
+        <div class="dato"><span class="etiqueta">Efecto del auto / del piloto</span><span class="num"><span style="color:var(--rojo-luz)">${nf2.format(p.auto)}</span> / <span style="color:var(--celeste)">${nf2.format(p.piloto)}</span></span><span class="etiqueta">el auto pesa ${nf1.format(p.ratio)} veces más</span></div>
         <div class="dato"><span class="etiqueta">Mejor auto del año</span><span style="display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700">${logo(mejor.equipo, 28)} ${EQ[mejor.equipo].nombre}</span><span class="etiqueta">posición media ${nf1.format(mejor.pos)}</span></div>
         <div class="dato"><span class="etiqueta">Compañeros a 3 lugares o menos</span><span class="num" style="color:var(--verde)">${pegados.n} de ${pegados.de}</span></div>`;
     }
@@ -345,7 +346,7 @@
     const top = X.carreras_por_piloto;
     $("#lectura-carreras").innerHTML = `<b>Lectura.</b> La mitad de los pilotos terminó ${nf0.format(r["50%"])} carreras o menos, pero el promedio es ${nf1.format(r.mean)}. ` +
       `La media supera a la mediana porque unos pocos pilotos con carreras muy largas, como ${top[0].piloto} (${top[0].n}) o ${top[1].piloto} (${top[1].n}), tiran el promedio para arriba: la distribución tiene cola a la derecha. ` +
-      `Por ahora el notebook no descarta pilotos, pero conviene exigir un mínimo de carreras para comparar.`;
+      `Por eso, para comparar pilotos el notebook exige después un mínimo de ${D.resumen.min_duelos} duelos con el compañero (la mediana).`;
 
     document.querySelectorAll("[data-cp]").forEach((b) => b.addEventListener("click", () => {
       document.querySelectorAll("[data-cp]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
@@ -440,19 +441,18 @@
     });
   }
 
-  /* ---------------- Vuelta 2: peso del auto ---------------- */
+  /* ---------------- Vuelta 2: efecto del auto y del piloto ---------------- */
   function graficoPeso(animar) {
     const cont = $("#g-peso");
     cont.innerHTML = "";
     const W = cont.clientWidth; const H = Math.max(300, Math.min(440, W * 0.5));
     const m = { t: 30, r: 16, b: 40, l: 48 };
-    const datos = D.peso_auto;
+    const datos = D.efectos;
     const x = d3.scaleLinear().domain([2010, 2024]).range([m.l, W - m.r]);
-    const y = d3.scaleLinear().domain([40, 100]).range([H - m.b, m.t]);
+    const y = d3.scaleLinear().domain([0, 6.5]).range([H - m.b, m.t]);
     const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
-      .attr("aria-label", "Porcentaje de la variación explicado por el auto, por año, 2010 a 2024");
+      .attr("aria-label", "Efecto típico del auto y del piloto sobre la posición final, por año, 2010 a 2024");
 
-    // Eras
     ERAS.forEach((e, i) => {
       svg.append("rect").attr("x", x(e.desde - (i ? 0.5 : 0))).attr("width", x(e.hasta + (i < 2 ? 0.5 : 0)) - x(e.desde - (i ? 0.5 : 0)))
         .attr("y", m.t - 22).attr("height", H - m.b - m.t + 22).attr("fill", i % 2 ? "#ffffff06" : "#ffffff00");
@@ -464,18 +464,13 @@
       .call(d3.axisLeft(y).ticks(6).tickSize(-(W - m.l - m.r)).tickFormat("")).call((g) => g.select(".domain").remove());
     svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`)
       .call(d3.axisBottom(x).ticks(W < 560 ? 7 : 15).tickFormat(d3.format("d")));
-    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat((d) => d + "%"));
-
-    // Referencia del azar
-    svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(47.4)).attr("y2", y(47.4))
-      .attr("stroke", css("--niebla")).attr("stroke-dasharray", "5 5");
-    svg.append("text").attr("x", W - m.r).attr("y", y(47.4) - 6).attr("text-anchor", "end").attr("fill", css("--niebla"))
-      .style("font-size", "12px").text("Si el auto no importara ≈ 47%");
+    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6));
+    svg.append("text").attr("class", "titulo-eje").attr("transform", `translate(14,${(m.t + H - m.b) / 2}) rotate(-90)`).attr("text-anchor", "middle").text("Posiciones");
     // Tope presupuestario
     svg.append("line").attr("x1", x(2021)).attr("x2", x(2021)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--verde")).attr("stroke-opacity", 0.6);
-    svg.append("text").attr("x", x(2021) - 6).attr("y", y(52)).attr("text-anchor", "end").attr("fill", css("--verde")).style("font-size", "12px").text("Tope presupuestario");
+    svg.append("text").attr("x", x(2021) - 6).attr("y", y(0.4)).attr("text-anchor", "end").attr("fill", css("--verde")).style("font-size", "12px").text("Tope presupuestario");
 
-    const series = [["clasificacion", css("--celeste")], ["carrera", css("--amarillo")]];
+    const series = [["auto", css("--rojo-luz")], ["piloto", css("--celeste")]];
     series.forEach(([k, c]) => {
       const linea = d3.line().x((d) => x(d.year)).y((d) => y(d[k])).curve(d3.curveMonotoneX);
       const p = svg.append("path").datum(datos).attr("fill", "none").attr("stroke", c).attr("stroke-width", 3).attr("d", linea);
@@ -487,13 +482,11 @@
         pts.attr("opacity", 0).transition().delay((d, i) => 150 * i).duration(300).attr("opacity", 1);
       }
     });
-    // Mínimo destacado (clasificación 2023)
-    const min = datos.reduce((a, b) => (b.clasificacion < a.clasificacion ? b : a));
-    svg.append("circle").attr("cx", x(min.year)).attr("cy", y(min.clasificacion)).attr("r", 9).attr("fill", "none").attr("stroke", css("--morado")).attr("stroke-width", 2);
-    svg.append("text").attr("x", x(min.year)).attr("y", y(min.clasificacion) + 24).attr("text-anchor", "middle").attr("fill", css("--morado"))
-      .style("font-family", css("--f-tiempo")).style("font-size", "12px").text(`${min.year}: ${nf1.format(min.clasificacion)}%`);
+    // Año de mayor cociente
+    const max = datos.reduce((a, b) => (b.ratio > a.ratio ? b : a));
+    svg.append("text").attr("x", x(max.year)).attr("y", y(max.auto) - 14).attr("text-anchor", "middle").attr("fill", css("--rojo-luz"))
+      .style("font-family", css("--f-tiempo")).style("font-size", "12px").text(`${max.year}: ${nf1.format(max.ratio)}×`);
 
-    // Interacción
     const tip = tooltip(cont);
     const guia = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#ffffff40").attr("opacity", 0);
     svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
@@ -501,9 +494,16 @@
         const [px] = d3.pointer(ev);
         const yr = Math.round(x.invert(px)); const d = datos.find((v) => v.year === yr); if (!d) return;
         guia.attr("x1", x(yr)).attr("x2", x(yr)).attr("opacity", 1);
-        tip.mostrar(`<div class="t">${yr}</div>Clasificación: <b style="color:var(--celeste)">${nf1.format(d.clasificacion)}%</b><br>Carrera: <b style="color:var(--amarillo)">${nf1.format(d.carrera)}%</b><br><span class="etiqueta">${era(yr)}</span>`, x(yr) * cont.clientWidth / W, y(Math.max(d.carrera, d.clasificacion)) * cont.clientWidth / W);
+        tip.mostrar(`<div class="t">${yr}</div>Auto: <b style="color:var(--rojo-luz)">${nf2.format(d.auto)}</b> posiciones<br>Piloto: <b style="color:var(--celeste)">${nf2.format(d.piloto)}</b> posiciones<br>El auto pesa <b>${nf2.format(d.ratio)}</b> veces más<br><span class="etiqueta">${era(yr)}</span>`, x(yr) * cont.clientWidth / W, y(d.auto) * cont.clientWidth / W);
       })
       .on("pointerleave", () => { guia.attr("opacity", 0); tip.ocultar(); });
+
+    const r = D.resumen;
+    const minA = Math.min(...datos.map((d) => d.auto)); const maxP = Math.max(...datos.map((d) => d.piloto));
+    const minR = datos.reduce((a, b) => (b.ratio < a.ratio ? b : a));
+    $("#lectura-peso").innerHTML = `<b>Lectura.</b> En todo el período el auto mueve en promedio <b>${nf2.format(r.efecto_auto)}</b> posiciones y el piloto <b>${nf2.format(r.efecto_piloto)}</b>: el auto pesa <b>${nf1.format(r.ratio)} veces más</b>. ` +
+      `La línea roja nunca baja de ${nf1.format(minA)} y la celeste nunca pasa de ${nf1.format(maxP)}, así que el auto gana en los 15 años. ` +
+      `El cociente máximo es ${nf2.format(max.ratio)} (${max.year}) y el mínimo ${nf2.format(minR.ratio)} (${minR.year}): desde el tope presupuestario los autos están algo más parejos, pero el piloto nunca se acerca. Si los autos fueran todos iguales, el cociente sería cercano a 1.`;
   }
 
   /* ---------------- Vuelta 3: duelos ---------------- */
@@ -531,11 +531,67 @@
       document.querySelectorAll("[data-duelos]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
       pintar(b.dataset.duelos, !quieto);
     }));
+    const [v1, v2] = todos;
+    const ult = todos[todos.length - 1];
+    $("#lectura-duelos").innerHTML = `<b>Lectura.</b> ${v1.piloto} (${nf1.format(v1.pct)}%) y ${v2.piloto} (${nf1.format(v2.pct)}%) le ganan a su compañero cerca de 4 de cada 5 carreras, en distintos equipos y contra distintos compañeros: el talento existe y es persistente. ` +
+      `Pero ganarle al compañero no es lo mismo que ganar la carrera: ellos dos le sacan en promedio ${nf1.format(-v1.dif * 2)} lugares al compañero, mucho menos que lo que separa a un auto de otro. En el otro extremo, ${ult.piloto} gana el ${nf1.format(ult.pct)}%.`;
     pintar("top", false);
     alEntrar(lista, (estatico) => { if (!estatico) pintar("top", true); }, 0.15);
   }
 
-  /* ---------------- Vuelta 4: dispersión ---------------- */
+  /* ---------------- Vuelta 4: trayectorias (gráfico 3 del notebook) ---------------- */
+  const TRAY = ["Fernando Alonso", "Lewis Hamilton", "Sebastian Vettel", "Max Verstappen"];
+  let pilotoTray = TRAY[0];
+  const LECTURA_TRAY = {
+    "Fernando Alonso": "Entre el 81% y el 100% de duelos ganados en Ferrari (2010–2014), con un 100% en 2012. Cae al 44% en su primer año en McLaren y vuelve a superar el 80% después: el talento se sostiene aunque cambie el auto.",
+    "Lewis Hamilton": "Siempre fuerte, pero con mucha variación de un año a otro: entre el 35% (2024) y el 84% (2018), según el auto y el compañero de turno.",
+    "Sebastian Vettel": "Del 100% en 2013 al 21% en 2014, con el reglamento nuevo y un compañero nuevo. Se recupera en Ferrari (77% a 87%), vuelve a caer al 23% en 2020 y cambia de equipo.",
+    "Max Verstappen": "Crece año a año en Red Bull, hasta ganar el 100% de los duelos en 2020, 2021 y 2024.",
+  };
+  function trayectorias() {
+    const cont = $("#tray-pilotos");
+    cont.innerHTML = TRAY.map((p, i) => `<button class="boton" type="button" data-p="${p}" aria-pressed="${i === 0}">${p}</button>`).join("");
+    cont.addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      pilotoTray = b.dataset.p;
+      cont.querySelectorAll("button").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+      graficoTray(!quieto);
+    });
+  }
+  function graficoTray(animar) {
+    const cont = $("#g-tray");
+    cont.innerHTML = "";
+    const datos = D.duelos_anio.filter((d) => d.piloto === pilotoTray).sort((a, b) => a.year - b.year);
+    const W = cont.clientWidth; const H = Math.max(280, Math.min(400, W * 0.45));
+    const m = { t: 20, r: 16, b: 40, l: 50 };
+    const x = d3.scaleLinear().domain([2009.5, 2024.5]).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, 105]).range([H - m.b, m.t]);
+    const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
+      .attr("aria-label", `Porcentaje de duelos ganados al compañero por temporada: ${pilotoTray}`);
+    svg.append("g").attr("class", "grilla").attr("transform", `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickValues([0, 25, 50, 75, 100]).tickSize(-(W - m.l - m.r)).tickFormat("")).call((g) => g.select(".domain").remove());
+    svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(W < 560 ? 7 : 15).tickFormat(d3.format("d")));
+    svg.append("g").attr("class", "eje").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([0, 25, 50, 75, 100]).tickFormat((d) => d + "%"));
+    svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(50)).attr("y2", y(50)).attr("stroke", css("--niebla")).attr("stroke-dasharray", "5 5");
+    svg.append("text").attr("x", W - m.r).attr("y", y(50) - 6).attr("text-anchor", "end").attr("fill", css("--niebla")).style("font-size", "12px").text("50%: empate con el compañero");
+    for (let i = 1; i < datos.length; i++) {
+      const a = datos[i - 1]; const b = datos[i];
+      const l = svg.append("line").attr("x1", x(a.year)).attr("y1", y(a.pct)).attr("x2", x(b.year)).attr("y2", y(b.pct))
+        .attr("stroke", EQ[b.equipo].color).attr("stroke-width", 3).attr("stroke-dasharray", b.year - a.year > 1 ? "4 5" : null);
+      if (animar) l.attr("opacity", 0).transition().delay(i * 90).duration(250).attr("opacity", 1);
+    }
+    const tip = tooltip(cont); const esc = cont.clientWidth / W;
+    const pts = svg.append("g").selectAll("circle").data(datos).enter().append("circle")
+      .attr("cx", (d) => x(d.year)).attr("cy", (d) => y(d.pct)).attr("r", 7)
+      .attr("fill", (d) => EQ[d.equipo].color).attr("stroke", css("--asfalto")).attr("stroke-width", 2)
+      .on("pointerenter", (ev, d) => tip.mostrar(`<div class="t" style="color:${EQ[d.equipo].color}">${d.year} · ${EQ[d.equipo].nombre}</div>Ganó <b>${nf1.format(d.pct)}%</b> de ${d.duelos} duelos`, x(d.year) * esc, y(d.pct) * esc))
+      .on("pointerleave", () => tip.ocultar());
+    if (animar) pts.attr("r", 0).transition().delay((d, i) => i * 90).duration(300).attr("r", 7);
+    const eqs = [...new Set(datos.map((d) => d.equipo))];
+    $("#lectura-tray").innerHTML = `<span class="equipos-tray">${eqs.map((q) => `${logo(q, 18)} ${EQ[q].nombre}`).join(" &nbsp; ")}</span><br><b>Lectura.</b> ${LECTURA_TRAY[pilotoTray]}`;
+  }
+
+  /* ---------------- Vuelta 5: dispersión ---------------- */
   let filtroFamilia = null;
   function graficoDispersion(animar) {
     const cont = $("#g-dispersion");
@@ -545,7 +601,7 @@
     const x = d3.scaleLinear().domain([22.5, 0.5]).range([m.l, W - m.r]);
     const y = d3.scaleLinear().domain([22.5, 0.5]).range([H - m.b, m.t]);
     const svg = d3.select(cont).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
-      .attr("aria-label", "Dispersión: posición media del piloto contra la de su compañero, r = 0,91");
+      .attr("aria-label", `Dispersión: posición media del piloto contra la de su compañero, r = ${D.resumen.correlacion}`);
     svg.append("g").attr("class", "grilla").attr("transform", `translate(${m.l},0)`)
       .call(d3.axisLeft(y).tickValues([1, 5, 10, 15, 20]).tickSize(-(W - m.l - m.r)).tickFormat("")).call((g) => g.select(".domain").remove());
     svg.append("g").attr("class", "eje").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 5, 10, 15, 20]).tickFormat((d) => "P" + d));
@@ -612,7 +668,7 @@
 
     const g = svg.append("g").selectAll("g").data(datos).enter().append("g").attr("transform", (d) => `translate(${x(d.year)},0)`);
     const bw = x.bandwidth();
-    const color = (d) => (d.year >= 2021 ? css("--verde") : css("--celeste"));
+    const color = (d) => (d.year >= 2022 ? css("--verde") : css("--celeste"));
     g.append("line").attr("x1", bw / 2).attr("x2", bw / 2).attr("y1", (d) => y(d.lo)).attr("y2", (d) => y(d.hi)).attr("stroke", color).attr("stroke-opacity", 0.6);
     g.append("line").attr("x1", bw * 0.25).attr("x2", bw * 0.75).attr("y1", (d) => y(d.hi)).attr("y2", (d) => y(d.hi)).attr("stroke", color);
     const cajas = g.append("rect").attr("x", 0).attr("width", bw).attr("y", (d) => y(d.q3)).attr("height", (d) => Math.max(2, y(d.q1) - y(d.q3)))
@@ -626,7 +682,7 @@
     g.append("rect").attr("x", 0).attr("width", bw).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
       .on("pointerenter", (ev, d) => tip.mostrar(`<div class="t">${d.year}</div>Mediana: <b>${nf0.format(d.med)}</b> lugares<br>50% central: ${nf0.format(d.q1)} a ${nf0.format(d.q3)}<br>Promedio: ${nf1.format(d.media)} · ${d.n} pares`, (x(d.year) + bw / 2) * esc, y(d.q3) * esc))
       .on("pointerleave", () => tip.ocultar());
-    svg.append("text").attr("x", W - m.r).attr("y", m.t + 4).attr("text-anchor", "end").attr("fill", css("--verde")).style("font-size", "12px").text("Desde 2021 la brecha se estira");
+    svg.append("text").attr("x", W - m.r).attr("y", m.t + 4).attr("text-anchor", "end").attr("fill", css("--verde")).style("font-size", "12px").text("Desde 2022 la mediana sube a 3");
   }
 
   /* ---------------- Vuelta 6: simulador ---------------- */
@@ -664,7 +720,7 @@
       $("#c-piloto").style.color = p.dif < 0 ? css("--verde") : "#ff6b6b";
       $("#c-total").textContent = "P" + nf1.format(total);
       const zona = a.pos <= 4 ? "pelea arriba igual" : a.pos >= 14 ? "ni así sale del fondo de la grilla" : "sigue en la zona media que marca el auto";
-      $("#sim-texto").innerHTML = `<b>${p.piloto}</b> en el <b style="color:${e.color}">${e.nombre} ${a.year}</b> clasificaría en promedio cerca del <b>P${Math.round(total)}</b>. ` +
+      $("#sim-texto").innerHTML = `<b>${p.piloto}</b> en el <b style="color:${e.color}">${e.nombre} ${a.year}</b> terminaría en promedio cerca del <b>P${Math.round(total)}</b>. ` +
         (Math.abs(p.dif) < 0.3
           ? "Rinde casi igual que sus compañeros, así que el auto decide todo."
           : `El auto lo deja en P${nf1.format(a.pos)} y él ${p.dif < 0 ? "le gana" : "le pierde"} ${nf1.format(Math.abs(p.dif))} lugares: ${zona}.`);
@@ -693,7 +749,7 @@
   /* ---------------- Arranque ---------------- */
   function dibujarGraficos(animar) {
     graficoTerminaron(animar); graficoCarreras(animar); graficoHisto();
-    graficoPeso(animar); graficoDispersion(animar); graficoBrecha(animar);
+    graficoPeso(animar); graficoTray(animar); graficoDispersion(animar); graficoBrecha(animar);
   }
 
   hero(false);
@@ -702,6 +758,7 @@
   formacion();
   torre();
   duelos();
+  trayectorias();
   filtrosEquipo();
   simulador();
   dibujarGraficos(false);
@@ -710,6 +767,7 @@
   alEntrar($("#g-terminaron"), (est) => { if (!est) graficoTerminaron(true); });
   alEntrar($("#g-carreras"), (est) => { if (!est) graficoCarreras(true); });
   alEntrar($("#g-peso"), (est) => { if (!est) graficoPeso(true); });
+  alEntrar($("#g-tray"), (est) => { if (!est) graficoTray(true); });
   alEntrar($("#g-dispersion"), (est) => { if (!est) graficoDispersion(true); });
   alEntrar($("#g-brecha"), (est) => { if (!est) graficoBrecha(true); });
 
