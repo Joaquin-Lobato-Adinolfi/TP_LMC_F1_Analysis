@@ -1,20 +1,21 @@
 """Genera la presentación del TP (8 diapositivas 16:9) como HTML y la exporta a PDF.
 
 Los gráficos se dibujan en SVG a partir de docs/data/f1_data.js, el mismo archivo
-que usa la web. Cuando el notebook final esté listo, se regenera ese archivo con
-docs/scripts/exportar_datos.py y se vuelve a correr este script:
+que usa la web, que reproduce los cálculos del notebook final. Si cambia el
+análisis, se regenera ese archivo con docs/scripts/exportar_datos.py y se vuelve
+a correr este script:
 
     python3 presentacion/generar_presentacion.py
     node presentacion/exportar_pdf.js
 
-Mientras los resultados no sean los definitivos, PROVISORIO = True agrega un
-aviso en las diapositivas de resultados.
+PROVISORIO = True agrega un aviso en las diapositivas de resultados (ya no hace
+falta: los números son los del notebook final).
 """
 
 import json
 from pathlib import Path
 
-PROVISORIO = True
+PROVISORIO = False
 
 RAIZ = Path(__file__).resolve().parent.parent
 SALIDA = Path(__file__).resolve().parent / "presentacion.html"
@@ -49,39 +50,43 @@ def miles(n):
 # Gráficos en SVG
 # ---------------------------------------------------------------------------
 
-def grafico_autos(ancho=760, alto=380):
-    """Puntos: posición media de clasificación de cada escudería, por temporada."""
-    m = dict(izq=40, der=14, arr=16, aba=34)
-    por_anio = {}
-    for a in DATOS["autos"]:
-        por_anio.setdefault(a["year"], []).append(a)
-    anios = sorted(por_anio)
-    y0, y1 = 1, 24
-    paso = (ancho - m["izq"] - m["der"]) / len(anios)
+def grafico_efectos(ancho=760, alto=400):
+    """Líneas: efecto típico del auto y del piloto sobre la posición final, por temporada."""
+    m = dict(izq=44, der=16, arr=30, aba=34)
+    serie = DATOS["efectos"]
+    y1 = 6.5
+    x0, x1 = 2010, 2024
+
+    def px(a):
+        return m["izq"] + (a - x0) / (x1 - x0) * (ancho - m["izq"] - m["der"])
 
     def py(v):
-        return m["arr"] + (v - y0) / (y1 - y0) * (alto - m["arr"] - m["aba"])
+        return m["arr"] + (y1 - v) / y1 * (alto - m["arr"] - m["aba"])
 
     partes = [f'<svg viewBox="0 0 {ancho} {alto}" width="{ancho}" height="{alto}">']
-    for v in (1, 5, 10, 15, 20):
+    for e0, e1, nom in ((2010, 2013, "V8"), (2014, 2021, "TURBO HÍBRIDO"), (2022, 2024, "EFECTO SUELO")):
+        partes.append(f'<text x="{(px(e0) + px(e1)) / 2}" y="{m["arr"] - 12}" class="eje" text-anchor="middle">{nom}</text>')
+    for v in range(0, 7):
         partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(v)}" y2="{py(v)}" stroke="{LINEA}"/>')
-        partes.append(f'<text x="{m["izq"] - 10}" y="{py(v) + 4}" class="eje" text-anchor="end">P{v}</text>')
-    for i, anio in enumerate(anios):
-        cx = m["izq"] + paso * (i + 0.5)
-        pos = [a["pos"] for a in por_anio[anio]]
-        partes.append(f'<line x1="{cx}" x2="{cx}" y1="{py(min(pos))}" y2="{py(max(pos))}" stroke="{AUTO}" '
-                      f'stroke-opacity=".35" stroke-width="10" stroke-linecap="round"/>')
-        for a in por_anio[anio]:
-            color = EQUIPOS.get(a["equipo"], {}).get("color", TENUE)
-            partes.append(f'<circle cx="{cx:.1f}" cy="{py(a["pos"]):.1f}" r="5.5" fill="{color}" stroke="#0B0D12" stroke-width="1.5"/>')
-        partes.append(f'<text x="{cx}" y="{alto - 10}" class="eje" text-anchor="middle">{str(anio)[2:]}</text>')
+        partes.append(f'<text x="{m["izq"] - 10}" y="{py(v) + 4}" class="eje" text-anchor="end">{v}</text>')
+    for a in range(x0, x1 + 1):
+        partes.append(f'<text x="{px(a)}" y="{alto - 10}" class="eje" text-anchor="middle">{str(a)[2:]}</text>')
+    partes.append(f'<line x1="{px(2021)}" x2="{px(2021)}" y1="{m["arr"]}" y2="{alto - m["aba"]}" stroke="#2BD47D" stroke-opacity=".5" stroke-dasharray="4 4"/>')
+    partes.append(f'<text x="{px(2021) - 6}" y="{py(0.35)}" class="nota" text-anchor="end" style="fill:#2BD47D">tope presupuestario</text>')
+    for clave, color in (("auto", AUTO), ("piloto", PILOTO)):
+        pts = " ".join(f"{px(d['year']):.1f},{py(d[clave]):.1f}" for d in serie)
+        partes.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="4" stroke-linejoin="round"/>')
+        for d in serie:
+            partes.append(f'<circle cx="{px(d["year"]):.1f}" cy="{py(d[clave]):.1f}" r="5" fill="#0B0D12" stroke="{color}" stroke-width="2.5"/>')
+    partes.append(f'<text x="{px(2017)}" y="{py(4.11) + 26}" class="rotulo" style="fill:{AUTO}" text-anchor="middle">auto</text>')
+    partes.append(f'<text x="{px(2017)}" y="{py(1.58) + 26}" class="rotulo" style="fill:{PILOTO}" text-anchor="middle">piloto</text>')
     partes.append("</svg>")
     return "".join(partes)
 
 
 def grafico_duelos(n=8, ancho=720):
-    """Barras: % de clasificaciones ganadas al compañero (pilotos con más de 100 duelos)."""
-    top = [d for d in DATOS["duelos"] if d["duelos"] >= 100][:n]
+    """Barras: % de carreras ganadas al compañero (pilotos con al menos 33 duelos)."""
+    top = DATOS["duelos"][:n]
     filas = []
     for i, d in enumerate(top, 1):
         color = EQUIPOS.get(d["equipo"], {}).get("color", PILOTO)
@@ -99,31 +104,33 @@ def grafico_duelos(n=8, ancho=720):
     return "".join(filas)
 
 
-def grafico_brecha(ancho=760, alto=360):
-    """Cajas: distancia en la grilla entre compañeros, por temporada."""
-    m = dict(izq=40, der=10, arr=14, aba=34)
-    serie = DATOS["brecha"]
-    y1 = 14
-    paso = (ancho - m["izq"] - m["der"]) / len(serie)
+def grafico_tray(ancho=380, alto=200, piloto=""):
+    """Líneas: % de duelos ganados al compañero por temporada, con el color del equipo."""
+    m = dict(izq=34, der=20, arr=26, aba=22)
+    d = sorted((x for x in DATOS["duelos_anio"] if x["piloto"] == piloto), key=lambda x: x["year"])
+
+    def px(a):
+        return m["izq"] + (a - 2010) / 14 * (ancho - m["izq"] - m["der"])
 
     def py(v):
-        return m["arr"] + (y1 - v) / y1 * (alto - m["arr"] - m["aba"])
+        return m["arr"] + (100 - v) / 100 * (alto - m["arr"] - m["aba"])
 
-    partes = [f'<svg viewBox="0 0 {ancho} {alto}" width="{ancho}" height="{alto}">']
-    for v in range(0, 15, 2):
-        partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(v)}" y2="{py(v)}" stroke="{LINEA}"/>')
-        partes.append(f'<text x="{m["izq"] - 10}" y="{py(v) + 4}" class="eje" text-anchor="end">{v}</text>')
-    for i, d in enumerate(serie):
-        cx = m["izq"] + paso * (i + 0.5)
-        nuevo = d["year"] >= 2021
-        color = PILOTO if nuevo else TENUE
-        w = paso * 0.5
-        partes.append(f'<line x1="{cx}" x2="{cx}" y1="{py(d["hi"])}" y2="{py(d["lo"])}" stroke="{color}" stroke-width="1.5"/>')
-        partes.append(f'<rect x="{cx - w / 2}" y="{py(d["q3"])}" width="{w}" height="{py(d["q1"]) - py(d["q3"])}" '
-                      f'fill="{color}" fill-opacity="{0.28 if nuevo else 0.12}" stroke="{color}" stroke-width="1.5" rx="3"/>')
-        partes.append(f'<line x1="{cx - w / 2}" x2="{cx + w / 2}" y1="{py(d["med"])}" y2="{py(d["med"])}" '
-                      f'stroke="{AUTO if nuevo else TEXTO}" stroke-width="3.5"/>')
-        partes.append(f'<text x="{cx}" y="{alto - 10}" class="eje" text-anchor="middle">{str(d["year"])[2:]}</text>')
+    color = lambda ref: EQUIPOS.get(ref, {}).get("color", TENUE)
+    partes = [f'<svg viewBox="0 0 {ancho} {alto}" width="{ancho}" height="{alto}">',
+              f'<text x="{m["izq"]}" y="16" class="mini-tit">{piloto}</text>']
+    for v in (0, 50, 100):
+        trazo = 'stroke="#4A5060" stroke-dasharray="4 4"' if v == 50 else f'stroke="{LINEA}"'
+        partes.append(f'<line x1="{m["izq"]}" x2="{ancho - m["der"]}" y1="{py(v)}" y2="{py(v)}" {trazo}/>')
+        partes.append(f'<text x="{m["izq"] - 6}" y="{py(v) + 4}" class="eje" text-anchor="end">{v}%</text>')
+    for a in (2012, 2016, 2020, 2024):
+        partes.append(f'<text x="{px(a)}" y="{alto - 6}" class="eje" text-anchor="middle">{a}</text>')
+    for i in range(1, len(d)):
+        a0, a1 = d[i - 1], d[i]
+        guion = ' stroke-dasharray="3 5"' if a1["year"] - a0["year"] > 1 else ""
+        partes.append(f'<line x1="{px(a0["year"]):.1f}" y1="{py(a0["pct"]):.1f}" x2="{px(a1["year"]):.1f}" y2="{py(a1["pct"]):.1f}" '
+                      f'stroke="{color(a1["equipo"])}" stroke-width="3"{guion}/>')
+    for x in d:
+        partes.append(f'<circle cx="{px(x["year"]):.1f}" cy="{py(x["pct"]):.1f}" r="4.5" fill="{color(x["equipo"])}" stroke="#0B0D12" stroke-width="1.5"/>')
     partes.append("</svg>")
     return "".join(partes)
 
@@ -150,33 +157,25 @@ def marco(n, titulo_corto, cuerpo, clase="", provisorio=False):
 </section>"""
 
 
-# Distancia en la grilla entre el mejor y el peor auto de cada temporada, y entre compañeros.
-rango_autos = {}
-for a in DATOS["autos"]:
-    rango_autos.setdefault(a["year"], []).append(a["pos"])
-rango_autos = {y: max(v) - min(v) for y, v in rango_autos.items()}
-dist_autos = sum(rango_autos.values()) / len(rango_autos)
-dist_compas = sum(b["media"] for b in DATOS["brecha"]) / len(DATOS["brecha"])
-
-
 def coma(x, dec=1):
     return f"{x:.{dec}f}".replace(".", ",")
-lider = DATOS["duelos"][0]
-alonso = next(d for d in DATOS["duelos"] if d["codigo"] == "ALO")
-brecha = {d["year"]: d for d in DATOS["brecha"]}
-med_antes = brecha[2020]["med"]
-med_despues = brecha[2023]["med"]
 
-# Cifras de la exploración y el filtrado del notebook de Joaquín (commits del 27 al 30/10).
-# Se cargan a mano porque el notebook todavía no exporta estos valores.
+
+EF = {d["year"]: d for d in DATOS["efectos"]}
+ratio_max = max(DATOS["efectos"], key=lambda d: d["ratio"])
+ratio_min = min(DATOS["efectos"], key=lambda d: d["ratio"])
+lider, segundo = DATOS["duelos"][0], DATOS["duelos"][1]
+alonso = next(d for d in DATOS["duelos"] if d["codigo"] == "ALO")
+X = DATOS["exploracion"]
+
+# Cifras de la exploración y el filtrado del notebook (las mismas que exporta la web)
 NB = dict(
-    resultados=6436,          # results 2010–2024
-    terminaron=5280,          # status "Finished" o "+N Laps"
-    clasificaciones=6412,     # qualifying 2010–2024
-    carreras=305,
-    pilotos_carrera=79,
-    pilotos_quali=80,         # el extra es André Lotterer: clasificó en Bélgica 2014 y abandonó en carrera
-    escuderias=23,
+    resultados=X["filtro"]["total"],          # results 2010–2024
+    terminaron=X["filtro"]["terminaron"],     # status "Finished" o "+N Laps"
+    pares=RES["pares"],                       # carreras en que terminaron los dos pilotos del equipo
+    carreras=RES["carreras"],
+    pilotos_carrera=X["pilotos_carrera"],
+    escuderias=RES["escuderias"],
 )
 
 SLIDES = []
@@ -210,8 +209,8 @@ SLIDES.append(marco(2, "La pregunta", f"""
       <div class="tarjeta"><div class="num">03</div><h3>El debate de siempre</h3><p>Todo fanático tiene una opinión. Nosotros lo medimos con datos.</p></div>
     </div>
     <div class="definiciones">
-      <div><b class="a">Auto</b> = desempeño de la escudería en el período, con independencia de sus pilotos.</div>
-      <div><b class="p">Talento</b> = desempeño del piloto por sí mismo y, sobre todo, contra su compañero, que tiene el mismo auto.</div>
+      <div><b class="a">Auto</b> = posición media de los dos pilotos de la escudería en cada carrera, analizada por escudería y año.</div>
+      <div><b class="p">Talento</b> = resultado del piloto contra su compañero, que maneja el mismo auto en la misma carrera.</div>
     </div>
   </div>"""))
 
@@ -224,20 +223,21 @@ SLIDES.append(marco(3, "Datos y método", f"""
         <div class="igual">mismo auto<br><b>=</b><br>misma carrera</div>
         <div class="auto-box"><div class="casco" style="background:#C77DFF"></div><span>Piloto B</span></div>
       </div>
-      <div class="ecuacion">diferencia entre A y B &nbsp;→&nbsp; <b class="p">efecto piloto</b></div>
+      <div class="ecuacion">posición = media de la carrera − <b class="a">auto</b> − <b class="p">piloto</b></div>
       <ul class="pasos">
         <li>Solo autos que terminaron (<i>Finished</i> o <i>+N vueltas</i>): un abandono es un atípico que no mide ni auto ni piloto.</li>
-        <li>Dos tablas de análisis, carrera y clasificación, con año, piloto y escudería. Variables: <i>positionOrder</i> y <i>grid</i>; se descartan puntos (el sistema cambió) y tiempos.</li>
-        <li>La clasificación se analiza aparte. Atípico: Lotterer, que clasificó en 2014 pero no terminó ninguna carrera.</li>
+        <li>Solo carreras en que terminaron <i>los dos</i> pilotos del equipo: si uno abandona, no hay contra quién comparar.</li>
+        <li><b class="a">Auto</b>: cuánto se aleja el equipo del promedio de la carrera. <b class="p">Piloto</b>: cuánto se aleja de la media de su equipo. Las dos en posiciones.</li>
       </ul>
     </div>
     <div class="metodo-der">
       <div class="embudo">
         <div class="dato"><b>{miles(NB['resultados'])}</b><span>resultados de carrera</span></div>
-        <div class="flecha">filtro: terminaron · −{miles(NB['resultados'] - NB['terminaron'])}</div>
-        <div class="dato fin"><b>{miles(NB['terminaron'])}</b><span>autos que terminaron ({NB['terminaron'] / NB['resultados']:.0%})</span></div>
+        <div class="flecha">terminaron · −{miles(NB['resultados'] - NB['terminaron'])}</div>
+        <div class="dato"><b>{miles(NB['terminaron'])}</b><span>autos que terminaron ({NB['terminaron'] / NB['resultados']:.0%})</span></div>
+        <div class="flecha">terminaron los dos del equipo</div>
+        <div class="dato fin"><b>{miles(NB['pares'])}</b><span>duelos entre compañeros</span></div>
       </div>
-      <div class="dato"><b>{miles(NB['clasificaciones'])}</b><span>resultados de clasificación</span></div>
       <div class="mini">{NB['carreras']} carreras · {NB['pilotos_carrera']} pilotos · {NB['escuderias']} escuderías</div>
       <div class="fuente">Kaggle · Rohan Rao · <i>Formula 1 World Championship (1950–2024)</i></div>
     </div>
@@ -251,62 +251,66 @@ SLIDES.append(marco(3, "Datos y método", f"""
 SLIDES.append(marco(4, "Resultado 1", f"""
   <div class="resultado">
     <div class="res-texto">
-      <div class="enorme a">{dist_autos:.0f}</div>
-      <h2>posiciones separan al mejor y al peor <em class="a">auto</em> de cada temporada</h2>
-      <p>Cada punto es una escudería: su posición media en clasificación en el año. Entre compañeros, la distancia media es de {coma(dist_compas)} posiciones.</p>
-      <p>Desde 2022 la franja se achica (de {rango_autos[2010]:.0f} posiciones en 2010 a {rango_autos[2023]:.0f} en 2023): <b>los autos están más parejos</b>.</p>
+      <div class="enorme a">{coma(RES['ratio'])}<small>×</small></div>
+      <h2>el <em class="a">auto</em> pesa 2,4 veces más que el <em class="p">piloto</em></h2>
+      <p>El auto aleja a su equipo <b>{coma(RES['efecto_auto'], 2)}</b> posiciones del promedio de la carrera; el piloto se aleja <b>{coma(RES['efecto_piloto'], 2)}</b> de su compañero.</p>
+      <p>Pasa en <b>las 15 temporadas</b>: el cociente va de {coma(ratio_min['ratio'])} ({ratio_min['year']}) a {coma(ratio_max['ratio'])} ({ratio_max['year']}).</p>
     </div>
-    <div class="res-grafico">{grafico_autos()}</div>
-  </div>""", provisorio=True))
+    <div class="res-grafico">{grafico_efectos()}
+      <div class="leyenda"><span><i style="background:{AUTO}"></i>Efecto del auto</span><span><i style="background:{PILOTO}"></i>Efecto del piloto</span><span style="color:{TENUE}">posiciones, por temporada</span></div>
+    </div>
+  </div>"""))
 
 SLIDES.append(marco(5, "Resultado 2", f"""
   <div class="resultado duelos">
     <div class="res-texto">
       <h2>Igual hay pilotos que <em class="p">marcan la diferencia</em></h2>
-      <p>Porcentaje de clasificaciones en las que le ganaron a su compañero, con el mismo auto.</p>
-      <p><b>{lider['piloto'].split()[-1]}</b> le gana {lider['pct']:.0f} de cada 100. Alonso lo hizo en {len(alonso["equipos"])} equipos distintos: eso es el piloto, no el auto.</p>
-      <p class="chico">Pilotos con 100 duelos o más · la línea marca el empate (50%).</p>
+      <p>Porcentaje de carreras en las que terminaron adelante de su compañero, con el mismo auto.</p>
+      <p><b>{lider['piloto'].split()[-1]}</b> le gana {lider['pct']:.0f} de cada 100 y <b>{segundo['piloto'].split()[-1]}</b>, {segundo['pct']:.0f}. Alonso lo hizo en {len(alonso["equipos"])} equipos distintos: eso es el piloto, no el auto.</p>
+      <p class="chico">Pilotos con {RES['min_duelos']} duelos o más (la mediana) · la línea marca el empate (50%).</p>
     </div>
     <div class="tabla-tiempos">{grafico_duelos()}</div>
-  </div>""", provisorio=True))
+  </div>"""))
 
 SLIDES.append(marco(6, "Resultado 3", f"""
-  <div class="resultado">
+  <div class="resultado tray">
     <div class="res-texto">
-      <div class="enorme p">{med_antes:.0f}<small>→</small>{med_despues:.0f}</div>
-      <h2>posiciones separan a los compañeros en la grilla</h2>
-      <p>Distancia típica entre los dos pilotos de un equipo en clasificación, por temporada.</p>
-      <p>Desde 2021 la mediana sube y las cajas se estiran: <b>cuando los autos se emparejan, el piloto se nota más</b>.</p>
+      <h2>El talento se sostiene, pero <em class="a">el auto</em> lo condiciona</h2>
+      <p>Duelos ganados al compañero, temporada por temporada, con el color del equipo.</p>
+      <p><b>Alonso</b>: entre 81% y 100% en Ferrari, 44% en su primer año en McLaren. <b>Vettel</b>: del 100% en 2013 al 21% en 2014, con reglamento nuevo.</p>
+      <p><b>Verstappen</b> crece hasta el 100% (2020, 2021 y 2024).</p>
     </div>
-    <div class="res-grafico">{grafico_brecha()}</div>
-  </div>""", provisorio=True))
+    <div class="res-grafico cuatro">
+      {"".join(grafico_tray(piloto=p) for p in ("Fernando Alonso", "Lewis Hamilton", "Sebastian Vettel", "Max Verstappen"))}
+    </div>
+  </div>"""))
 
 SLIDES.append(marco(7, "Conclusión", f"""
   <div class="conclusion">
-    <h2>Pesa más el <em class="a">auto</em>. Pero el <em class="p">piloto</em> decide quién lo aprovecha.</h2>
+    <h2>Pesa más el <em class="a">auto</em>. El <em class="p">piloto</em> decide dentro de lo que el auto permite.</h2>
     <div class="medidor">
-      <div class="fila-medidor"><span>Entre autos</span><div class="m-auto" style="width:{dist_autos / 20 * 100:.1f}%">≈ {dist_autos:.0f} posiciones</div></div>
-      <div class="fila-medidor"><span>Entre compañeros</span><div class="m-piloto" style="width:{dist_compas / 20 * 100:.1f}%">≈ {dist_compas:.0f}</div></div>
+      <div class="fila-medidor"><span>Efecto del auto</span><div class="m-auto" style="width:{RES['efecto_auto'] / 6 * 100:.1f}%">{coma(RES['efecto_auto'], 2)} posiciones</div></div>
+      <div class="fila-medidor"><span>Efecto del piloto</span><div class="m-piloto" style="width:{RES['efecto_piloto'] / 6 * 100:.1f}%">{coma(RES['efecto_piloto'], 2)}</div></div>
     </div>
     <div class="col2">
       <div>
         <h3>Lo que encontramos</h3>
         <ol>
-          <li>La distancia entre el mejor y el peor auto es casi {dist_autos / dist_compas:.0f} veces la que hay entre compañeros.</li>
-          <li>Dentro de un mismo auto, algunos pilotos ganan siempre.</li>
-          <li>Con autos más parejos (desde 2021) el piloto pesa más.</li>
+          <li>El auto mueve la posición {coma(RES['ratio'])} veces más que el piloto, en las 15 temporadas.</li>
+          <li>Dentro de un mismo auto hay pilotos que ganan 4 de cada 5 duelos.</li>
+          <li>Desde 2021 los autos están algo más parejos (cociente entre 2,0 y 2,3).</li>
         </ol>
       </div>
       <div class="limites">
         <h3>Limitaciones</h3>
         <ul>
+          <li>El talento se mide contra el compañero, no en términos absolutos.</li>
+          <li>Quedan afuera los abandonos y las carreras de un solo auto.</li>
           <li>Solo 2010–2024: no se generaliza a otras épocas.</li>
-          <li>Pocos equipos por temporada (10 a 12).</li>
-          <li>El compañero es otro piloto, no una vara absoluta.</li>
         </ul>
       </div>
     </div>
-  </div>""", provisorio=True))
+  </div>"""))
 
 SLIDES.append(f"""
 <section class="slide cierre">
@@ -318,10 +322,10 @@ SLIDES.append(f"""
     <div class="ia">
       <h3>Uso de IA en el flujo de trabajo</h3>
       <ul>
-        <li><b>Modelo:</b> Claude (Anthropic), usado como agente con contexto del proyecto: consigna, diccionario del dataset y repositorio.</li>
-        <li><b>Análisis:</b> generación y depuración del pipeline en pandas (joins por raceId, driverId y constructorId; construcción de duelos; agregaciones con groupby; descomposición de la varianza).</li>
-        <li><b>Comunicación:</b> estructura del informe en LaTeX, visualizaciones (matplotlib y SVG) y esta presentación, generada por código.</li>
-        <li><b>Validación:</b> cada salida se contrastó contra los datos crudos; las celdas asistidas están marcadas con su prompt.</li>
+        <li><b>Modelo:</b> Claude (Anthropic), usado como asistente con el contexto del proyecto: consigna, notebook y repositorio.</li>
+        <li><b>Análisis:</b> elección de variables y hoja de ruta, filtro de autos terminados (sumar los doblados), <i>transform</i> para armar los pares de compañeros, control de reconstrucción y elección de gráficos.</li>
+        <li><b>Comunicación:</b> informe en LaTeX, sitio web y esta presentación, generada por código con los mismos datos.</li>
+        <li><b>Validación:</b> controles en el notebook (sumas de carreras, reconstrucción con error 0) y una segunda ejecución del código que reproduce todas las cifras. Las celdas asistidas están marcadas con su prompt.</li>
       </ul>
     </div>
     <div class="links">
@@ -454,6 +458,12 @@ b.p {{ color: {PILOTO}; }}
 .barra {{ height: 100%; border-radius: 7px; }}
 .mitad {{ position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: #FFFFFF55; z-index: 2; }}
 .fila .pct {{ font-family: 'JetBrains Mono'; font-weight: 700; font-size: 20px; width: 56px; text-align: right; }}
+
+.rotulo {{ font-family: 'Inter Display'; font-weight: 800; font-style: italic; font-size: 16px; }}
+.mini-tit {{ font-family: 'Inter Display'; font-weight: 800; font-size: 15px; fill: {TEXTO}; }}
+.cuatro {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; padding: 16px 14px 10px; }}
+.tray .res-texto {{ flex: 0 0 330px; }}
+.tray .res-texto h2 {{ font-size: 32px; }}
 
 /* conclusión */
 .conclusion h2 {{ font-size: 50px; max-width: 1080px; margin-top: 16px; }}
