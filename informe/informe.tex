@@ -1,20 +1,25 @@
 % Informe académico - TP Grupal LMC 2C 2026
-% Copiar este archivo al proyecto de Overleaf (reemplaza el main.tex actual).
-% Los bloques marcados con TODO se completan cuando el notebook esté ejecutado.
-% Extensión objetivo: 3 a 5 páginas sin contar portada, índice ni bibliografía.
+% Para Overleaf: subir este archivo como main.tex y los tres PNG de graficos/
+% a una carpeta figuras/ del proyecto.
+% Para compilar localmente: cd informe && pdflatex informe.tex (dos veces).
+% Todas las cifras salen del notebook TP_LMC_F1_Analysis.ipynb.
 
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[spanish]{babel}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[margin=2.3cm]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{amsmath}
-\usepackage{hyperref}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
 
 \graphicspath{{figuras/}{../graficos/}}
+\captionsetup{font=small,labelfont=bf}
+\decimalpoint
 
 \begin{document}
 
@@ -28,33 +33,32 @@
     \vspace{2cm}
     {\Huge\bfseries Análisis F1\par}
     \vspace{0.5cm}
-    {\Large Rendimiento por auto o talento\par}
+    {\Large ¿Pesa más el auto o el piloto?\par}
     \vfill
     {\large Alumnos: Agustín Mier Torre y Joaquín Lobato Adinolfi\par}
+    \vspace{0.3cm}
+    {\normalsize Repositorio: \url{https://github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis}\par}
     \vspace{0.5cm}
     {\large Facultad de Ciencias Económicas, Universidad de Buenos Aires\par}
     \vspace{0.3cm}
     {\large 2do Cuatrimestre 2026\par}
 \end{titlepage}
 
-\tableofcontents
-\newpage
 
 % ---------------------------------------------------------------------------
 % §1. Resumen (5 a 8 líneas)
 % ---------------------------------------------------------------------------
 \begin{abstract}
-El presente trabajo analiza en qué medida el resultado de una carrera de
-Fórmula 1 depende del rendimiento del auto o del talento del piloto. Se
-utilizan los resultados de carrera y de clasificación del dataset
-\emph{Formula 1 World Championship}, restringidos a las temporadas
-2010--2024 (305 carreras, 80 pilotos y 23 escuderías). Se define el
-rendimiento del auto como el desempeño de cada escudería y el talento como el
-desempeño de cada piloto, y se comparan ambos a partir de las carreras
-finalizadas y de las clasificaciones: escudería contra escudería y piloto
-contra su compañero de equipo, que dispone del mismo auto.
-% TODO: agregar una o dos oraciones con los hallazgos principales cuando la
-% sección de resultados esté cerrada.
+El trabajo analiza si el resultado de una carrera de Fórmula 1 depende más del
+rendimiento del auto o del talento del piloto, con el dataset \emph{Formula 1
+World Championship} restringido a 2010--2024 (305 carreras). Se usan solo los
+autos que terminaron la carrera y, dentro de ellos, las 2.209 carreras en que
+los dos pilotos de un mismo equipo llegaron a la meta. La posición de cada
+piloto se separa en el aporte del auto (cuánto se aleja su equipo del promedio
+de la carrera) y el aporte del piloto (cuánto se aleja de su compañero, que
+maneja el mismo auto). El auto mueve en promedio 4,75 posiciones y el piloto
+1,97: el auto pesa unas 2,4 veces más, y es así en las quince temporadas
+analizadas.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -67,57 +71,37 @@ En la Fórmula 1 el resultado de cada carrera combina dos factores difíciles
 de separar: el auto que construye la escudería y el piloto que lo maneja. Los
 equipos invierten cientos de millones de dólares por año en el desarrollo del
 auto y, al mismo tiempo, pagan salarios muy altos para contratar a los pilotos
-más destacados. Estimar cuánto del resultado explica cada factor permite
-evaluar dónde rinde más cada peso invertido, y también qué tan justo es
-comparar a campeones que corrieron con autos de muy distinto nivel.
+más destacados. Estimar cuánto del resultado explica cada factor ayuda a
+decidir dónde conviene invertir (en el auto o en el piloto) y también a juzgar
+qué tan justo es comparar a campeones que corrieron con autos de muy distinto
+nivel.
 
-El período 2010--2024 resulta adecuado para estudiarlo porque contiene tres
-reglamentos técnicos distintos (motores V8 hasta 2013, motores turbo híbridos
-desde 2014 y autos de efecto suelo desde 2022) y la introducción del límite
-presupuestario en 2021. Esos cambios permiten observar si el balance entre
-auto y piloto se modifica cuando cambian las reglas que determinan cuán
-parejos son los autos.
+El período 2010--2024 contiene tres reglamentos técnicos distintos (motores
+V8 hasta 2013, motores turbo híbridos desde 2014 y autos de efecto suelo desde
+2022) y la introducción del límite presupuestario en 2021. Esos cambios
+permiten observar si el balance entre auto y piloto se modifica cuando cambian
+las reglas que determinan cuán parejos son los autos.
 
-\subsection{Pregunta de investigación}
+\subsection{Pregunta de investigación y objetivos}
 La pregunta que guía el trabajo es: \emph{¿qué pesa más en el resultado de una
 carrera de Fórmula 1 entre 2010 y 2024, el rendimiento del auto o el talento
-del piloto?} Para responderla no solo se analizan los resultados de cada
-piloto, sino que se compara a las escuderías entre sí y a cada piloto con su
-compañero de equipo, que corre con el mismo auto en la misma carrera.
-
-\subsection{Objetivos}
-El objetivo general del trabajo es determinar si el resultado de una carrera
-de Fórmula 1 entre 2010 y 2024 depende más del rendimiento del auto o del
-desempeño del piloto.
-
-Los objetivos particulares son:
-\begin{enumerate}
-    \item Construir, a partir de las tablas del dataset, dos bases de
-    análisis (carreras finalizadas y clasificaciones) que reúnan en una sola
-    tabla el año, el piloto, la escudería y la posición de cada auto.
-    \item Medir el rendimiento del auto como el desempeño de cada escudería a
-    lo largo del período, con independencia de quiénes fueron sus pilotos.
-    \item Medir el talento a partir de los resultados de cada piloto y,
-    sobre todo, de la comparación con su compañero de equipo:
-    \begin{enumerate}
-        \item comparar a los dos pilotos de una misma escudería, que
-        manejan el mismo auto;
-        \item observar cómo cambia el resultado de un piloto cuando cambia de
-        escudería o de compañero.
-    \end{enumerate}
-    \item Contrastar los resultados de carrera con los de clasificación, que
-    miden el ritmo del auto y del piloto sin la influencia de la estrategia,
-    los choques o las roturas.
-\end{enumerate}
+del piloto?} Para responderla se compara a las escuderías entre sí (auto
+contra auto) y a cada piloto con su compañero de equipo, que corre con el
+mismo auto en la misma carrera (piloto contra piloto). Los objetivos
+particulares son: (1) construir una base que reúna, para cada auto que terminó
+una carrera, el año, el piloto, la escudería y la posición final; (2) medir el
+rendimiento del auto como la posición media de los dos pilotos de cada
+escudería; (3) medir el talento como el resultado de cada piloto frente a su
+compañero y observar cómo cambia cuando cambia de equipo, y (4) llevar ambas
+medidas a la misma escala y compararlas, en total y por temporada.
 
 \subsection{Dataset y fuente}
 Se utiliza el dataset \emph{Formula 1 World Championship (1950--2024)},
 publicado en Kaggle por Rohan Rao a partir de la base Ergast
-\cite{kaggle}. Está compuesto por un conjunto de tablas relacionadas
-(archivos CSV) que registran carreras, resultados, clasificaciones, pilotos,
-escuderías y circuitos del campeonato mundial desde 1950. El análisis se
-restringe a las temporadas 2010--2024: 305 carreras, 80 pilotos y 23
-escuderías.
+\cite{kaggle}. Está compuesto por tablas relacionadas (archivos CSV) que
+registran carreras, resultados, clasificaciones, pilotos, escuderías y
+estados de llegada del campeonato mundial desde 1950. El notebook lo descarga
+directamente con \texttt{kagglehub}.
 
 % ---------------------------------------------------------------------------
 % §3. Datos y metodología (media página)
@@ -125,143 +109,212 @@ escuderías.
 \section{Datos y metodología}
 
 \subsection{Variables y estructura}
-Se utilizan seis tablas del dataset, filtradas a las carreras de 2010--2024:
-\texttt{races} (305 carreras), \texttt{results} (6.436 resultados, uno por
-piloto y carrera), \texttt{qualifying} (6.412 registros de clasificación),
-\texttt{drivers} (80 pilotos), \texttt{constructors} (23 escuderías) y
-\texttt{status} (motivo por el que cada auto terminó o abandonó). Las tablas se
-relacionan mediante las claves \texttt{raceId}, \texttt{driverId},
-\texttt{constructorId} y \texttt{statusId}.
-
-En la exploración inicial ninguna tabla presenta nulos, con una excepción:
-en \texttt{qualifying} faltan 22 tiempos de Q2 y 46 de Q3, que corresponden a
-pilotos que no participaron de esas tandas. En \texttt{results}, en cambio, los
-faltantes no aparecen como nulos sino codificados con el texto
-\texttt{\textbackslash N}, sobre todo en la posición y los tiempos de los
-autos que no terminaron la carrera.
+Se usan seis tablas filtradas a 2010--2024: \texttt{races} (305 carreras),
+\texttt{results} (6.436 resultados, uno por piloto y carrera),
+\texttt{qualifying} (6.412 registros), \texttt{drivers} (80 pilotos),
+\texttt{constructors} (23 escuderías) y \texttt{status} (motivo de llegada o
+abandono). Se relacionan por \texttt{raceId}, \texttt{driverId},
+\texttt{constructorId} y \texttt{statusId}. No hay nulos, salvo 22 tiempos
+de Q2 y 46 de Q3 en \texttt{qualifying} (pilotos eliminados antes). En
+\texttt{results} los faltantes aparecen como el texto \texttt{\textbackslash
+N}, sobre todo en la posición y los tiempos de los autos que abandonaron. La
+variable de resultado es \texttt{positionOrder}, la única posición informada
+para todos los autos.
 
 \subsection{Transformaciones}
 \begin{enumerate}
-    \item \textbf{Filtro de carreras finalizadas.} Se conservan solo los
-    resultados de autos que terminaron la carrera. Un abandono aparece como
-    un dato atípico severo y no informa sobre el rendimiento comparable de
-    auto y piloto. Se consideran finalizados tanto los autos con estado
-    \emph{Finished} como los que llegaron con vueltas de atraso (estados
-    \emph{+1 Lap}, \emph{+2 Laps}, etc.). La base queda con 5.280 resultados
-    (el 82\% del total); los 1.156 restantes corresponden a abandonos.
-    \item \textbf{Control de consistencia entre tablas.} Las carreras
-    finalizadas cubren las 305 carreras y las 23 escuderías, pero 79
-    pilotos, contra 80 en la clasificación. El piloto faltante es André
-    Lotterer, que disputó una sola carrera (Bélgica 2014) y no la terminó.
-    Se lo identifica como dato atípico.
-    \item \textbf{Construcción de las tablas de análisis.} Se arman dos
-    tablas finales. La primera, \texttt{carreras\_analisis}, agrega a cada
-    resultado el año, el nombre del piloto, el de la escudería y el estado
-    final. La segunda, \texttt{qualifying\_analisis}, hace lo mismo con la
-    clasificación. Se descartan las columnas que no aportan al análisis:
-    el número del auto, los puntos (el sistema de puntuación cambió a lo
-    largo de los años) y los tiempos y vueltas rápidas, que varían mucho
-    entre temporadas y circuitos.
+    \item \textbf{Filtro de carreras finalizadas.} Un abandono no informa sobre
+    el rendimiento comparable de auto y piloto, por lo que se conservan los
+    estados \emph{Finished} y los de autos que llegaron con vueltas de atraso
+    (\emph{+1 Lap}, \emph{+2 Laps}, etc.). Quedan 5.280 resultados (82\%); los
+    1.156 restantes son abandonos. Al cruzar con la clasificación aparece un
+    piloto de más, André Lotterer: corrió una sola carrera (Bélgica 2014) y
+    abandonó en la primera vuelta.
+    \item \textbf{Tabla de análisis.} Se arma \texttt{carreras\_analisis}, que
+    agrega a cada resultado el año, el nombre del piloto, el de la escudería y
+    el estado, mediante diccionarios y \texttt{map}. Se descartan el número del
+    auto, los puntos (el sistema cambió con los años), los tiempos y la
+    clasificación, cuyo análisis excedía el alcance del trabajo. También se
+    descarta medir posiciones ganadas desde la largada, porque las largadas
+    desde boxes (\texttt{grid}~$=0$, 1,04\% de los casos) complican la cuenta.
+    \item \textbf{Pares de compañeros.} Con \texttt{groupby} y
+    \texttt{transform} se conservan solo las carreras en que \emph{los dos}
+    pilotos de una escudería terminaron: si uno abandona no hay contra quién
+    compararlo. Quedan 4.418 filas, es decir, 2.209 pares.
+    \item \textbf{Columnas derivadas.} Para cada piloto se calculan la media
+    del equipo en esa carrera (\texttt{team\_mean}), la media de la carrera
+    (\texttt{race\_mean}), el aporte del piloto
+    $d = \texttt{team\_mean} - \texttt{positionOrder}$ y el aporte del auto
+    $a = \texttt{race\_mean} - \texttt{team\_mean}$. En ambos casos un valor
+    positivo significa terminar mejor que la referencia. También se marca si
+    el piloto ganó el duelo ($d>0$) y la distancia entre compañeros ($2|d|$).
 \end{enumerate}
 
-\subsection{Variables de análisis y método}
-La variable de resultado en carrera es \texttt{positionOrder}, que siempre
-está informada y ordena a todos los autos de cada carrera. Se conserva también
-\texttt{grid}, la posición de largada, para medir cuántos lugares gana o
-pierde cada piloto (\texttt{grid} $=0$ indica una largada desde boxes). En
-clasificación se usa \texttt{position}, la posición obtenida en la sesión,
-antes de aplicar penalizaciones.
+\subsection{Método}
+Por construcción, la posición de cada piloto se reconstruye exactamente como
+\begin{equation}
+\texttt{positionOrder} = \texttt{race\_mean} - a - d ,
+\end{equation}
+control que el notebook verifica para las 4.418 filas (diferencia máxima 0).
+Como $a$ y $d$ se miden en posiciones y en la misma carrera, son comparables.
+Para resumirlos se usa la raíz del promedio de sus cuadrados, igual que un
+desvío estándar: el \emph{efecto del auto} es $\sqrt{\overline{a^2}}$ y el
+\emph{efecto del piloto}, $\sqrt{\overline{d^2}}$. Su cociente indica cuántas
+veces más mueve las posiciones el auto que el piloto. Si los autos fueran
+todos iguales y los pilotos se repartieran al azar, el cociente sería cercano
+a 1. Los resúmenes se calculan con \texttt{groupby} por piloto, por escudería,
+por temporada y por escudería y temporada. Para los rankings de pilotos se
+exige un mínimo de 33 duelos (la mediana), para no sacar conclusiones de
+pilotos con muy pocas carreras.
 
-Se define el \emph{rendimiento del auto} como el desempeño de cada escudería
-en el período, con independencia de sus pilotos, y el \emph{talento} como el
-desempeño de cada piloto por sí mismo. Las dos tablas se analizan por
-separado y luego se comparan entre sí. Los resúmenes se calculan con
-\texttt{groupby} por piloto, escudería y temporada. El primero cuenta las
-carreras finalizadas por piloto: la mediana es de 42 carreras y la media de
-66,8, con un rango de 1 a 276. La distribución es asimétrica, porque unos
-pocos pilotos concentran muchas más carreras que el resto. Ese dato se tiene
-en cuenta para no sacar conclusiones sobre pilotos con muy pocas carreras.
-% TODO: completar cuando el notebook tenga las comparaciones escudería contra
-% escudería y piloto contra compañero (qué agrupaciones y qué medidas).
-
-\subsection{Herramientas}
-El análisis se realizó en Python sobre Google Colab, con las librerías
-\texttt{pandas} y \texttt{numpy} para la manipulación de datos y
-\texttt{matplotlib} para los gráficos. Los datos se descargan directamente
-de Kaggle con \texttt{kagglehub}. El informe se redactó en \LaTeX{}
-(Overleaf). El código y los gráficos están disponibles en el repositorio del
-grupo.
+El análisis se hizo en Python (Google Colab) con \texttt{pandas},
+\texttt{numpy} y \texttt{matplotlib}; el código, los gráficos, la
+presentación y un sitio web con los resultados están en el repositorio.
 
 % ---------------------------------------------------------------------------
 % §4. Resultados (1 a 2 páginas)
 % ---------------------------------------------------------------------------
 \section{Resultados}
-% TODO: un párrafo de interpretación por figura o tabla, que explique qué
-% significa en relación con la pregunta (no solo qué se ve).
 
-\subsection{Diferencias entre escuderías y entre compañeros}
-% TODO: tabla de resumen con groupby (por ejemplo, dispersión de resultados
-% entre equipos vs. dentro de cada equipo, por era).
-% \begin{table}[H]
-%     \centering
-%     \caption{...}
-%     \label{tab:dispersion}
-%     \begin{tabular}{lrr}
-%         \toprule
-%         Era & Brecha entre equipos & Brecha entre compañeros \\
-%         \midrule
-%         ... & ... & ... \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
+\subsection{Auto contra auto y piloto contra piloto}
+Una primera mirada separa ambas partes. Entre escuderías, la posición media va
+de 4,1 (Red Bull) y 4,3 (Mercedes) a 19,2 (HRT) en el período. Dentro de cada
+temporada, el mejor y el peor auto quedan separados en promedio por 13,5
+posiciones. Entre compañeros, en cambio, la distancia media es de 3,1
+posiciones y la mediana, de apenas 2: los dos pilotos de un equipo suelen
+terminar muy cerca. Estas dos cifras no son directamente comparables (una mide
+la distancia entre los extremos de unos diez autos y la otra, entre solo dos
+pilotos), por eso se recurre a la descomposición de la sección anterior.
 
-\subsection{Evolución por eras}
-% TODO: gráfico de evolución temporal (líneas) del peso relativo del auto.
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.85\textwidth]{evolucion_eras.png}
-%     \caption{...}
-%     \label{fig:evolucion}
-% \end{figure}
+\subsection{Efecto del auto y del piloto por temporada}
+En el total del período, el efecto del auto es de 4,75 posiciones y el del
+piloto, de 1,97: \textbf{el auto pesa 2,4 veces más}. La Figura~\ref{fig:efectos}
+muestra que la relación se mantiene en todas las temporadas: el efecto del
+auto nunca baja de 4,1 posiciones y el del piloto nunca supera 2,4. El
+cociente va de 1,99 (2021) a 3,29 (2011). La Tabla~\ref{tab:eras} agrupa las temporadas por
+reglamento: el peso del auto es algo mayor en la era V8 y baja levemente con
+el efecto suelo y el límite presupuestario, pero en ninguna era el piloto se
+acerca al auto.
 
-\subsection{Comparación entre categorías}
-% TODO: gráfico de barras (por ejemplo, porcentaje de duelos ganados por
-% piloto, o resultados promedio por escudería dominante).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{grafico_1_auto_vs_piloto.png}
+    \caption{Efecto típico del auto y del piloto sobre la posición final, por
+    temporada (raíz del promedio de los cuadrados, en posiciones). Fuente:
+    elaboración propia con datos de Kaggle/Ergast.}
+    \label{fig:efectos}
+\end{figure}
 
-\subsection{Relación entre variables}
-% TODO: dispersión entre rendimiento del auto (posición media del equipo) y
-% resultado del piloto, o entre grilla de partida y posición final.
+\begin{table}[H]
+    \centering
+    \caption{Efecto del auto y del piloto por era reglamentaria.}
+    \label{tab:eras}
+    \begin{tabular}{lrrrr}
+        \toprule
+        Era & Pares & Efecto auto & Efecto piloto & Cociente \\
+        \midrule
+        V8 (2010--2013)            & 597   & 5,21 & 2,03 & 2,57 \\
+        Turbo híbrido (2014--2021) & 1.105 & 4,58 & 1,88 & 2,44 \\
+        Efecto suelo (2022--2024)  & 507   & 4,57 & 2,10 & 2,18 \\
+        \midrule
+        Total 2010--2024           & 2.209 & 4,75 & 1,97 & 2,41 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Duelos entre compañeros}
+El piloto sí marca diferencias, aunque más chicas. Entre los 39 pilotos con al
+menos 33 duelos, Max Verstappen le ganó a su compañero el 81,9\% de las veces
+y Fernando Alonso el 77,7\%, ambos con una ventaja media de 1,19 posiciones
+por carrera sobre la media de su equipo (Figura~\ref{fig:duelos}). Les siguen
+George Russell (66,0\%) y Lando Norris (64,8\%). En el otro extremo, Mark
+Webber ganó el 19,4\% y Nicholas Latifi el 10,8\%. Un 80\% de duelos ganados
+equivale, de todos modos, a terminar en promedio a poco más de dos posiciones
+del compañero: mucho menos que la distancia típica entre autos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.56\textwidth]{grafico_2_duelos_ganados.png}
+    \caption{Los 15 pilotos con mayor porcentaje de duelos ganados a su
+    compañero (mínimo 33 duelos). La línea punteada marca el 50\%.}
+    \label{fig:duelos}
+\end{figure}
+
+\subsection{Talento sostenido y cambio de auto}
+La Figura~\ref{fig:sostenido} sigue a cuatro campeones temporada a temporada.
+Alonso ganó entre el 81\% y el 100\% de los duelos en Ferrari (2010--2014),
+cayó al 44\% en su primer año en McLaren y volvió a superar el 80\% después.
+Vettel pasó del 100\% en 2013 al 21\% en 2014, con el cambio de reglamento y
+un compañero nuevo, se recuperó en Ferrari (77\%--87\%) y volvió a caer al
+23\% en 2020, antes de cambiar de equipo. Verstappen crece año a año hasta
+ganar el 100\% en 2020, 2021 y 2024, y Hamilton oscila entre el 35\% y el
+84\%. El talento aparece como algo persistente, pero que también depende del
+auto, del reglamento y del compañero de turno.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.74\textwidth]{grafico_3_talento_sostenido.png}
+    \caption{Porcentaje de duelos ganados al compañero por temporada, con el
+    color de la escudería (temporadas con al menos 5 duelos; la línea
+    punteada une años no consecutivos).}
+    \label{fig:sostenido}
+\end{figure}
 
 % ---------------------------------------------------------------------------
 % §5. Conclusiones (media página)
 % ---------------------------------------------------------------------------
 \section{Conclusiones}
-% TODO: responder la pregunta de forma directa, retomando cada objetivo
-% particular.
+Entre 2010 y 2024 el auto pesa más que el piloto en el resultado de una
+carrera: separa a los equipos en unas 4,75 posiciones típicas, contra 1,97
+del piloto frente a su compañero, un cociente de 2,4. La relación se mantiene
+en las quince temporadas y en los tres reglamentos, con un peso del auto algo
+menor desde 2021. El talento existe y es medible (Verstappen y Alonso ganan
+cerca de cuatro de cada cinco duelos), pero un buen piloto, por sí solo, no
+alcanza para llevar a un auto lento a los primeros puestos. Para un equipo,
+el primer paso para mejorar sus resultados sería priorizar el desarrollo del
+auto; el piloto define la diferencia dentro de lo que el auto permite.
 
 \subsection{Limitaciones}
-% TODO. Algunas a considerar:
-%  - El período 2010--2024 no permite generalizar a las décadas anteriores
-%    del campeonato, en las que la tecnología y los reglamentos eran otros.
-%  - Hay pocos equipos por temporada (10 a 12), por lo que los resultados
-%    por era se apoyan en pocas observaciones de escudería.
-%  - Los reemplazos a mitad de temporada generan duelos con pocas carreras,
-%    con menos peso estadístico que los duelos de temporada completa.
-%  - La comparación entre compañeros mide al piloto respecto de otro piloto,
-%    no en términos absolutos.
+\begin{itemize}
+    \item El talento se mide contra el compañero, no en términos absolutos: si
+    los dos pilotos de un equipo son muy buenos, ambos parecen promedio, y
+    parte del talento queda contado dentro del efecto del auto.
+    \item Solo se usan las carreras en que terminaron los dos pilotos. Los
+    abandonos, que pueden deberse al auto o al piloto, quedan afuera.
+    \item La posición final también refleja estrategia, órdenes de equipo e
+    incidentes, que el análisis no separa.
+    \item Hay unos diez equipos por temporada, y los reemplazos a mitad de año
+    generan duelos con pocas carreras.
+    \item El período 2010--2024 no permite generalizar a décadas anteriores.
+\end{itemize}
 
 \subsection{Posibles extensiones}
-% TODO: por ejemplo, un modelo de regresión con efectos fijos de piloto y de
-% escudería-temporada, o incorporar los tiempos de vuelta (lap_times).
+Incorporar la clasificación y los tiempos de vuelta, que miden el ritmo sin
+el efecto de abandonos y estrategias; estimar un modelo de regresión con
+efectos fijos de piloto y de escudería-temporada, que aprovecha los cambios de
+equipo para separar mejor ambos factores; y extender el análisis a décadas
+anteriores.
 
 % ---------------------------------------------------------------------------
 % §6. Reflexión metodológica (un cuarto de página)
 % ---------------------------------------------------------------------------
 \section{Reflexión metodológica}
-% TODO: qué herramientas de IA se usaron y para qué (código, redacción,
-% estructura del informe), qué se verificó manualmente, cómo fue la revisión
-% intragrupal y, si se hizo, qué comentarios dejó la validación externa y
-% cómo se incorporaron. Cerrar con uno o dos aprendizajes.
+Se usó Claude como asistente en todas las etapas, y el notebook indica en
+cada caso la instrucción utilizada. En el análisis ayudó a elegir variables y
+armar la hoja de ruta, señaló que los autos con vueltas de atraso también
+terminaron la carrera (lo que sumó muchos datos), sugirió \texttt{transform}
+para armar los pares y la columna de dispersión entre autos, propuso el
+control de reconstrucción y los gráficos. También asistió en la redacción del
+informe, la presentación y el sitio web. Las decisiones de qué medir y cómo
+interpretarlo fueron del grupo, que descartó por alcance la clasificación y
+las posiciones ganadas desde la largada. Las cifras se verificaron con
+controles en el propio notebook (la suma de carreras por piloto y por
+escudería da 5.280, la reconstrucción da error 0) y con una segunda ejecución
+independiente del código, que reproduce todos los valores. El informe se
+contrastó con las salidas del notebook antes de cerrarlo. El principal
+aprendizaje fue que la IA acelera mucho el trabajo, pero sus sugerencias hay
+que entenderlas y verificarlas: el primer filtro de carreras terminadas, sin
+ese control, habría descartado una parte importante de los datos.
 
 % ---------------------------------------------------------------------------
 % §7. Bibliografía (opcional)
