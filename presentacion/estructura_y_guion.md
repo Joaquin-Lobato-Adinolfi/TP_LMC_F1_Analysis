@@ -141,7 +141,7 @@ Todas las cifras salen del notebook `TP_LMC_F1_Analysis.ipynb` y coinciden con e
 
 **En pantalla**
 - Uso de IA en el flujo de trabajo: Claude (Anthropic) como asistente con el contexto del proyecto. En el análisis: elección de variables y hoja de ruta, filtro de autos terminados (sumar los doblados), `transform` para armar los pares de compañeros, control de reconstrucción y elección de gráficos. En la comunicación: informe en LaTeX, sitio web y esta presentación. Validación: controles en el notebook y una segunda ejecución del código que reproduce todas las cifras; las celdas asistidas están marcadas con su prompt.
-- Links: repositorio de GitHub, informe, sitio web (GitHub Pages)
+- Links: repositorio de GitHub, informe, sitio web (piloto-o-auto-f1.vercel.app)
 - "¿Preguntas?"
 
 **Guion**

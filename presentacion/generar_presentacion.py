@@ -28,7 +28,7 @@ TENUE = "#8A90A0"
 LINEA = "#262A36"
 
 REPO = "github.com/Joaquin-Lobato-Adinolfi/TP_LMC_F1_Analysis"
-WEB = "joaquin-lobato-adinolfi.github.io/TP_LMC_F1_Analysis"
+WEB = "piloto-o-auto-f1.vercel.app"
 
 
 def cargar_js(ruta, variable):

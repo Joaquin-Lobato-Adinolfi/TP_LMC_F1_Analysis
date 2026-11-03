@@ -52,9 +52,9 @@ ESTADO = [
     ("Presentación con IA (6–10 diapos.)", "parcial",
      "Diseño final en presentacion/Presentacion_TP_F1.pdf y .pptx (PowerPoint, con el guion en las notas), "
      "8 diapositivas con los resultados finales. Falta darle la pasada con Copilot o Canva, como pide la consigna."),
-    ("Complemento opcional: sitio web", "parcial",
+    ("Complemento opcional: sitio web", "ok",
      "docs/ con los cálculos del notebook final y los tres gráficos (efectos por año, duelos, trayectorias). "
-     "Falta activar GitHub Pages."),
+     "Publicado en piloto-o-auto-f1.vercel.app."),
     ("Commits de ambos integrantes", "ok",
      "Joaquín: notebook. Agustín: informe, presentación, web y este avance."),
 ]
@@ -166,7 +166,6 @@ PENDIENTES = [
     ("Alta", "Presentación: abrir el .pptx en PowerPoint y darle una pasada con Copilot (o importarlo en Canva), y ensayar (~6 min)."),
     ("Alta", "PDF de entrega para el campus: completar los números de registro en entrega/entrega.tex y compilarlo."),
     ("Alta", "Informe: subir informe.tex y los gráficos a Overleaf y poner el link en el README."),
-    ("Media", "Activar GitHub Pages (Settings → Pages → rama main, carpeta /docs) y poner el link público en el README."),
     ("Media", "Revisión intragrupal del informe: cada uno lo contrasta con el notebook."),
     ("Media", "Video (complemento opcional): se arma después."),
 ]
@@ -201,7 +200,7 @@ ENTREGABLES = [
         ("Duelos y trayectorias", "ok", "Ranking de duelos (gráfico 2) y trayectorias de cuatro campeones (gráfico 3)."),
         ("Autos", "ok", "Dibujo nuevo de un F1 2022 visto desde arriba (js/auto.js), también usado en la presentación."),
         ("Espejo, brecha y simulador", "ok", "Piloto contra compañero (r = 0,92), distancia entre compañeros y \u201ccambio de asiento\u201d."),
-        ("Publicación", "falta", "Activar GitHub Pages."),
+        ("Publicación", "ok", "Publicada en Vercel: piloto-o-auto-f1.vercel.app."),
     ]),
 ]
 
@@ -222,7 +221,7 @@ CAMBIOS = [
                          "Corrige las tablas de datos con los tamaños del dataset que usa el notebook. Suma las correcciones "
                          "pendientes del notebook."),
     ("03/11/2026", "v6", "Diseño final de la presentación (autos de F1, franjas de pianito, banda entre curvas) y versión "
-                         "PowerPoint con el guion en las notas. Autos nuevos en la web. Suma el PDF de entrega para el campus."),
+                         "PowerPoint con el guion en las notas. Autos nuevos en la web. Suma el PDF de entrega para el campus. Web publicada en Vercel."),
 ]
 
 # ---------------------------------------------------------------------------
