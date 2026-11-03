@@ -119,11 +119,11 @@ p { margin: 0; max-width: 65ch; }
 .balanza .seg-piloto { background: var(--amarillo); flex: 1; }
 .balanza .nota { font-size: .9rem; color: var(--niebla); }
 
-.auto-hero { position: relative; height: 70px; }
-.auto-hero svg { position: absolute; left: 0; top: 0; width: 200px; height: 70px; }
+.auto-hero { position: relative; height: 92px; }
+.auto-hero svg { position: absolute; left: 0; top: 0; width: 240px; height: 92px; filter: drop-shadow(0 8px 14px #0008); }
 .auto-hero.corre svg { animation: cruzar 1.6s cubic-bezier(.5,0,.3,1) forwards; }
-@keyframes cruzar { from { transform: translateX(-260px); } to { transform: translateX(calc(min(100vw, var(--ancho)) - 240px)); } }
-.auto-hero .estela { position: absolute; top: 33px; left: 0; height: 4px; width: 0; background: linear-gradient(90deg, transparent, var(--rojo)); }
+@keyframes cruzar { from { transform: translateX(-260px); } to { transform: translateX(calc(min(100vw, var(--ancho)) - 290px)); } }
+.auto-hero .estela { position: absolute; top: 44px; left: 0; height: 4px; width: 0; background: linear-gradient(90deg, transparent, var(--rojo)); }
 .auto-hero.corre .estela { animation: estela 1.6s cubic-bezier(.5,0,.3,1) forwards; }
 @keyframes estela { from { width: 0; opacity: 1; } 80% { opacity: 1; } to { width: calc(min(100vw, var(--ancho)) - 260px); opacity: .25; } }
 
@@ -252,7 +252,7 @@ select.boton { text-transform: none; font-family: var(--f-texto); font-size: .95
 .recta .carril { position: absolute; left: 0; right: 0; height: 52px; }
 .recta .carril.a { top: 10px; }
 .recta .carril.b { top: 64px; }
-.recta .coche { position: absolute; top: 4px; width: 118px; height: 42px; transform: translateX(-50%); transition: left 1.2s cubic-bezier(.3,.9,.3,1); }
+.recta .coche { position: absolute; top: 2px; width: 120px; height: 46px; transform: translateX(-50%); transition: left 1.2s cubic-bezier(.3,.9,.3,1); }
 .recta .coche svg { width: 100%; height: 100%; }
 .recta .rotulo { position: absolute; top: 14px; font-family: var(--f-tiempo); font-size: .75rem; color: var(--niebla); white-space: nowrap; transition: left 1.2s cubic-bezier(.3,.9,.3,1); }
 .veredicto { font-size: clamp(1.1rem, 2.4vw, 1.4rem); line-height: 1.4; max-width: 70ch; }
